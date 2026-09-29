@@ -1,0 +1,13 @@
+group,variable,analysis_n,available_n,missing_n,missing_pct,CV_handling
+overall,age,1820,1820,0,0.0,numeric/binary coding; training-fold median imputation; fold-local standardization
+overall,male,1820,1820,0,0.0,numeric/binary coding; training-fold median imputation; fold-local standardization
+overall,hypertension,1820,1741,79,4.34065934065934,numeric/binary coding; training-fold median imputation; fold-local standardization
+overall,diabetes,1820,1772,48,2.6373626373626373,numeric/binary coding; training-fold median imputation; fold-local standardization
+AMI,age,453,453,0,0.0,numeric/binary coding; training-fold median imputation; fold-local standardization
+AMI,male,453,453,0,0.0,numeric/binary coding; training-fold median imputation; fold-local standardization
+AMI,hypertension,453,435,18,3.9735099337748343,numeric/binary coding; training-fold median imputation; fold-local standardization
+AMI,diabetes,453,442,11,2.4282560706401766,numeric/binary coding; training-fold median imputation; fold-local standardization
+non_AMI,age,1367,1367,0,0.0,numeric/binary coding; training-fold median imputation; fold-local standardization
+non_AMI,male,1367,1367,0,0.0,numeric/binary coding; training-fold median imputation; fold-local standardization
+non_AMI,hypertension,1367,1306,61,4.462326261887345,numeric/binary coding; training-fold median imputation; fold-local standardization
+non_AMI,diabetes,1367,1330,37,2.7066569129480613,numeric/binary coding; training-fold median imputation; fold-local standardization

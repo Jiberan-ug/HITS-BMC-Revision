@@ -1,0 +1,9 @@
+stage,N,AMI_n,non_AMI_n,definition
+raw_source_rows,2548,,,raw master rows; count only
+unique_patients_after_frozen_row_selection,2279,,,one source row per patient using frozen V0.2 selection rule
+discharge_diagnosis_available,1944,,,nonempty discharge diagnosis
+definite_AMI_phenotype_before_core_filter,456,456.0,0.0,frozen diagnosis-text rule
+definite_non_AMI_CAD_before_core_filter,1372,0.0,1372.0,frozen diagnosis-text rule
+core_CBC_available,2265,,,"absolute Neut, Lymph, Mono, and PLT available"
+primary_analysis,1820,453.0,1367.0,definite AMI vs definite non-AMI CAD with required Core CBC
+fibrinogen_complete_case,1705,426.0,1279.0,Core-7 + fibrinogen complete; no fibrinogen imputation

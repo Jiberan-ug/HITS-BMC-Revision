@@ -1,0 +1,121 @@
+model,analysis_id,bin,N,AMI_n,mean_predicted,observed_rate,bin_method
+PIV,primary_core,1,182,12,0.08051700135219601,0.06593406593406594,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+PIV,primary_core,2,182,20,0.11841218537640213,0.10989010989010989,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+PIV,primary_core,3,182,35,0.144820685164709,0.19230769230769232,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+PIV,primary_core,4,182,29,0.17040828878607933,0.15934065934065933,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+PIV,primary_core,5,182,27,0.1999448522219798,0.14835164835164835,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+PIV,primary_core,6,182,43,0.23143050715168623,0.23626373626373626,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+PIV,primary_core,7,182,45,0.26996949685424076,0.24725274725274726,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+PIV,primary_core,8,182,65,0.32061917351407976,0.35714285714285715,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+PIV,primary_core,9,182,75,0.3939977138040401,0.41208791208791207,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+PIV,primary_core,10,182,102,0.5589167717195647,0.5604395604395604,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Core-7,primary_core,1,182,19,0.07001784621428779,0.1043956043956044,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Core-7,primary_core,2,182,16,0.10880098361102714,0.08791208791208792,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Core-7,primary_core,3,182,22,0.13446987400593835,0.12087912087912088,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Core-7,primary_core,4,182,27,0.16205678488020253,0.14835164835164835,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Core-7,primary_core,5,182,31,0.19011258181303226,0.17032967032967034,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Core-7,primary_core,6,182,42,0.2206427206137085,0.23076923076923078,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Core-7,primary_core,7,182,49,0.26213107588943363,0.2692307692307692,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Core-7,primary_core,8,182,56,0.32102901626583613,0.3076923076923077,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Core-7,primary_core,9,182,78,0.40896617870317825,0.42857142857142855,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Core-7,primary_core,10,182,113,0.6107058975065202,0.6208791208791209,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Enhanced (full cohort),primary_enhanced_imputed,1,182,18,0.06679649538768244,0.0989010989010989,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Enhanced (full cohort),primary_enhanced_imputed,2,182,18,0.1035838017341189,0.0989010989010989,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Enhanced (full cohort),primary_enhanced_imputed,3,182,13,0.1297441341863205,0.07142857142857142,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Enhanced (full cohort),primary_enhanced_imputed,4,182,27,0.15770473179912078,0.14835164835164835,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Enhanced (full cohort),primary_enhanced_imputed,5,182,34,0.1868944265207403,0.18681318681318682,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Enhanced (full cohort),primary_enhanced_imputed,6,182,38,0.21864119728945206,0.2087912087912088,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Enhanced (full cohort),primary_enhanced_imputed,7,182,50,0.2652273698910041,0.27472527472527475,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Enhanced (full cohort),primary_enhanced_imputed,8,182,66,0.3302532897122661,0.3626373626373626,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Enhanced (full cohort),primary_enhanced_imputed,9,182,81,0.4194062531382656,0.44505494505494503,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Enhanced (full cohort),primary_enhanced_imputed,10,182,108,0.61117356030341,0.5934065934065934,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Enhanced (complete case),primary_fbg_complete_case,1,170,15,0.06585508807942457,0.08823529411764706,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Enhanced (complete case),primary_fbg_complete_case,2,171,19,0.10172902276183263,0.1111111111111111,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Enhanced (complete case),primary_fbg_complete_case,3,170,12,0.1265403076702975,0.07058823529411765,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Enhanced (complete case),primary_fbg_complete_case,4,171,24,0.1565930762021224,0.14035087719298245,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Enhanced (complete case),primary_fbg_complete_case,5,171,35,0.18610322838614005,0.2046783625730994,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Enhanced (complete case),primary_fbg_complete_case,6,170,33,0.21954986733935736,0.19411764705882353,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Enhanced (complete case),primary_fbg_complete_case,7,171,47,0.26901705258950337,0.27485380116959063,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Enhanced (complete case),primary_fbg_complete_case,8,170,62,0.33367085953329667,0.36470588235294116,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Enhanced (complete case),primary_fbg_complete_case,9,171,79,0.4227556426755553,0.4619883040935672,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Enhanced (complete case),primary_fbg_complete_case,10,170,100,0.618995746260556,0.5882352941176471,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Clinical only,primary_clinical,1,182,38,0.1925137335223129,0.2087912087912088,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Clinical only,primary_clinical,2,182,33,0.20707747678381805,0.1813186813186813,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Clinical only,primary_clinical,3,182,45,0.21763041871824346,0.24725274725274726,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Clinical only,primary_clinical,4,182,41,0.2282735193942717,0.22527472527472528,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Clinical only,primary_clinical,5,182,42,0.23944664777416458,0.23076923076923078,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Clinical only,primary_clinical,6,182,50,0.2500377428294276,0.27472527472527475,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Clinical only,primary_clinical,7,182,45,0.26416523321716306,0.24725274725274726,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Clinical only,primary_clinical,8,182,46,0.28072968480527777,0.25274725274725274,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Clinical only,primary_clinical,9,182,52,0.2959587519458826,0.2857142857142857,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Clinical only,primary_clinical,10,182,61,0.31278674907183646,0.33516483516483514,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Clinical + PIV,primary_clinical,1,182,12,0.07775996802269101,0.06593406593406594,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Clinical + PIV,primary_clinical,2,182,15,0.11736977619648263,0.08241758241758242,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Clinical + PIV,primary_clinical,3,182,33,0.14542634323153278,0.1813186813186813,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Clinical + PIV,primary_clinical,4,182,35,0.17389772047017552,0.19230769230769232,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Clinical + PIV,primary_clinical,5,182,33,0.19966587927691345,0.1813186813186813,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Clinical + PIV,primary_clinical,6,182,33,0.23268236050954985,0.1813186813186813,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Clinical + PIV,primary_clinical,7,182,51,0.2704031121836746,0.2802197802197802,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Clinical + PIV,primary_clinical,8,182,62,0.32147522305163395,0.34065934065934067,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Clinical + PIV,primary_clinical,9,182,76,0.3919502707874852,0.4175824175824176,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Clinical + PIV,primary_clinical,10,182,103,0.5590622974589512,0.5659340659340659,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Clinical + Core-7,primary_clinical,1,182,17,0.06879891001318442,0.09340659340659341,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Clinical + Core-7,primary_clinical,2,182,21,0.10719363570752494,0.11538461538461539,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Clinical + Core-7,primary_clinical,3,182,13,0.13621977706321164,0.07142857142857142,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Clinical + Core-7,primary_clinical,4,182,30,0.1633377853119865,0.16483516483516483,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Clinical + Core-7,primary_clinical,5,182,35,0.18937148446849114,0.19230769230769232,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Clinical + Core-7,primary_clinical,6,182,37,0.21955460336202326,0.2032967032967033,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Clinical + Core-7,primary_clinical,7,182,53,0.26202046259558703,0.29120879120879123,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Clinical + Core-7,primary_clinical,8,182,57,0.3179978179150134,0.3131868131868132,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Clinical + Core-7,primary_clinical,9,182,76,0.412282956641441,0.4175824175824176,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Clinical + Core-7,primary_clinical,10,182,114,0.6118049626716026,0.6263736263736264,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Clinical + Enhanced (full cohort),primary_clinical,1,182,15,0.06656985126576838,0.08241758241758242,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Clinical + Enhanced (full cohort),primary_clinical,2,182,20,0.10468450500341607,0.10989010989010989,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Clinical + Enhanced (full cohort),primary_clinical,3,182,19,0.1312810540597344,0.1043956043956044,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Clinical + Enhanced (full cohort),primary_clinical,4,182,21,0.15808316756827231,0.11538461538461539,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Clinical + Enhanced (full cohort),primary_clinical,5,182,24,0.18548271019423895,0.13186813186813187,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Clinical + Enhanced (full cohort),primary_clinical,6,182,48,0.21992304567050466,0.26373626373626374,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Clinical + Enhanced (full cohort),primary_clinical,7,182,49,0.26525085018561645,0.2692307692307692,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Clinical + Enhanced (full cohort),primary_clinical,8,182,63,0.32756818206195565,0.34615384615384615,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Clinical + Enhanced (full cohort),primary_clinical,9,182,84,0.41966501119330746,0.46153846153846156,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Clinical + Enhanced (full cohort),primary_clinical,10,182,110,0.6108457692875692,0.6043956043956044,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Clinical only (complete case),primary_clinical_fbg_complete_case,1,170,41,0.1976771606159287,0.2411764705882353,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Clinical only (complete case),primary_clinical_fbg_complete_case,2,171,30,0.2123594558711756,0.17543859649122806,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Clinical only (complete case),primary_clinical_fbg_complete_case,3,170,42,0.22342041493489612,0.24705882352941178,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Clinical only (complete case),primary_clinical_fbg_complete_case,4,171,39,0.23278233253098282,0.22807017543859648,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Clinical only (complete case),primary_clinical_fbg_complete_case,5,171,40,0.24229113978150396,0.23391812865497075,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Clinical only (complete case),primary_clinical_fbg_complete_case,6,170,36,0.25091167239441187,0.21176470588235294,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Clinical only (complete case),primary_clinical_fbg_complete_case,7,171,48,0.2621273753428998,0.2807017543859649,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Clinical only (complete case),primary_clinical_fbg_complete_case,8,170,46,0.2752717737486735,0.27058823529411763,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Clinical only (complete case),primary_clinical_fbg_complete_case,9,171,47,0.29065648758101614,0.27485380116959063,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Clinical only (complete case),primary_clinical_fbg_complete_case,10,170,57,0.3102733987626629,0.3352941176470588,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Clinical + PIV (complete case),primary_clinical_fbg_complete_case,1,170,11,0.0750929217468118,0.06470588235294118,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Clinical + PIV (complete case),primary_clinical_fbg_complete_case,2,171,14,0.11359601306792998,0.08187134502923976,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Clinical + PIV (complete case),primary_clinical_fbg_complete_case,3,170,27,0.14198387811987787,0.1588235294117647,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Clinical + PIV (complete case),primary_clinical_fbg_complete_case,4,171,38,0.16993403028498788,0.2222222222222222,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Clinical + PIV (complete case),primary_clinical_fbg_complete_case,5,171,29,0.19772684104449237,0.1695906432748538,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Clinical + PIV (complete case),primary_clinical_fbg_complete_case,6,170,30,0.23250623657452896,0.17647058823529413,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Clinical + PIV (complete case),primary_clinical_fbg_complete_case,7,171,48,0.2703669965140018,0.2807017543859649,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Clinical + PIV (complete case),primary_clinical_fbg_complete_case,8,170,59,0.3248910044899613,0.34705882352941175,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Clinical + PIV (complete case),primary_clinical_fbg_complete_case,9,171,72,0.39978848659990013,0.42105263157894735,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Clinical + PIV (complete case),primary_clinical_fbg_complete_case,10,170,98,0.572637589824647,0.5764705882352941,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Clinical + Core-7 (complete case),primary_clinical_fbg_complete_case,1,170,16,0.06757400531715216,0.09411764705882353,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Clinical + Core-7 (complete case),primary_clinical_fbg_complete_case,2,171,24,0.10509140992871395,0.14035087719298245,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Clinical + Core-7 (complete case),primary_clinical_fbg_complete_case,3,170,10,0.13420642692343246,0.058823529411764705,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Clinical + Core-7 (complete case),primary_clinical_fbg_complete_case,4,171,26,0.16117687516156445,0.15204678362573099,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Clinical + Core-7 (complete case),primary_clinical_fbg_complete_case,5,171,31,0.18742315405799073,0.18128654970760233,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Clinical + Core-7 (complete case),primary_clinical_fbg_complete_case,6,170,41,0.21999451737787534,0.2411764705882353,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Clinical + Core-7 (complete case),primary_clinical_fbg_complete_case,7,171,50,0.2631382081240236,0.29239766081871343,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Clinical + Core-7 (complete case),primary_clinical_fbg_complete_case,8,170,52,0.32079173719702947,0.3058823529411765,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Clinical + Core-7 (complete case),primary_clinical_fbg_complete_case,9,171,67,0.41625720584429404,0.391812865497076,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Clinical + Core-7 (complete case),primary_clinical_fbg_complete_case,10,170,109,0.6215392250951757,0.6411764705882353,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Clinical + Enhanced (complete case),primary_clinical_fbg_complete_case,1,170,13,0.06538624080795932,0.07647058823529412,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Clinical + Enhanced (complete case),primary_clinical_fbg_complete_case,2,171,20,0.10241124152454789,0.11695906432748537,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Clinical + Enhanced (complete case),primary_clinical_fbg_complete_case,3,170,17,0.1292922858126244,0.1,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Clinical + Enhanced (complete case),primary_clinical_fbg_complete_case,4,171,23,0.15556285852326737,0.13450292397660818,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Clinical + Enhanced (complete case),primary_clinical_fbg_complete_case,5,171,19,0.1838582071422537,0.1111111111111111,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Clinical + Enhanced (complete case),primary_clinical_fbg_complete_case,6,170,46,0.22013646331303263,0.27058823529411763,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Clinical + Enhanced (complete case),primary_clinical_fbg_complete_case,7,171,48,0.2685910766978724,0.2807017543859649,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Clinical + Enhanced (complete case),primary_clinical_fbg_complete_case,8,170,59,0.3320204354318937,0.34705882352941175,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Clinical + Enhanced (complete case),primary_clinical_fbg_complete_case,9,171,78,0.4242925745430575,0.45614035087719296,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed
+Clinical + Enhanced (complete case),primary_clinical_fbg_complete_case,10,170,103,0.6185317752089742,0.6058823529411764,10 target quantile groups; R quantile type 8 equivalent; duplicate breaks removed

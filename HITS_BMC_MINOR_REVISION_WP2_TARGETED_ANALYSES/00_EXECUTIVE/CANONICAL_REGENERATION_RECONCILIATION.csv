@@ -1,0 +1,58 @@
+metric,frozen_value,regenerated_value,absolute_difference,tolerance,status,frozen_source
+Core AUC,0.7253504637053473,0.7253504637053473,0.0,0.005,MATCH,V0.5.2 Publication Freeze canonical result registry
+Core AUC CI lower,0.6972291331992886,0.6972291331992886,0.0,0.005,MATCH,V0.5.2 Publication Freeze canonical result registry
+Core AUC CI upper,0.7526109516538609,0.7526109516538609,0.0,0.005,MATCH,V0.5.2 Publication Freeze canonical result registry
+Core Brier,0.1628034060185146,0.1628034060185146,0.0,0.005,MATCH,V0.5.2 Publication Freeze canonical result registry
+Core calibration intercept,-0.0257926630711702,-0.02579266307117025,5.204170427930421e-17,0.005,MATCH,V0.5.2 Publication Freeze canonical result registry
+Core calibration slope,0.9738763965042028,0.9738763965042029,1.1102230246251565e-16,0.005,MATCH,V0.5.2 Publication Freeze canonical result registry
+PIV AUC,0.7080505320136745,0.7080505320136745,0.0,0.005,MATCH,V0.5.2 Publication Freeze canonical result registry
+PIV AUC CI lower,0.6777573646293071,0.6777573646293071,0.0,0.005,MATCH,V0.5.2 Publication Freeze canonical result registry
+PIV AUC CI upper,0.7352535551335468,0.7352535551335468,0.0,0.005,MATCH,V0.5.2 Publication Freeze canonical result registry
+Enhanced full-cohort AUC,0.7351348645379661,0.7351348645379661,0.0,0.005,MATCH,V0.5.2 Publication Freeze canonical result registry
+Enhanced full-cohort AUC CI lower,0.7100435434129415,0.7100435434129415,0.0,0.005,MATCH,V0.5.2 Publication Freeze canonical result registry
+Enhanced full-cohort AUC CI upper,0.7627597227434184,0.7627597227434184,0.0,0.005,MATCH,V0.5.2 Publication Freeze canonical result registry
+Enhanced full-cohort Brier,0.1619481277208798,0.1619481277208798,0.0,0.005,MATCH,V0.5.2 Publication Freeze canonical result registry
+Enhanced full-cohort calibration intercept,-0.0215103323164074,-0.021510332316407435,3.469446951953614e-17,0.005,MATCH,V0.5.2 Publication Freeze canonical result registry
+Enhanced full-cohort calibration slope,0.9782980697185204,0.9782980697185203,1.1102230246251565e-16,0.005,MATCH,V0.5.2 Publication Freeze canonical result registry
+Core-PIV paired delta AUC,0.0172999316916727,0.017299931691672765,6.591949208711867e-17,0.005,MATCH,V0.5.2 Publication Freeze canonical result registry
+Core-PIV paired delta CI lower,0.003446066363558,0.0034460663635580064,6.5052130349130266e-18,0.005,MATCH,V0.5.2 Publication Freeze canonical result registry
+Core-PIV paired delta CI upper,0.0307939973521519,0.030793997352151985,8.326672684688674e-17,0.005,MATCH,V0.5.2 Publication Freeze canonical result registry
+Fibrinogen-complete Core AUC,0.7270608273041953,0.7270608273041953,0.0,0.005,MATCH,V0.3.1 frozen same-sample fibrinogen complete-case output
+Fibrinogen-complete Core AUC CI lower,0.6986954403603197,0.6986954403603197,0.0,0.005,MATCH,V0.3.1 frozen same-sample fibrinogen complete-case output
+Fibrinogen-complete Core AUC CI upper,0.7552169533832364,0.7552169533832364,0.0,0.005,MATCH,V0.3.1 frozen same-sample fibrinogen complete-case output
+Fibrinogen-complete Core Brier,0.1626015776461631,0.1626015776461631,0.0,0.005,MATCH,V0.3.1 frozen same-sample fibrinogen complete-case output
+Fibrinogen-complete Core calibration intercept,-0.0350383675373409,-0.03503836753734099,9.020562075079397e-17,0.005,MATCH,V0.3.1 frozen same-sample fibrinogen complete-case output
+Fibrinogen-complete Core calibration slope,0.9647490538667924,0.9647490538667923,1.1102230246251565e-16,0.005,MATCH,V0.3.1 frozen same-sample fibrinogen complete-case output
+Fibrinogen-complete Enhanced AUC,0.7367386492528273,0.7367386492528273,0.0,0.005,MATCH,V0.3.1 frozen same-sample fibrinogen complete-case output
+Fibrinogen-complete Enhanced AUC CI lower,0.7098167499273758,0.7098167499273758,0.0,0.005,MATCH,V0.3.1 frozen same-sample fibrinogen complete-case output
+Fibrinogen-complete Enhanced AUC CI upper,0.7660103739170109,0.7660103739170109,0.0,0.005,MATCH,V0.3.1 frozen same-sample fibrinogen complete-case output
+Fibrinogen-complete Enhanced Brier,0.1618074738888085,0.1618074738888085,0.0,0.005,MATCH,V0.3.1 frozen same-sample fibrinogen complete-case output
+Fibrinogen-complete Enhanced calibration intercept,-0.0315307379535027,-0.03153073795350274,4.163336342344337e-17,0.005,MATCH,V0.3.1 frozen same-sample fibrinogen complete-case output
+Fibrinogen-complete Enhanced calibration slope,0.9685766339607828,0.9685766339607828,0.0,0.005,MATCH,V0.3.1 frozen same-sample fibrinogen complete-case output
+Fibrinogen complete-case paired delta AUC,0.0096778219486319,0.009677821948631982,8.153200337090993e-17,0.005,MATCH,V0.3.1 frozen same-sample fibrinogen paired comparison
+Fibrinogen complete-case paired delta CI lower,0.0023000853057349,0.002300085305734942,4.206704429243757e-17,0.005,MATCH,V0.3.1 frozen same-sample fibrinogen paired comparison
+Fibrinogen complete-case paired delta CI upper,0.0169322656814893,0.016932265681489395,9.367506770274758e-17,0.005,MATCH,V0.3.1 frozen same-sample fibrinogen paired comparison
+Clinical AUC,0.5545247403718363,0.5545247403718363,0.0,0.005,MATCH,V0.5.2 Publication Freeze canonical result registry
+Clinical AUC CI lower,0.5244522596039022,0.5244522596039022,0.0,0.005,MATCH,V0.5.2 Publication Freeze canonical result registry
+Clinical AUC CI upper,0.5858200362654873,0.5858200362654873,0.0,0.005,MATCH,V0.5.2 Publication Freeze canonical result registry
+Clinical Brier,0.1857297771399369,0.18572977713993696,5.551115123125783e-17,0.005,MATCH,V0.5.2 Publication Freeze canonical result registry
+Clinical calibration intercept,-0.090790934775032,-0.09079093477503204,4.163336342344337e-17,0.005,MATCH,V0.5.2 Publication Freeze canonical result registry
+Clinical calibration slope,0.916924825193084,0.9169248251930839,1.1102230246251565e-16,0.005,MATCH,V0.5.2 Publication Freeze canonical result registry
+Clinical+PIV AUC,0.7130565796421807,0.7130565796421807,0.0,0.005,MATCH,V0.5.2 Publication Freeze canonical result registry
+Clinical+PIV AUC CI lower,0.6848817560414782,0.6848817560414782,0.0,0.005,MATCH,V0.5.2 Publication Freeze canonical result registry
+Clinical+PIV AUC CI upper,0.7401185388621552,0.7401185388621552,0.0,0.005,MATCH,V0.5.2 Publication Freeze canonical result registry
+Clinical+PIV Brier,0.1660385147497102,0.1660385147497102,0.0,0.005,MATCH,V0.5.2 Publication Freeze canonical result registry
+Clinical+PIV calibration intercept,0.0137384949925634,0.01373849499256343,2.949029909160572e-17,0.005,MATCH,V0.5.2 Publication Freeze canonical result registry
+Clinical+PIV calibration slope,1.0141872365908255,1.0141872365908255,0.0,0.005,MATCH,V0.5.2 Publication Freeze canonical result registry
+Clinical+Core AUC,0.7292697145422453,0.7292697145422453,0.0,0.005,MATCH,V0.5.2 Publication Freeze canonical result registry
+Clinical+Core AUC CI lower,0.7024121730923852,0.7024121730923852,0.0,0.005,MATCH,V0.5.2 Publication Freeze canonical result registry
+Clinical+Core AUC CI upper,0.7575331527873268,0.7575331527873268,0.0,0.005,MATCH,V0.5.2 Publication Freeze canonical result registry
+Clinical+Core Brier,0.1622846995440414,0.1622846995440414,0.0,0.005,MATCH,V0.5.2 Publication Freeze canonical result registry
+Clinical+Core calibration intercept,-0.0195830396757452,-0.019583039675745248,4.85722573273506e-17,0.005,MATCH,V0.5.2 Publication Freeze canonical result registry
+Clinical+Core calibration slope,0.979951390057102,0.9799513900571019,1.1102230246251565e-16,0.005,MATCH,V0.5.2 Publication Freeze canonical result registry
+Clinical+Enhanced AUC,0.7394126129792281,0.7394126129792281,0.0,0.005,MATCH,V0.5.2 Publication Freeze canonical result registry
+Clinical+Enhanced AUC CI lower,0.7135399842926861,0.7135399842926861,0.0,0.005,MATCH,V0.5.2 Publication Freeze canonical result registry
+Clinical+Enhanced AUC CI upper,0.766462688286434,0.766462688286434,0.0,0.005,MATCH,V0.5.2 Publication Freeze canonical result registry
+Clinical+Enhanced Brier,0.1612536861620861,0.16125368616208618,8.326672684688674e-17,0.005,MATCH,V0.5.2 Publication Freeze canonical result registry
+Clinical+Enhanced calibration intercept,-0.0043949374898535,-0.004394937489853588,8.847089727481716e-17,0.005,MATCH,V0.5.2 Publication Freeze canonical result registry
+Clinical+Enhanced calibration slope,0.9957319501993112,0.9957319501993112,0.0,0.005,MATCH,V0.5.2 Publication Freeze canonical result registry

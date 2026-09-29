@@ -1,0 +1,11 @@
+stage,N,AMI_n,non_AMI_n,rule
+primary_AMI,453,453,0,frozen primary diagnosis-text phenotype
+date_axis_early,196,196,0,frozen deidentified date-axis allocation; no temporal re-analysis
+date_axis_buffer,79,79,0,frozen deidentified date-axis allocation; excluded from boundary comparison
+date_axis_later,178,178,0,frozen deidentified date-axis allocation
+later_high_specificity_AMI,138,138,0,definite AMI plus MI keyword and acute marker; excludes subacute and uncertain wording; requires STEMI/NSTEMI/ST segment subtype or explicit acute MI phrase/site
+later_AMI_not_meeting_strict_text_rule,40,40,0,difference between frozen later primary AMI (178) and high-specificity subset (138); not adjudicated misclassification
+later_broad_CAD_angina_controls,370,0,370,frozen broad late non-AMI control pool before strict-control restriction
+later_strict_CAD_angina_controls,288,0,288,frozen strict-control rule; 370 broad late controls less 82 excluded
+later_broad_controls_excluded,82,0,82,does not meet frozen strict CAD/angina control definition
+later_high_specificity_comparison,426,138,288,high-specificity late AMI plus strict CAD/angina controls

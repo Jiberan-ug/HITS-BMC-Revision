@@ -1,0 +1,5 @@
+group,analysis_n,available_n,missing_n,missing_pct,AMI_n,non_AMI_n
+overall,1820,1705,115,6.318681318681318,,
+AMI,453,426,27,5.960264900662252,,
+non_AMI,1367,1279,88,6.437454279444038,,
+complete_case,1820,1705,115,6.318681318681318,426.0,1279.0

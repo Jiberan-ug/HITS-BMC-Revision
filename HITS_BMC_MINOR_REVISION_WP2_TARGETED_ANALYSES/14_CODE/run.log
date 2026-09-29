@@ -1,0 +1,110 @@
+[2026-09-29 21:11:19 CST] WP2 targeted analysis run started
+[2026-09-29 21:11:20 CST] Verified source and cohort: raw_rows=2548 selected_patients=2279 primary_N=1820 AMI=453 fbg_CC_N=1705
+[2026-09-29 21:11:20 CST] Starting canonical nested OOF block: primary_core; N=1820; models=8
+[2026-09-29 21:11:20] Nested OOF primary_core: outer split 1/50 complete
+[2026-09-29 21:11:21] Nested OOF primary_core: outer split 5/50 complete
+[2026-09-29 21:11:22] Nested OOF primary_core: outer split 10/50 complete
+[2026-09-29 21:11:23] Nested OOF primary_core: outer split 15/50 complete
+[2026-09-29 21:11:24] Nested OOF primary_core: outer split 20/50 complete
+[2026-09-29 21:11:25] Nested OOF primary_core: outer split 25/50 complete
+[2026-09-29 21:11:25] Nested OOF primary_core: outer split 30/50 complete
+[2026-09-29 21:11:26] Nested OOF primary_core: outer split 35/50 complete
+[2026-09-29 21:11:27] Nested OOF primary_core: outer split 40/50 complete
+[2026-09-29 21:11:28] Nested OOF primary_core: outer split 45/50 complete
+[2026-09-29 21:11:29] Nested OOF primary_core: outer split 50/50 complete
+[2026-09-29 21:11:29 CST] Completed canonical nested OOF block: primary_core; records=145600
+[2026-09-29 21:11:29 CST] Starting canonical nested OOF block: primary_enhanced_imputed; N=1820; models=1
+[2026-09-29 21:11:29] Nested OOF primary_enhanced_imputed: outer split 1/50 complete
+[2026-09-29 21:11:30] Nested OOF primary_enhanced_imputed: outer split 5/50 complete
+[2026-09-29 21:11:31] Nested OOF primary_enhanced_imputed: outer split 10/50 complete
+[2026-09-29 21:11:32] Nested OOF primary_enhanced_imputed: outer split 15/50 complete
+[2026-09-29 21:11:33] Nested OOF primary_enhanced_imputed: outer split 20/50 complete
+[2026-09-29 21:11:34] Nested OOF primary_enhanced_imputed: outer split 25/50 complete
+[2026-09-29 21:11:34] Nested OOF primary_enhanced_imputed: outer split 30/50 complete
+[2026-09-29 21:11:35] Nested OOF primary_enhanced_imputed: outer split 35/50 complete
+[2026-09-29 21:11:36] Nested OOF primary_enhanced_imputed: outer split 40/50 complete
+[2026-09-29 21:11:37] Nested OOF primary_enhanced_imputed: outer split 45/50 complete
+[2026-09-29 21:11:38] Nested OOF primary_enhanced_imputed: outer split 50/50 complete
+[2026-09-29 21:11:38 CST] Completed canonical nested OOF block: primary_enhanced_imputed; records=18200
+[2026-09-29 21:11:38 CST] Starting canonical nested OOF block: primary_fbg_complete_case; N=1705; models=2
+[2026-09-29 21:11:38] Nested OOF primary_fbg_complete_case: outer split 1/50 complete
+[2026-09-29 21:11:40] Nested OOF primary_fbg_complete_case: outer split 5/50 complete
+[2026-09-29 21:11:41] Nested OOF primary_fbg_complete_case: outer split 10/50 complete
+[2026-09-29 21:11:43] Nested OOF primary_fbg_complete_case: outer split 15/50 complete
+[2026-09-29 21:11:45] Nested OOF primary_fbg_complete_case: outer split 20/50 complete
+[2026-09-29 21:11:46] Nested OOF primary_fbg_complete_case: outer split 25/50 complete
+[2026-09-29 21:11:48] Nested OOF primary_fbg_complete_case: outer split 30/50 complete
+[2026-09-29 21:11:50] Nested OOF primary_fbg_complete_case: outer split 35/50 complete
+[2026-09-29 21:11:51] Nested OOF primary_fbg_complete_case: outer split 40/50 complete
+[2026-09-29 21:11:53] Nested OOF primary_fbg_complete_case: outer split 45/50 complete
+[2026-09-29 21:11:55] Nested OOF primary_fbg_complete_case: outer split 50/50 complete
+[2026-09-29 21:11:55 CST] Completed canonical nested OOF block: primary_fbg_complete_case; records=34100
+[2026-09-29 21:11:55 CST] Starting canonical nested OOF block: primary_clinical; N=1820; models=4
+[2026-09-29 21:11:56] Nested OOF primary_clinical: outer split 1/50 complete
+[2026-09-29 21:11:59] Nested OOF primary_clinical: outer split 5/50 complete
+[2026-09-29 21:12:02] Nested OOF primary_clinical: outer split 10/50 complete
+[2026-09-29 21:12:06] Nested OOF primary_clinical: outer split 15/50 complete
+[2026-09-29 21:12:09] Nested OOF primary_clinical: outer split 20/50 complete
+[2026-09-29 21:12:12] Nested OOF primary_clinical: outer split 25/50 complete
+[2026-09-29 21:12:16] Nested OOF primary_clinical: outer split 30/50 complete
+[2026-09-29 21:12:19] Nested OOF primary_clinical: outer split 35/50 complete
+[2026-09-29 21:12:22] Nested OOF primary_clinical: outer split 40/50 complete
+[2026-09-29 21:12:26] Nested OOF primary_clinical: outer split 45/50 complete
+[2026-09-29 21:12:29] Nested OOF primary_clinical: outer split 50/50 complete
+[2026-09-29 21:12:29 CST] Completed canonical nested OOF block: primary_clinical; records=72800
+[2026-09-29 21:12:29 CST] Starting canonical nested OOF block: primary_clinical_fbg_complete_case; N=1705; models=4
+[2026-09-29 21:12:30] Nested OOF primary_clinical_fbg_complete_case: outer split 1/50 complete
+[2026-09-29 21:12:32] Nested OOF primary_clinical_fbg_complete_case: outer split 5/50 complete
+[2026-09-29 21:12:36] Nested OOF primary_clinical_fbg_complete_case: outer split 10/50 complete
+[2026-09-29 21:12:39] Nested OOF primary_clinical_fbg_complete_case: outer split 15/50 complete
+[2026-09-29 21:12:42] Nested OOF primary_clinical_fbg_complete_case: outer split 20/50 complete
+[2026-09-29 21:12:46] Nested OOF primary_clinical_fbg_complete_case: outer split 25/50 complete
+[2026-09-29 21:12:49] Nested OOF primary_clinical_fbg_complete_case: outer split 30/50 complete
+[2026-09-29 21:12:52] Nested OOF primary_clinical_fbg_complete_case: outer split 35/50 complete
+[2026-09-29 21:12:55] Nested OOF primary_clinical_fbg_complete_case: outer split 40/50 complete
+[2026-09-29 21:12:59] Nested OOF primary_clinical_fbg_complete_case: outer split 45/50 complete
+[2026-09-29 21:13:02] Nested OOF primary_clinical_fbg_complete_case: outer split 50/50 complete
+[2026-09-29 21:13:02 CST] Completed canonical nested OOF block: primary_clinical_fbg_complete_case; records=68200
+[2026-09-29 21:13:34 CST] Rendering aggregate figure with R: draw_canonical_roc.R
+[2026-09-29 21:19:10 CST] Resuming from existing aggregate outputs; model fitting skipped
+[2026-09-29 21:19:10 CST] Rendering aggregate figure with R: draw_canonical_roc.R
+[2026-09-29 21:19:11 CST] Rendering aggregate figure with R: draw_calibration.R
+[2026-09-29 21:19:12 CST] Rendering aggregate figure with R: draw_dca.R
+[2026-09-29 21:19:13 CST] Rendering aggregate figure with R: draw_core7_correlation.R
+[2026-09-29 21:19:14 CST] Rendering aggregate figure with R: draw_high_specificity_flow.R
+[2026-09-29 21:19:16 CST] WP2 render-only finalization finished with gate=WP2_CONDITIONAL_PASS_MINOR_REPORTING_GAPS; figures_ok=False
+[2026-09-29 21:20:14 CST] Resuming from existing aggregate outputs; model fitting skipped
+[2026-09-29 21:20:14 CST] Rendering aggregate figure with R: draw_canonical_roc.R
+[2026-09-29 21:20:15 CST] Rendering aggregate figure with R: draw_calibration.R
+[2026-09-29 21:20:16 CST] Rendering aggregate figure with R: draw_dca.R
+[2026-09-29 21:20:18 CST] Rendering aggregate figure with R: draw_core7_correlation.R
+[2026-09-29 21:20:19 CST] Rendering aggregate figure with R: draw_high_specificity_flow.R
+[2026-09-29 21:20:20 CST] WP2 render-only finalization finished with gate=WP2_PASS_READY_FOR_MANUSCRIPT_REVISION; figures_ok=True
+[2026-09-29 21:25:32 CST] Resuming from existing aggregate outputs; model fitting skipped
+[2026-09-29 21:25:32 CST] Rendering aggregate figure with R: draw_canonical_roc.R
+[2026-09-29 21:25:33 CST] Rendering aggregate figure with R: draw_calibration.R
+[2026-09-29 21:25:34 CST] Rendering aggregate figure with R: draw_dca.R
+[2026-09-29 21:25:35 CST] Rendering aggregate figure with R: draw_core7_correlation.R
+[2026-09-29 21:25:36 CST] Rendering aggregate figure with R: draw_high_specificity_flow.R
+[2026-09-29 21:25:37 CST] WP2 render-only finalization finished with gate=WP2_PASS_READY_FOR_MANUSCRIPT_REVISION; figures_ok=True
+[2026-09-29 21:27:06 CST] Resuming from existing aggregate outputs; model fitting skipped
+[2026-09-29 21:27:06 CST] Rendering aggregate figure with R: draw_canonical_roc.R
+[2026-09-29 21:27:08 CST] Rendering aggregate figure with R: draw_calibration.R
+[2026-09-29 21:27:09 CST] Rendering aggregate figure with R: draw_dca.R
+[2026-09-29 21:27:10 CST] Rendering aggregate figure with R: draw_core7_correlation.R
+[2026-09-29 21:27:11 CST] Rendering aggregate figure with R: draw_high_specificity_flow.R
+[2026-09-29 21:27:12 CST] WP2 render-only finalization finished with gate=WP2_PASS_READY_FOR_MANUSCRIPT_REVISION; figures_ok=True
+[2026-09-29 21:30:31 CST] Resuming from existing aggregate outputs; model fitting skipped
+[2026-09-29 21:30:31 CST] Rendering aggregate figure with R: draw_canonical_roc.R
+[2026-09-29 21:30:32 CST] Rendering aggregate figure with R: draw_calibration.R
+[2026-09-29 21:30:33 CST] Rendering aggregate figure with R: draw_dca.R
+[2026-09-29 21:30:34 CST] Rendering aggregate figure with R: draw_core7_correlation.R
+[2026-09-29 21:30:35 CST] Rendering aggregate figure with R: draw_high_specificity_flow.R
+[2026-09-29 21:30:36 CST] WP2 render-only finalization finished with gate=WP2_PASS_READY_FOR_MANUSCRIPT_REVISION; figures_ok=True
+[2026-09-29 21:32:25 CST] Resuming from existing aggregate outputs; model fitting skipped
+[2026-09-29 21:32:25 CST] Rendering aggregate figure with R: draw_canonical_roc.R
+[2026-09-29 21:32:26 CST] Rendering aggregate figure with R: draw_calibration.R
+[2026-09-29 21:32:27 CST] Rendering aggregate figure with R: draw_dca.R
+[2026-09-29 21:32:28 CST] Rendering aggregate figure with R: draw_core7_correlation.R
+[2026-09-29 21:32:29 CST] Rendering aggregate figure with R: draw_high_specificity_flow.R
+[2026-09-29 21:32:30 CST] WP2 render-only finalization finished with gate=WP2_PASS_READY_FOR_MANUSCRIPT_REVISION; figures_ok=True
