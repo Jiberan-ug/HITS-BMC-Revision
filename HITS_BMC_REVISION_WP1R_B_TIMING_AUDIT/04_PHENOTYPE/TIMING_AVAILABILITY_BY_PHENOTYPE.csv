@@ -1,0 +1,4 @@
+analysis_group,n_total,cbc_timestamp_available_n,cbc_timestamp_available_pct,admission_date_available_n,admission_date_available_pct,cbc_and_admission_date_paired_n,cbc_and_admission_date_paired_pct,fbg_timestamp_available_n,fbg_timestamp_available_pct,fbg_value_available_n,fbg_value_available_pct,cbc_fbg_timestamps_paired_n,cbc_fbg_timestamps_paired_pct,angiography_time_available_n,initial_ami_diagnosis_time_available_n,direct_encounter_linkage_n,any_defensible_episode_timing_n,same_index_hospitalization_cbc_confirmed_n,timing_unverified_n
+Total,1820,1820,100.00,130,7.14,130,7.14,1707,93.79,1705,93.68,1707,93.79,0,0,0,0,0,1820
+AMI,453,453,100.00,33,7.28,33,7.28,427,94.26,426,94.04,427,94.26,0,0,0,0,0,453
+non-AMI CAD,1367,1367,100.00,97,7.10,97,7.10,1280,93.64,1279,93.56,1280,93.64,0,NA,0,0,0,1367

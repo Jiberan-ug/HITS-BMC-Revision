@@ -1,0 +1,39 @@
+{
+  "cohort_n": 1820,
+  "ami_n": 453,
+  "non_ami_cad_n": 1367,
+  "any_defensible_index_episode_timing_n": 0,
+  "direct_encounter_linkage_n": 0,
+  "same_index_hospitalization_cbc_confirmed_n": 0,
+  "pre_angiography_cbc_n": 0,
+  "pre_angiography_cbc_denominator_n": 0,
+  "pre_initial_ami_diagnosis_cbc_n": 0,
+  "pre_initial_ami_diagnosis_cbc_denominator_n": 0,
+  "timing_unverified_n": 1820,
+  "field_checks": {
+    "explicit_encounter_id_field_n": 0,
+    "unlinked_inpatient_number_or_token_fields_n": 2,
+    "explicit_discharge_datetime_field_n": 0,
+    "CAG_or_angiography_field_n": 0,
+    "PCI_date_time_field_n": 0,
+    "procedure_date_time_field_n": 0,
+    "initial_diagnosis_date_time_field_n": 0,
+    "scheme_c_zip_member_n": 11
+  },
+  "source_files": 14,
+  "zip_members": [
+    "master_cohort_cleaned.csv",
+    "mace_positive_cleaned.csv",
+    "mace_negative_cleaned.csv",
+    "positive_extended_cleaned.csv",
+    "recommended_model_dataset_draft.csv",
+    "field_dictionary.csv",
+    "README_schemeC.txt",
+    "patient_crosswalk.csv",
+    "file_relationship.csv",
+    "duplicate_audit.csv",
+    "missing_summary.csv"
+  ],
+  "output_contains_patient_rows": false,
+  "models_refit": false
+}

@@ -4,7 +4,13 @@ This public repository contains a bounded **WP1 evidence-recovery and feasibilit
 
 ## Current Review
 
-**Latest source-recovery gate: `WP1R_SOURCE_RECOVERY_PARTIAL_PASS_INDEX_CBC_RECONSTRUCTION_REQUIRED`.** The original WP1 package remains historical; WP1R supersedes its source-date and ethics statements where noted below. The broader manuscript-revision readiness remains on hold.
+**Latest timing gate: `WP1R_B_PASS_SELECTION_RULE_ONLY`.** WP1R-A remains the historical source-recovery record. WP1R-B verifies the exact CBC record-selection rule but finds no defensible index-episode timing linkage in the available cohort sources. Broader manuscript-revision readiness remains on hold.
+
+[Open the WP1R-B timing executive summary](HITS_BMC_REVISION_WP1R_B_TIMING_AUDIT/00_EXECUTIVE/WP1R_B_EXECUTIVE_SUMMARY.md)
+
+[Browse the WP1R-B timing audit package](HITS_BMC_REVISION_WP1R_B_TIMING_AUDIT)
+
+[Download the WP1R-B aggregate-only audit ZIP](HITS_BMC_REVISION_WP1R_B_TIMING_AUDIT.zip)
 
 [Open the WP1R final decision](https://github.com/Jiberan-ug/HITS-BMC-Revision/blob/revision/bmc-major-revision-wp1-evidence-audit/HITS_BMC_REVISION_WP1_EVIDENCE_AUDIT/10_ORIGINAL_SOURCE_RECOVERY/WP1R_DECISION.md)
 
@@ -18,8 +24,8 @@ The dedicated revision pull request remains OPEN for review. The main branch is 
 
 ## Main Findings
 
-1. WP1R recovered the primary 2,548-row/431-column mother file and matched its 2,279-patient key set exactly to the analysis master; three of the four named source files were found. The author confirms the 2020–2026 coronary-angiography eligibility rule, but no query/date field machine-verifies it.
-2. The source row grain and encounter linkage remain unresolved. CBC test times cannot be classified as index-admission versus historical values, and same-hospitalization index CBC reconstruction is not feasible from the recovered files. Frozen temporal results therefore are not credible as temporal-transportability evidence until date lineage is verified.
+1. WP1R-A recovered the primary 2,548-row/431-column mother file and matched its 2,279-patient key set exactly to the analysis master; three of the four named source files were found. The author confirms the 2020–2026 coronary-angiography eligibility rule, but no query/date field machine-verifies it.
+2. WP1R-B reproduced the frozen HITS cohort (N=1,820; AMI=453; non-AMI CAD=1,367) and verified the historical completeness-ranked row-selection rule. It found zero defensible index-episode timing links; all 1,820 remain timing-unverified. CBC and fibrinogen timestamps are present, but cannot be assigned to the index CAG stay. Temporal validation must be removed from the manuscript as a clinical transportability claim.
 3. The ethics gate is PASS based on the author's explicit confirmation of approval K202602-10 and waiver of informed consent; the existing manuscript statement that all participants provided consent conflicts and requires correction. Approval documents were not independently inspected or published.
 4. The recovered calibration/ROC figure branch uses legacy 20-repeat predictions, while the canonical Table 2 comes from a different verified 10-repeat validation run. Corrected age provenance remains unresolved; canonical patient-level predictions were not persisted and cannot be replaced by legacy predictions for new DCA.
 
