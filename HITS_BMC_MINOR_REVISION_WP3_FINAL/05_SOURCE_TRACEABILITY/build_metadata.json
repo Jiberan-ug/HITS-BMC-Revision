@@ -1,0 +1,9 @@
+{
+  "package": "HITS_BMC_MINOR_REVISION_WP3_FINAL",
+  "created_utc": "2026-09-29T16:46:06.343495+00:00",
+  "restricted_master_sha256": "f87691f5876ece3e70b2835284bf2412ed57edaf83ee7e198df6caa89669a660",
+  "manifest_rows": 35,
+  "exact_review_reports_recovered": false,
+  "portal_integrated_manuscript_recovered": false,
+  "raw_patient_level_data_included": false
+}

@@ -1,0 +1,819 @@
+2026-09-29T16:33:38.933314+00:00Z	AGE_BUILD restricted_source_sha256=f87691f5876ece3e70b2835284bf2412ed57edaf83ee7e198df6caa89669a660; output=05_SOURCE_TRACEABILITY/source_data/Table1_age_rebuilt_source.csv
+2026-09-29T16:33:38.933714+00:00Z	raw_rows=2548 selected_unique_patients=2279 primary_n=1820 AMI_n=453 non_AMI_n=1367 age_n=1820 p=0.0039785462
+2026-09-29T16:44:33.097623+00:00Z	AGE_BUILD restricted_source_sha256=f87691f5876ece3e70b2835284bf2412ed57edaf83ee7e198df6caa89669a660; output=05_SOURCE_TRACEABILITY/source_data/Table1_age_rebuilt_source.csv
+2026-09-29T16:44:33.097914+00:00Z	raw_rows=2548 selected_unique_patients=2279 primary_n=1820 AMI_n=453 non_AMI_n=1367 age_n=1820 p=0.0039739906
+2026-09-29T16:45:34.135888+00:00Z	AGE_BUILD restricted_source_sha256=f87691f5876ece3e70b2835284bf2412ed57edaf83ee7e198df6caa89669a660; output=05_SOURCE_TRACEABILITY/source_data/Table1_age_rebuilt_source.csv
+2026-09-29T16:45:34.136191+00:00Z	raw_rows=2548 selected_unique_patients=2279 primary_n=1820 AMI_n=453 non_AMI_n=1367 age_n=1820 p=0.0039739906
+2026-09-29T16:46:06.169838+00:00Z	AGE_BUILD restricted_source_sha256=f87691f5876ece3e70b2835284bf2412ed57edaf83ee7e198df6caa89669a660; output=05_SOURCE_TRACEABILITY/source_data/Table1_age_rebuilt_source.csv
+2026-09-29T16:46:06.170249+00:00Z	raw_rows=2548 selected_unique_patients=2279 primary_n=1820 AMI_n=453 non_AMI_n=1367 age_n=1820 p=0.0039739906
+2026-09-29T16:46:06.343731+00:00Z	PREPARE_PASS; restricted row-level data excluded
+2026-09-29T16:52:00.942754+00:00Z	R_FIGURE /usr/local/bin/Rscript $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/05_SOURCE_TRACEABILITY/figure_scripts/plot_Figure1_Flow.R $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL
+2026-09-29T16:52:00.943166+00:00Z	Warning messages:
+1: In grSoftVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/modules//R_X11.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/modules//R_X11.so, 0x0006): Library not loaded: /opt/X11/lib/libSM.6.dylib
+  Referenced from: <5FD378C2-DF88-3BAC-B48D-DF631DE22C72> /Library/Frameworks/R.framework/Versions/4.6/Resources/modules/R_X11.so
+  Reason: tried: '/opt/X11/lib/libSM.6.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libSM.6.dylib' (no such file), '/opt/X11/lib/libSM.6.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libSM.6.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libSM.6.dylib' (no such file)
+2: In cairoVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so, 0x0006): Library not loaded: /opt/X11/lib/libXrender.1.dylib
+  Referenced from: <903A0F3F-3C80-304C-B075-4101215E8841> /Library/Frameworks/R.framework/Versions/4.6/Resources/library/grDevices/libs/cairo.so
+  Reason: tried: '/opt/X11/lib/libXrender.1.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libXrender.1.dylib' (no such file), '/opt/X11/lib/libXrender.1.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libXrender.1.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libXrender.1.dylib' (no such file)
+3: In device(filename = "$WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/04_FIGURES/Figure1_Revised.pdf",  :
+  failed to load cairo DLL
+2026-09-29T16:52:01.933169+00:00Z	R_FIGURE /usr/local/bin/Rscript $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/05_SOURCE_TRACEABILITY/figure_scripts/plot_Figure2_ROC.R $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL
+2026-09-29T16:52:01.933293+00:00Z	Warning messages:
+1: In grSoftVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/modules//R_X11.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/modules//R_X11.so, 0x0006): Library not loaded: /opt/X11/lib/libSM.6.dylib
+  Referenced from: <5FD378C2-DF88-3BAC-B48D-DF631DE22C72> /Library/Frameworks/R.framework/Versions/4.6/Resources/modules/R_X11.so
+  Reason: tried: '/opt/X11/lib/libSM.6.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libSM.6.dylib' (no such file), '/opt/X11/lib/libSM.6.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libSM.6.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libSM.6.dylib' (no such file)
+2: In cairoVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so, 0x0006): Library not loaded: /opt/X11/lib/libXrender.1.dylib
+  Referenced from: <903A0F3F-3C80-304C-B075-4101215E8841> /Library/Frameworks/R.framework/Versions/4.6/Resources/library/grDevices/libs/cairo.so
+  Reason: tried: '/opt/X11/lib/libXrender.1.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libXrender.1.dylib' (no such file), '/opt/X11/lib/libXrender.1.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libXrender.1.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libXrender.1.dylib' (no such file)
+3: In device(filename = "$WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/04_FIGURES/Figure2_Revised.pdf",  :
+  failed to load cairo DLL
+2026-09-29T16:52:02.970888+00:00Z	R_FIGURE /usr/local/bin/Rscript $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/05_SOURCE_TRACEABILITY/figure_scripts/plot_Figure3_Calibration.R $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL
+2026-09-29T16:52:02.971035+00:00Z	Warning messages:
+1: In grSoftVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/modules//R_X11.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/modules//R_X11.so, 0x0006): Library not loaded: /opt/X11/lib/libSM.6.dylib
+  Referenced from: <5FD378C2-DF88-3BAC-B48D-DF631DE22C72> /Library/Frameworks/R.framework/Versions/4.6/Resources/modules/R_X11.so
+  Reason: tried: '/opt/X11/lib/libSM.6.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libSM.6.dylib' (no such file), '/opt/X11/lib/libSM.6.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libSM.6.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libSM.6.dylib' (no such file)
+2: In cairoVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so, 0x0006): Library not loaded: /opt/X11/lib/libXrender.1.dylib
+  Referenced from: <903A0F3F-3C80-304C-B075-4101215E8841> /Library/Frameworks/R.framework/Versions/4.6/Resources/library/grDevices/libs/cairo.so
+  Reason: tried: '/opt/X11/lib/libXrender.1.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libXrender.1.dylib' (no such file), '/opt/X11/lib/libXrender.1.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libXrender.1.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libXrender.1.dylib' (no such file)
+3: In device(filename = "$WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/04_FIGURES/Figure3_Revised.pdf",  :
+  failed to load cairo DLL
+2026-09-29T16:52:03.930983+00:00Z	R_FIGURE /usr/local/bin/Rscript $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/05_SOURCE_TRACEABILITY/figure_scripts/plot_Figure4_DateAxis.R $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL
+2026-09-29T16:52:03.931133+00:00Z	Warning messages:
+1: In grSoftVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/modules//R_X11.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/modules//R_X11.so, 0x0006): Library not loaded: /opt/X11/lib/libSM.6.dylib
+  Referenced from: <5FD378C2-DF88-3BAC-B48D-DF631DE22C72> /Library/Frameworks/R.framework/Versions/4.6/Resources/modules/R_X11.so
+  Reason: tried: '/opt/X11/lib/libSM.6.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libSM.6.dylib' (no such file), '/opt/X11/lib/libSM.6.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libSM.6.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libSM.6.dylib' (no such file)
+2: In cairoVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so, 0x0006): Library not loaded: /opt/X11/lib/libXrender.1.dylib
+  Referenced from: <903A0F3F-3C80-304C-B075-4101215E8841> /Library/Frameworks/R.framework/Versions/4.6/Resources/library/grDevices/libs/cairo.so
+  Reason: tried: '/opt/X11/lib/libXrender.1.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libXrender.1.dylib' (no such file), '/opt/X11/lib/libXrender.1.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libXrender.1.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libXrender.1.dylib' (no such file)
+3: In device(filename = "$WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/04_FIGURES/Figure4_Revised.pdf",  :
+  failed to load cairo DLL
+2026-09-29T16:52:05.186572+00:00Z	R_FIGURE /usr/local/bin/Rscript $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/05_SOURCE_TRACEABILITY/figure_scripts/plot_Figure5_Robustness.R $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL
+2026-09-29T16:52:05.186725+00:00Z	Warning messages:
+1: In grSoftVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/modules//R_X11.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/modules//R_X11.so, 0x0006): Library not loaded: /opt/X11/lib/libSM.6.dylib
+  Referenced from: <5FD378C2-DF88-3BAC-B48D-DF631DE22C72> /Library/Frameworks/R.framework/Versions/4.6/Resources/modules/R_X11.so
+  Reason: tried: '/opt/X11/lib/libSM.6.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libSM.6.dylib' (no such file), '/opt/X11/lib/libSM.6.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libSM.6.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libSM.6.dylib' (no such file)
+2: In cairoVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so, 0x0006): Library not loaded: /opt/X11/lib/libXrender.1.dylib
+  Referenced from: <903A0F3F-3C80-304C-B075-4101215E8841> /Library/Frameworks/R.framework/Versions/4.6/Resources/library/grDevices/libs/cairo.so
+  Reason: tried: '/opt/X11/lib/libXrender.1.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libXrender.1.dylib' (no such file), '/opt/X11/lib/libXrender.1.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libXrender.1.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libXrender.1.dylib' (no such file)
+3: In device(filename = "$WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/04_FIGURES/Figure5_Revised.pdf",  :
+  failed to load cairo DLL
+2026-09-29T16:52:06.241007+00:00Z	R_FIGURE /usr/local/bin/Rscript $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/05_SOURCE_TRACEABILITY/figure_scripts/plot_FigureS1_DCA.R $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL
+2026-09-29T16:52:06.241181+00:00Z	Warning messages:
+1: In grSoftVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/modules//R_X11.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/modules//R_X11.so, 0x0006): Library not loaded: /opt/X11/lib/libSM.6.dylib
+  Referenced from: <5FD378C2-DF88-3BAC-B48D-DF631DE22C72> /Library/Frameworks/R.framework/Versions/4.6/Resources/modules/R_X11.so
+  Reason: tried: '/opt/X11/lib/libSM.6.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libSM.6.dylib' (no such file), '/opt/X11/lib/libSM.6.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libSM.6.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libSM.6.dylib' (no such file)
+2: In cairoVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so, 0x0006): Library not loaded: /opt/X11/lib/libXrender.1.dylib
+  Referenced from: <903A0F3F-3C80-304C-B075-4101215E8841> /Library/Frameworks/R.framework/Versions/4.6/Resources/library/grDevices/libs/cairo.so
+  Reason: tried: '/opt/X11/lib/libXrender.1.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libXrender.1.dylib' (no such file), '/opt/X11/lib/libXrender.1.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libXrender.1.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libXrender.1.dylib' (no such file)
+3: In device(filename = "$WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/04_FIGURES/FigureS1_DCA.pdf",  :
+  failed to load cairo DLL
+4: Removed 6 rows containing missing values or values outside the scale range
+(`geom_line()`).
+5: Removed 6 rows containing missing values or values outside the scale range
+(`geom_line()`).
+6: Removed 6 rows containing missing values or values outside the scale range
+(`geom_line()`).
+2026-09-29T16:52:07.358259+00:00Z	R_FIGURE /usr/local/bin/Rscript $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/05_SOURCE_TRACEABILITY/figure_scripts/plot_FigureS2_HighSpecificityFlow.R $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL
+2026-09-29T16:52:07.358446+00:00Z	Warning messages:
+1: In grSoftVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/modules//R_X11.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/modules//R_X11.so, 0x0006): Library not loaded: /opt/X11/lib/libSM.6.dylib
+  Referenced from: <5FD378C2-DF88-3BAC-B48D-DF631DE22C72> /Library/Frameworks/R.framework/Versions/4.6/Resources/modules/R_X11.so
+  Reason: tried: '/opt/X11/lib/libSM.6.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libSM.6.dylib' (no such file), '/opt/X11/lib/libSM.6.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libSM.6.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libSM.6.dylib' (no such file)
+2: In cairoVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so, 0x0006): Library not loaded: /opt/X11/lib/libXrender.1.dylib
+  Referenced from: <903A0F3F-3C80-304C-B075-4101215E8841> /Library/Frameworks/R.framework/Versions/4.6/Resources/library/grDevices/libs/cairo.so
+  Reason: tried: '/opt/X11/lib/libXrender.1.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libXrender.1.dylib' (no such file), '/opt/X11/lib/libXrender.1.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libXrender.1.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libXrender.1.dylib' (no such file)
+3: In device(filename = "$WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/04_FIGURES/FigureS2_HighSpecificityFlow.pdf",  :
+  failed to load cairo DLL
+2026-09-29T16:52:08.411353+00:00Z	R_FIGURE /usr/local/bin/Rscript $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/05_SOURCE_TRACEABILITY/figure_scripts/plot_FigureS3_Correlation.R $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL
+2026-09-29T16:52:08.411551+00:00Z	Warning messages:
+1: In grSoftVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/modules//R_X11.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/modules//R_X11.so, 0x0006): Library not loaded: /opt/X11/lib/libSM.6.dylib
+  Referenced from: <5FD378C2-DF88-3BAC-B48D-DF631DE22C72> /Library/Frameworks/R.framework/Versions/4.6/Resources/modules/R_X11.so
+  Reason: tried: '/opt/X11/lib/libSM.6.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libSM.6.dylib' (no such file), '/opt/X11/lib/libSM.6.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libSM.6.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libSM.6.dylib' (no such file)
+2: In cairoVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so, 0x0006): Library not loaded: /opt/X11/lib/libXrender.1.dylib
+  Referenced from: <903A0F3F-3C80-304C-B075-4101215E8841> /Library/Frameworks/R.framework/Versions/4.6/Resources/library/grDevices/libs/cairo.so
+  Reason: tried: '/opt/X11/lib/libXrender.1.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libXrender.1.dylib' (no such file), '/opt/X11/lib/libXrender.1.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libXrender.1.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libXrender.1.dylib' (no such file)
+3: In device(filename = "$WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/04_FIGURES/FigureS3_Core7Correlation.pdf",  :
+  failed to load cairo DLL
+2026-09-29T16:52:09.336521+00:00Z	R_FIGURE /usr/local/bin/Rscript $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/05_SOURCE_TRACEABILITY/figure_scripts/plot_FigureS4_Domains.R $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL
+2026-09-29T16:52:09.336662+00:00Z	Warning messages:
+1: In grSoftVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/modules//R_X11.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/modules//R_X11.so, 0x0006): Library not loaded: /opt/X11/lib/libSM.6.dylib
+  Referenced from: <5FD378C2-DF88-3BAC-B48D-DF631DE22C72> /Library/Frameworks/R.framework/Versions/4.6/Resources/modules/R_X11.so
+  Reason: tried: '/opt/X11/lib/libSM.6.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libSM.6.dylib' (no such file), '/opt/X11/lib/libSM.6.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libSM.6.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libSM.6.dylib' (no such file)
+2: In cairoVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so, 0x0006): Library not loaded: /opt/X11/lib/libXrender.1.dylib
+  Referenced from: <903A0F3F-3C80-304C-B075-4101215E8841> /Library/Frameworks/R.framework/Versions/4.6/Resources/library/grDevices/libs/cairo.so
+  Reason: tried: '/opt/X11/lib/libXrender.1.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libXrender.1.dylib' (no such file), '/opt/X11/lib/libXrender.1.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libXrender.1.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libXrender.1.dylib' (no such file)
+3: In device(filename = "$WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/04_FIGURES/FigureS4_Domains.pdf",  :
+  failed to load cairo DLL
+2026-09-29T16:52:35.426476+00:00Z	R_FIGURE /usr/local/bin/Rscript $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/05_SOURCE_TRACEABILITY/figure_scripts/plot_Figure1_Flow.R $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL
+2026-09-29T16:52:35.426795+00:00Z	Warning messages:
+1: In grSoftVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/modules//R_X11.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/modules//R_X11.so, 0x0006): Library not loaded: /opt/X11/lib/libSM.6.dylib
+  Referenced from: <5FD378C2-DF88-3BAC-B48D-DF631DE22C72> /Library/Frameworks/R.framework/Versions/4.6/Resources/modules/R_X11.so
+  Reason: tried: '/opt/X11/lib/libSM.6.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libSM.6.dylib' (no such file), '/opt/X11/lib/libSM.6.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libSM.6.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libSM.6.dylib' (no such file)
+2: In cairoVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so, 0x0006): Library not loaded: /opt/X11/lib/libXrender.1.dylib
+  Referenced from: <903A0F3F-3C80-304C-B075-4101215E8841> /Library/Frameworks/R.framework/Versions/4.6/Resources/library/grDevices/libs/cairo.so
+  Reason: tried: '/opt/X11/lib/libXrender.1.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libXrender.1.dylib' (no such file), '/opt/X11/lib/libXrender.1.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libXrender.1.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libXrender.1.dylib' (no such file)
+3: In device(filename = "$WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/04_FIGURES/Figure1_Revised.pdf",  :
+  failed to load cairo DLL
+2026-09-29T16:52:36.414866+00:00Z	R_FIGURE /usr/local/bin/Rscript $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/05_SOURCE_TRACEABILITY/figure_scripts/plot_Figure2_ROC.R $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL
+2026-09-29T16:52:36.415030+00:00Z	Warning messages:
+1: In grSoftVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/modules//R_X11.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/modules//R_X11.so, 0x0006): Library not loaded: /opt/X11/lib/libSM.6.dylib
+  Referenced from: <5FD378C2-DF88-3BAC-B48D-DF631DE22C72> /Library/Frameworks/R.framework/Versions/4.6/Resources/modules/R_X11.so
+  Reason: tried: '/opt/X11/lib/libSM.6.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libSM.6.dylib' (no such file), '/opt/X11/lib/libSM.6.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libSM.6.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libSM.6.dylib' (no such file)
+2: In cairoVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so, 0x0006): Library not loaded: /opt/X11/lib/libXrender.1.dylib
+  Referenced from: <903A0F3F-3C80-304C-B075-4101215E8841> /Library/Frameworks/R.framework/Versions/4.6/Resources/library/grDevices/libs/cairo.so
+  Reason: tried: '/opt/X11/lib/libXrender.1.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libXrender.1.dylib' (no such file), '/opt/X11/lib/libXrender.1.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libXrender.1.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libXrender.1.dylib' (no such file)
+3: In device(filename = "$WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/04_FIGURES/Figure2_Revised.pdf",  :
+  failed to load cairo DLL
+2026-09-29T16:52:37.443891+00:00Z	R_FIGURE /usr/local/bin/Rscript $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/05_SOURCE_TRACEABILITY/figure_scripts/plot_Figure3_Calibration.R $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL
+2026-09-29T16:52:37.444076+00:00Z	Warning messages:
+1: In grSoftVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/modules//R_X11.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/modules//R_X11.so, 0x0006): Library not loaded: /opt/X11/lib/libSM.6.dylib
+  Referenced from: <5FD378C2-DF88-3BAC-B48D-DF631DE22C72> /Library/Frameworks/R.framework/Versions/4.6/Resources/modules/R_X11.so
+  Reason: tried: '/opt/X11/lib/libSM.6.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libSM.6.dylib' (no such file), '/opt/X11/lib/libSM.6.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libSM.6.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libSM.6.dylib' (no such file)
+2: In cairoVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so, 0x0006): Library not loaded: /opt/X11/lib/libXrender.1.dylib
+  Referenced from: <903A0F3F-3C80-304C-B075-4101215E8841> /Library/Frameworks/R.framework/Versions/4.6/Resources/library/grDevices/libs/cairo.so
+  Reason: tried: '/opt/X11/lib/libXrender.1.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libXrender.1.dylib' (no such file), '/opt/X11/lib/libXrender.1.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libXrender.1.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libXrender.1.dylib' (no such file)
+3: In device(filename = "$WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/04_FIGURES/Figure3_Revised.pdf",  :
+  failed to load cairo DLL
+2026-09-29T16:52:38.402104+00:00Z	R_FIGURE /usr/local/bin/Rscript $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/05_SOURCE_TRACEABILITY/figure_scripts/plot_Figure4_DateAxis.R $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL
+2026-09-29T16:52:38.402321+00:00Z	Warning messages:
+1: In grSoftVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/modules//R_X11.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/modules//R_X11.so, 0x0006): Library not loaded: /opt/X11/lib/libSM.6.dylib
+  Referenced from: <5FD378C2-DF88-3BAC-B48D-DF631DE22C72> /Library/Frameworks/R.framework/Versions/4.6/Resources/modules/R_X11.so
+  Reason: tried: '/opt/X11/lib/libSM.6.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libSM.6.dylib' (no such file), '/opt/X11/lib/libSM.6.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libSM.6.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libSM.6.dylib' (no such file)
+2: In cairoVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so, 0x0006): Library not loaded: /opt/X11/lib/libXrender.1.dylib
+  Referenced from: <903A0F3F-3C80-304C-B075-4101215E8841> /Library/Frameworks/R.framework/Versions/4.6/Resources/library/grDevices/libs/cairo.so
+  Reason: tried: '/opt/X11/lib/libXrender.1.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libXrender.1.dylib' (no such file), '/opt/X11/lib/libXrender.1.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libXrender.1.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libXrender.1.dylib' (no such file)
+3: In device(filename = "$WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/04_FIGURES/Figure4_Revised.pdf",  :
+  failed to load cairo DLL
+2026-09-29T16:52:39.652884+00:00Z	R_FIGURE /usr/local/bin/Rscript $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/05_SOURCE_TRACEABILITY/figure_scripts/plot_Figure5_Robustness.R $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL
+2026-09-29T16:52:39.653094+00:00Z	Warning messages:
+1: In grSoftVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/modules//R_X11.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/modules//R_X11.so, 0x0006): Library not loaded: /opt/X11/lib/libSM.6.dylib
+  Referenced from: <5FD378C2-DF88-3BAC-B48D-DF631DE22C72> /Library/Frameworks/R.framework/Versions/4.6/Resources/modules/R_X11.so
+  Reason: tried: '/opt/X11/lib/libSM.6.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libSM.6.dylib' (no such file), '/opt/X11/lib/libSM.6.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libSM.6.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libSM.6.dylib' (no such file)
+2: In cairoVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so, 0x0006): Library not loaded: /opt/X11/lib/libXrender.1.dylib
+  Referenced from: <903A0F3F-3C80-304C-B075-4101215E8841> /Library/Frameworks/R.framework/Versions/4.6/Resources/library/grDevices/libs/cairo.so
+  Reason: tried: '/opt/X11/lib/libXrender.1.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libXrender.1.dylib' (no such file), '/opt/X11/lib/libXrender.1.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libXrender.1.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libXrender.1.dylib' (no such file)
+3: In device(filename = "$WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/04_FIGURES/Figure5_Revised.pdf",  :
+  failed to load cairo DLL
+2026-09-29T16:52:40.706397+00:00Z	R_FIGURE /usr/local/bin/Rscript $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/05_SOURCE_TRACEABILITY/figure_scripts/plot_FigureS1_DCA.R $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL
+2026-09-29T16:52:40.706589+00:00Z	Warning messages:
+1: In grSoftVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/modules//R_X11.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/modules//R_X11.so, 0x0006): Library not loaded: /opt/X11/lib/libSM.6.dylib
+  Referenced from: <5FD378C2-DF88-3BAC-B48D-DF631DE22C72> /Library/Frameworks/R.framework/Versions/4.6/Resources/modules/R_X11.so
+  Reason: tried: '/opt/X11/lib/libSM.6.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libSM.6.dylib' (no such file), '/opt/X11/lib/libSM.6.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libSM.6.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libSM.6.dylib' (no such file)
+2: In cairoVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so, 0x0006): Library not loaded: /opt/X11/lib/libXrender.1.dylib
+  Referenced from: <903A0F3F-3C80-304C-B075-4101215E8841> /Library/Frameworks/R.framework/Versions/4.6/Resources/library/grDevices/libs/cairo.so
+  Reason: tried: '/opt/X11/lib/libXrender.1.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libXrender.1.dylib' (no such file), '/opt/X11/lib/libXrender.1.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libXrender.1.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libXrender.1.dylib' (no such file)
+3: In device(filename = "$WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/04_FIGURES/FigureS1_DCA.pdf",  :
+  failed to load cairo DLL
+4: Removed 6 rows containing missing values or values outside the scale range
+(`geom_line()`).
+5: Removed 6 rows containing missing values or values outside the scale range
+(`geom_line()`).
+6: Removed 6 rows containing missing values or values outside the scale range
+(`geom_line()`).
+2026-09-29T16:52:41.828760+00:00Z	R_FIGURE /usr/local/bin/Rscript $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/05_SOURCE_TRACEABILITY/figure_scripts/plot_FigureS2_HighSpecificityFlow.R $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL
+2026-09-29T16:52:41.828983+00:00Z	Warning messages:
+1: In grSoftVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/modules//R_X11.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/modules//R_X11.so, 0x0006): Library not loaded: /opt/X11/lib/libSM.6.dylib
+  Referenced from: <5FD378C2-DF88-3BAC-B48D-DF631DE22C72> /Library/Frameworks/R.framework/Versions/4.6/Resources/modules/R_X11.so
+  Reason: tried: '/opt/X11/lib/libSM.6.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libSM.6.dylib' (no such file), '/opt/X11/lib/libSM.6.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libSM.6.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libSM.6.dylib' (no such file)
+2: In cairoVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so, 0x0006): Library not loaded: /opt/X11/lib/libXrender.1.dylib
+  Referenced from: <903A0F3F-3C80-304C-B075-4101215E8841> /Library/Frameworks/R.framework/Versions/4.6/Resources/library/grDevices/libs/cairo.so
+  Reason: tried: '/opt/X11/lib/libXrender.1.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libXrender.1.dylib' (no such file), '/opt/X11/lib/libXrender.1.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libXrender.1.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libXrender.1.dylib' (no such file)
+3: In device(filename = "$WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/04_FIGURES/FigureS2_HighSpecificityFlow.pdf",  :
+  failed to load cairo DLL
+2026-09-29T16:52:42.852917+00:00Z	R_FIGURE /usr/local/bin/Rscript $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/05_SOURCE_TRACEABILITY/figure_scripts/plot_FigureS3_Correlation.R $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL
+2026-09-29T16:52:42.853117+00:00Z	Warning messages:
+1: In grSoftVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/modules//R_X11.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/modules//R_X11.so, 0x0006): Library not loaded: /opt/X11/lib/libSM.6.dylib
+  Referenced from: <5FD378C2-DF88-3BAC-B48D-DF631DE22C72> /Library/Frameworks/R.framework/Versions/4.6/Resources/modules/R_X11.so
+  Reason: tried: '/opt/X11/lib/libSM.6.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libSM.6.dylib' (no such file), '/opt/X11/lib/libSM.6.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libSM.6.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libSM.6.dylib' (no such file)
+2: In cairoVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so, 0x0006): Library not loaded: /opt/X11/lib/libXrender.1.dylib
+  Referenced from: <903A0F3F-3C80-304C-B075-4101215E8841> /Library/Frameworks/R.framework/Versions/4.6/Resources/library/grDevices/libs/cairo.so
+  Reason: tried: '/opt/X11/lib/libXrender.1.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libXrender.1.dylib' (no such file), '/opt/X11/lib/libXrender.1.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libXrender.1.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libXrender.1.dylib' (no such file)
+3: In device(filename = "$WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/04_FIGURES/FigureS3_Core7Correlation.pdf",  :
+  failed to load cairo DLL
+2026-09-29T16:52:43.747055+00:00Z	R_FIGURE /usr/local/bin/Rscript $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/05_SOURCE_TRACEABILITY/figure_scripts/plot_FigureS4_Domains.R $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL
+2026-09-29T16:52:43.747222+00:00Z	Warning messages:
+1: In grSoftVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/modules//R_X11.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/modules//R_X11.so, 0x0006): Library not loaded: /opt/X11/lib/libSM.6.dylib
+  Referenced from: <5FD378C2-DF88-3BAC-B48D-DF631DE22C72> /Library/Frameworks/R.framework/Versions/4.6/Resources/modules/R_X11.so
+  Reason: tried: '/opt/X11/lib/libSM.6.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libSM.6.dylib' (no such file), '/opt/X11/lib/libSM.6.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libSM.6.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libSM.6.dylib' (no such file)
+2: In cairoVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so, 0x0006): Library not loaded: /opt/X11/lib/libXrender.1.dylib
+  Referenced from: <903A0F3F-3C80-304C-B075-4101215E8841> /Library/Frameworks/R.framework/Versions/4.6/Resources/library/grDevices/libs/cairo.so
+  Reason: tried: '/opt/X11/lib/libXrender.1.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libXrender.1.dylib' (no such file), '/opt/X11/lib/libXrender.1.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libXrender.1.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libXrender.1.dylib' (no such file)
+3: In device(filename = "$WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/04_FIGURES/FigureS4_Domains.pdf",  :
+  failed to load cairo DLL
+2026-09-29T16:52:44.174317+00:00Z	ASSEMBLE_PASS; main and supplementary DOCX built from approved aggregates
+2026-09-29T16:55:59.317711+00:00Z	R_FIGURE /usr/local/bin/Rscript $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/05_SOURCE_TRACEABILITY/figure_scripts/plot_Figure1_Flow.R $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL
+2026-09-29T16:55:59.318037+00:00Z	Warning messages:
+1: In grSoftVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/modules//R_X11.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/modules//R_X11.so, 0x0006): Library not loaded: /opt/X11/lib/libSM.6.dylib
+  Referenced from: <5FD378C2-DF88-3BAC-B48D-DF631DE22C72> /Library/Frameworks/R.framework/Versions/4.6/Resources/modules/R_X11.so
+  Reason: tried: '/opt/X11/lib/libSM.6.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libSM.6.dylib' (no such file), '/opt/X11/lib/libSM.6.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libSM.6.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libSM.6.dylib' (no such file)
+2: In cairoVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so, 0x0006): Library not loaded: /opt/X11/lib/libXrender.1.dylib
+  Referenced from: <903A0F3F-3C80-304C-B075-4101215E8841> /Library/Frameworks/R.framework/Versions/4.6/Resources/library/grDevices/libs/cairo.so
+  Reason: tried: '/opt/X11/lib/libXrender.1.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libXrender.1.dylib' (no such file), '/opt/X11/lib/libXrender.1.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libXrender.1.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libXrender.1.dylib' (no such file)
+3: In device(filename = "$WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/04_FIGURES/Figure1_Revised.pdf",  :
+  failed to load cairo DLL
+2026-09-29T16:56:00.309512+00:00Z	R_FIGURE /usr/local/bin/Rscript $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/05_SOURCE_TRACEABILITY/figure_scripts/plot_Figure2_ROC.R $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL
+2026-09-29T16:56:00.309713+00:00Z	Warning messages:
+1: In grSoftVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/modules//R_X11.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/modules//R_X11.so, 0x0006): Library not loaded: /opt/X11/lib/libSM.6.dylib
+  Referenced from: <5FD378C2-DF88-3BAC-B48D-DF631DE22C72> /Library/Frameworks/R.framework/Versions/4.6/Resources/modules/R_X11.so
+  Reason: tried: '/opt/X11/lib/libSM.6.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libSM.6.dylib' (no such file), '/opt/X11/lib/libSM.6.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libSM.6.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libSM.6.dylib' (no such file)
+2: In cairoVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so, 0x0006): Library not loaded: /opt/X11/lib/libXrender.1.dylib
+  Referenced from: <903A0F3F-3C80-304C-B075-4101215E8841> /Library/Frameworks/R.framework/Versions/4.6/Resources/library/grDevices/libs/cairo.so
+  Reason: tried: '/opt/X11/lib/libXrender.1.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libXrender.1.dylib' (no such file), '/opt/X11/lib/libXrender.1.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libXrender.1.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libXrender.1.dylib' (no such file)
+3: In device(filename = "$WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/04_FIGURES/Figure2_Revised.pdf",  :
+  failed to load cairo DLL
+2026-09-29T16:56:01.342325+00:00Z	R_FIGURE /usr/local/bin/Rscript $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/05_SOURCE_TRACEABILITY/figure_scripts/plot_Figure3_Calibration.R $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL
+2026-09-29T16:56:01.342523+00:00Z	Warning messages:
+1: In grSoftVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/modules//R_X11.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/modules//R_X11.so, 0x0006): Library not loaded: /opt/X11/lib/libSM.6.dylib
+  Referenced from: <5FD378C2-DF88-3BAC-B48D-DF631DE22C72> /Library/Frameworks/R.framework/Versions/4.6/Resources/modules/R_X11.so
+  Reason: tried: '/opt/X11/lib/libSM.6.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libSM.6.dylib' (no such file), '/opt/X11/lib/libSM.6.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libSM.6.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libSM.6.dylib' (no such file)
+2: In cairoVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so, 0x0006): Library not loaded: /opt/X11/lib/libXrender.1.dylib
+  Referenced from: <903A0F3F-3C80-304C-B075-4101215E8841> /Library/Frameworks/R.framework/Versions/4.6/Resources/library/grDevices/libs/cairo.so
+  Reason: tried: '/opt/X11/lib/libXrender.1.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libXrender.1.dylib' (no such file), '/opt/X11/lib/libXrender.1.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libXrender.1.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libXrender.1.dylib' (no such file)
+3: In device(filename = "$WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/04_FIGURES/Figure3_Revised.pdf",  :
+  failed to load cairo DLL
+2026-09-29T16:56:02.299304+00:00Z	R_FIGURE /usr/local/bin/Rscript $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/05_SOURCE_TRACEABILITY/figure_scripts/plot_Figure4_DateAxis.R $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL
+2026-09-29T16:56:02.299608+00:00Z	Warning messages:
+1: In grSoftVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/modules//R_X11.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/modules//R_X11.so, 0x0006): Library not loaded: /opt/X11/lib/libSM.6.dylib
+  Referenced from: <5FD378C2-DF88-3BAC-B48D-DF631DE22C72> /Library/Frameworks/R.framework/Versions/4.6/Resources/modules/R_X11.so
+  Reason: tried: '/opt/X11/lib/libSM.6.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libSM.6.dylib' (no such file), '/opt/X11/lib/libSM.6.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libSM.6.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libSM.6.dylib' (no such file)
+2: In cairoVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so, 0x0006): Library not loaded: /opt/X11/lib/libXrender.1.dylib
+  Referenced from: <903A0F3F-3C80-304C-B075-4101215E8841> /Library/Frameworks/R.framework/Versions/4.6/Resources/library/grDevices/libs/cairo.so
+  Reason: tried: '/opt/X11/lib/libXrender.1.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libXrender.1.dylib' (no such file), '/opt/X11/lib/libXrender.1.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libXrender.1.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libXrender.1.dylib' (no such file)
+3: In device(filename = "$WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/04_FIGURES/Figure4_Revised.pdf",  :
+  failed to load cairo DLL
+2026-09-29T16:56:03.559652+00:00Z	R_FIGURE /usr/local/bin/Rscript $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/05_SOURCE_TRACEABILITY/figure_scripts/plot_Figure5_Robustness.R $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL
+2026-09-29T16:56:03.559882+00:00Z	Warning messages:
+1: In grSoftVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/modules//R_X11.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/modules//R_X11.so, 0x0006): Library not loaded: /opt/X11/lib/libSM.6.dylib
+  Referenced from: <5FD378C2-DF88-3BAC-B48D-DF631DE22C72> /Library/Frameworks/R.framework/Versions/4.6/Resources/modules/R_X11.so
+  Reason: tried: '/opt/X11/lib/libSM.6.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libSM.6.dylib' (no such file), '/opt/X11/lib/libSM.6.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libSM.6.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libSM.6.dylib' (no such file)
+2: In cairoVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so, 0x0006): Library not loaded: /opt/X11/lib/libXrender.1.dylib
+  Referenced from: <903A0F3F-3C80-304C-B075-4101215E8841> /Library/Frameworks/R.framework/Versions/4.6/Resources/library/grDevices/libs/cairo.so
+  Reason: tried: '/opt/X11/lib/libXrender.1.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libXrender.1.dylib' (no such file), '/opt/X11/lib/libXrender.1.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libXrender.1.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libXrender.1.dylib' (no such file)
+3: In device(filename = "$WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/04_FIGURES/Figure5_Revised.pdf",  :
+  failed to load cairo DLL
+2026-09-29T16:56:04.615334+00:00Z	R_FIGURE /usr/local/bin/Rscript $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/05_SOURCE_TRACEABILITY/figure_scripts/plot_FigureS1_DCA.R $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL
+2026-09-29T16:56:04.615501+00:00Z	Warning messages:
+1: In grSoftVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/modules//R_X11.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/modules//R_X11.so, 0x0006): Library not loaded: /opt/X11/lib/libSM.6.dylib
+  Referenced from: <5FD378C2-DF88-3BAC-B48D-DF631DE22C72> /Library/Frameworks/R.framework/Versions/4.6/Resources/modules/R_X11.so
+  Reason: tried: '/opt/X11/lib/libSM.6.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libSM.6.dylib' (no such file), '/opt/X11/lib/libSM.6.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libSM.6.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libSM.6.dylib' (no such file)
+2: In cairoVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so, 0x0006): Library not loaded: /opt/X11/lib/libXrender.1.dylib
+  Referenced from: <903A0F3F-3C80-304C-B075-4101215E8841> /Library/Frameworks/R.framework/Versions/4.6/Resources/library/grDevices/libs/cairo.so
+  Reason: tried: '/opt/X11/lib/libXrender.1.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libXrender.1.dylib' (no such file), '/opt/X11/lib/libXrender.1.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libXrender.1.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libXrender.1.dylib' (no such file)
+3: In device(filename = "$WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/04_FIGURES/FigureS1_DCA.pdf",  :
+  failed to load cairo DLL
+4: Removed 6 rows containing missing values or values outside the scale range
+(`geom_line()`).
+5: Removed 6 rows containing missing values or values outside the scale range
+(`geom_line()`).
+6: Removed 6 rows containing missing values or values outside the scale range
+(`geom_line()`).
+2026-09-29T16:56:05.742706+00:00Z	R_FIGURE /usr/local/bin/Rscript $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/05_SOURCE_TRACEABILITY/figure_scripts/plot_FigureS2_HighSpecificityFlow.R $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL
+2026-09-29T16:56:05.742892+00:00Z	Warning messages:
+1: In grSoftVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/modules//R_X11.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/modules//R_X11.so, 0x0006): Library not loaded: /opt/X11/lib/libSM.6.dylib
+  Referenced from: <5FD378C2-DF88-3BAC-B48D-DF631DE22C72> /Library/Frameworks/R.framework/Versions/4.6/Resources/modules/R_X11.so
+  Reason: tried: '/opt/X11/lib/libSM.6.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libSM.6.dylib' (no such file), '/opt/X11/lib/libSM.6.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libSM.6.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libSM.6.dylib' (no such file)
+2: In cairoVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so, 0x0006): Library not loaded: /opt/X11/lib/libXrender.1.dylib
+  Referenced from: <903A0F3F-3C80-304C-B075-4101215E8841> /Library/Frameworks/R.framework/Versions/4.6/Resources/library/grDevices/libs/cairo.so
+  Reason: tried: '/opt/X11/lib/libXrender.1.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libXrender.1.dylib' (no such file), '/opt/X11/lib/libXrender.1.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libXrender.1.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libXrender.1.dylib' (no such file)
+3: In device(filename = "$WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/04_FIGURES/FigureS2_HighSpecificityFlow.pdf",  :
+  failed to load cairo DLL
+2026-09-29T16:56:06.775449+00:00Z	R_FIGURE /usr/local/bin/Rscript $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/05_SOURCE_TRACEABILITY/figure_scripts/plot_FigureS3_Correlation.R $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL
+2026-09-29T16:56:06.775649+00:00Z	Warning messages:
+1: In grSoftVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/modules//R_X11.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/modules//R_X11.so, 0x0006): Library not loaded: /opt/X11/lib/libSM.6.dylib
+  Referenced from: <5FD378C2-DF88-3BAC-B48D-DF631DE22C72> /Library/Frameworks/R.framework/Versions/4.6/Resources/modules/R_X11.so
+  Reason: tried: '/opt/X11/lib/libSM.6.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libSM.6.dylib' (no such file), '/opt/X11/lib/libSM.6.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libSM.6.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libSM.6.dylib' (no such file)
+2: In cairoVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so, 0x0006): Library not loaded: /opt/X11/lib/libXrender.1.dylib
+  Referenced from: <903A0F3F-3C80-304C-B075-4101215E8841> /Library/Frameworks/R.framework/Versions/4.6/Resources/library/grDevices/libs/cairo.so
+  Reason: tried: '/opt/X11/lib/libXrender.1.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libXrender.1.dylib' (no such file), '/opt/X11/lib/libXrender.1.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libXrender.1.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libXrender.1.dylib' (no such file)
+3: In device(filename = "$WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/04_FIGURES/FigureS3_Core7Correlation.pdf",  :
+  failed to load cairo DLL
+2026-09-29T16:56:07.674111+00:00Z	R_FIGURE /usr/local/bin/Rscript $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/05_SOURCE_TRACEABILITY/figure_scripts/plot_FigureS4_Domains.R $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL
+2026-09-29T16:56:07.674328+00:00Z	Warning messages:
+1: In grSoftVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/modules//R_X11.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/modules//R_X11.so, 0x0006): Library not loaded: /opt/X11/lib/libSM.6.dylib
+  Referenced from: <5FD378C2-DF88-3BAC-B48D-DF631DE22C72> /Library/Frameworks/R.framework/Versions/4.6/Resources/modules/R_X11.so
+  Reason: tried: '/opt/X11/lib/libSM.6.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libSM.6.dylib' (no such file), '/opt/X11/lib/libSM.6.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libSM.6.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libSM.6.dylib' (no such file)
+2: In cairoVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so, 0x0006): Library not loaded: /opt/X11/lib/libXrender.1.dylib
+  Referenced from: <903A0F3F-3C80-304C-B075-4101215E8841> /Library/Frameworks/R.framework/Versions/4.6/Resources/library/grDevices/libs/cairo.so
+  Reason: tried: '/opt/X11/lib/libXrender.1.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libXrender.1.dylib' (no such file), '/opt/X11/lib/libXrender.1.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libXrender.1.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libXrender.1.dylib' (no such file)
+3: In device(filename = "$WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/04_FIGURES/FigureS4_Domains.pdf",  :
+  failed to load cairo DLL
+2026-09-29T16:56:08.105810+00:00Z	ASSEMBLE_PASS; main and supplementary DOCX built from approved aggregates
+2026-09-29T16:56:39.141240+00:00Z	RESPONSE_PASS; non-verbatim comment summaries include rendered page locators
+2026-09-29T16:59:20.185575+00:00Z	R_FIGURE /usr/local/bin/Rscript $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/05_SOURCE_TRACEABILITY/figure_scripts/plot_Figure1_Flow.R $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL
+2026-09-29T16:59:20.186073+00:00Z	Warning messages:
+1: In grSoftVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/modules//R_X11.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/modules//R_X11.so, 0x0006): Library not loaded: /opt/X11/lib/libSM.6.dylib
+  Referenced from: <5FD378C2-DF88-3BAC-B48D-DF631DE22C72> /Library/Frameworks/R.framework/Versions/4.6/Resources/modules/R_X11.so
+  Reason: tried: '/opt/X11/lib/libSM.6.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libSM.6.dylib' (no such file), '/opt/X11/lib/libSM.6.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libSM.6.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libSM.6.dylib' (no such file)
+2: In cairoVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so, 0x0006): Library not loaded: /opt/X11/lib/libXrender.1.dylib
+  Referenced from: <903A0F3F-3C80-304C-B075-4101215E8841> /Library/Frameworks/R.framework/Versions/4.6/Resources/library/grDevices/libs/cairo.so
+  Reason: tried: '/opt/X11/lib/libXrender.1.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libXrender.1.dylib' (no such file), '/opt/X11/lib/libXrender.1.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libXrender.1.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libXrender.1.dylib' (no such file)
+3: In device(filename = "$WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/04_FIGURES/Figure1_Revised.pdf",  :
+  failed to load cairo DLL
+2026-09-29T16:59:21.170299+00:00Z	R_FIGURE /usr/local/bin/Rscript $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/05_SOURCE_TRACEABILITY/figure_scripts/plot_Figure2_ROC.R $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL
+2026-09-29T16:59:21.170620+00:00Z	Warning messages:
+1: In grSoftVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/modules//R_X11.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/modules//R_X11.so, 0x0006): Library not loaded: /opt/X11/lib/libSM.6.dylib
+  Referenced from: <5FD378C2-DF88-3BAC-B48D-DF631DE22C72> /Library/Frameworks/R.framework/Versions/4.6/Resources/modules/R_X11.so
+  Reason: tried: '/opt/X11/lib/libSM.6.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libSM.6.dylib' (no such file), '/opt/X11/lib/libSM.6.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libSM.6.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libSM.6.dylib' (no such file)
+2: In cairoVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so, 0x0006): Library not loaded: /opt/X11/lib/libXrender.1.dylib
+  Referenced from: <903A0F3F-3C80-304C-B075-4101215E8841> /Library/Frameworks/R.framework/Versions/4.6/Resources/library/grDevices/libs/cairo.so
+  Reason: tried: '/opt/X11/lib/libXrender.1.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libXrender.1.dylib' (no such file), '/opt/X11/lib/libXrender.1.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libXrender.1.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libXrender.1.dylib' (no such file)
+3: In device(filename = "$WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/04_FIGURES/Figure2_Revised.pdf",  :
+  failed to load cairo DLL
+2026-09-29T16:59:22.199406+00:00Z	R_FIGURE /usr/local/bin/Rscript $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/05_SOURCE_TRACEABILITY/figure_scripts/plot_Figure3_Calibration.R $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL
+2026-09-29T16:59:22.199712+00:00Z	Warning messages:
+1: In grSoftVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/modules//R_X11.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/modules//R_X11.so, 0x0006): Library not loaded: /opt/X11/lib/libSM.6.dylib
+  Referenced from: <5FD378C2-DF88-3BAC-B48D-DF631DE22C72> /Library/Frameworks/R.framework/Versions/4.6/Resources/modules/R_X11.so
+  Reason: tried: '/opt/X11/lib/libSM.6.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libSM.6.dylib' (no such file), '/opt/X11/lib/libSM.6.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libSM.6.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libSM.6.dylib' (no such file)
+2: In cairoVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so, 0x0006): Library not loaded: /opt/X11/lib/libXrender.1.dylib
+  Referenced from: <903A0F3F-3C80-304C-B075-4101215E8841> /Library/Frameworks/R.framework/Versions/4.6/Resources/library/grDevices/libs/cairo.so
+  Reason: tried: '/opt/X11/lib/libXrender.1.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libXrender.1.dylib' (no such file), '/opt/X11/lib/libXrender.1.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libXrender.1.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libXrender.1.dylib' (no such file)
+3: In device(filename = "$WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/04_FIGURES/Figure3_Revised.pdf",  :
+  failed to load cairo DLL
+2026-09-29T16:59:23.153859+00:00Z	R_FIGURE /usr/local/bin/Rscript $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/05_SOURCE_TRACEABILITY/figure_scripts/plot_Figure4_DateAxis.R $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL
+2026-09-29T16:59:23.154111+00:00Z	Warning messages:
+1: In grSoftVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/modules//R_X11.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/modules//R_X11.so, 0x0006): Library not loaded: /opt/X11/lib/libSM.6.dylib
+  Referenced from: <5FD378C2-DF88-3BAC-B48D-DF631DE22C72> /Library/Frameworks/R.framework/Versions/4.6/Resources/modules/R_X11.so
+  Reason: tried: '/opt/X11/lib/libSM.6.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libSM.6.dylib' (no such file), '/opt/X11/lib/libSM.6.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libSM.6.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libSM.6.dylib' (no such file)
+2: In cairoVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so, 0x0006): Library not loaded: /opt/X11/lib/libXrender.1.dylib
+  Referenced from: <903A0F3F-3C80-304C-B075-4101215E8841> /Library/Frameworks/R.framework/Versions/4.6/Resources/library/grDevices/libs/cairo.so
+  Reason: tried: '/opt/X11/lib/libXrender.1.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libXrender.1.dylib' (no such file), '/opt/X11/lib/libXrender.1.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libXrender.1.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libXrender.1.dylib' (no such file)
+3: In device(filename = "$WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/04_FIGURES/Figure4_Revised.pdf",  :
+  failed to load cairo DLL
+2026-09-29T16:59:24.404664+00:00Z	R_FIGURE /usr/local/bin/Rscript $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/05_SOURCE_TRACEABILITY/figure_scripts/plot_Figure5_Robustness.R $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL
+2026-09-29T16:59:24.404839+00:00Z	Warning messages:
+1: In grSoftVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/modules//R_X11.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/modules//R_X11.so, 0x0006): Library not loaded: /opt/X11/lib/libSM.6.dylib
+  Referenced from: <5FD378C2-DF88-3BAC-B48D-DF631DE22C72> /Library/Frameworks/R.framework/Versions/4.6/Resources/modules/R_X11.so
+  Reason: tried: '/opt/X11/lib/libSM.6.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libSM.6.dylib' (no such file), '/opt/X11/lib/libSM.6.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libSM.6.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libSM.6.dylib' (no such file)
+2: In cairoVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so, 0x0006): Library not loaded: /opt/X11/lib/libXrender.1.dylib
+  Referenced from: <903A0F3F-3C80-304C-B075-4101215E8841> /Library/Frameworks/R.framework/Versions/4.6/Resources/library/grDevices/libs/cairo.so
+  Reason: tried: '/opt/X11/lib/libXrender.1.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libXrender.1.dylib' (no such file), '/opt/X11/lib/libXrender.1.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libXrender.1.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libXrender.1.dylib' (no such file)
+3: In device(filename = "$WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/04_FIGURES/Figure5_Revised.pdf",  :
+  failed to load cairo DLL
+2026-09-29T16:59:25.454429+00:00Z	R_FIGURE /usr/local/bin/Rscript $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/05_SOURCE_TRACEABILITY/figure_scripts/plot_FigureS1_DCA.R $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL
+2026-09-29T16:59:25.454635+00:00Z	Warning messages:
+1: In grSoftVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/modules//R_X11.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/modules//R_X11.so, 0x0006): Library not loaded: /opt/X11/lib/libSM.6.dylib
+  Referenced from: <5FD378C2-DF88-3BAC-B48D-DF631DE22C72> /Library/Frameworks/R.framework/Versions/4.6/Resources/modules/R_X11.so
+  Reason: tried: '/opt/X11/lib/libSM.6.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libSM.6.dylib' (no such file), '/opt/X11/lib/libSM.6.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libSM.6.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libSM.6.dylib' (no such file)
+2: In cairoVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so, 0x0006): Library not loaded: /opt/X11/lib/libXrender.1.dylib
+  Referenced from: <903A0F3F-3C80-304C-B075-4101215E8841> /Library/Frameworks/R.framework/Versions/4.6/Resources/library/grDevices/libs/cairo.so
+  Reason: tried: '/opt/X11/lib/libXrender.1.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libXrender.1.dylib' (no such file), '/opt/X11/lib/libXrender.1.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libXrender.1.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libXrender.1.dylib' (no such file)
+3: In device(filename = "$WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/04_FIGURES/FigureS1_DCA.pdf",  :
+  failed to load cairo DLL
+4: Removed 6 rows containing missing values or values outside the scale range
+(`geom_line()`).
+5: Removed 6 rows containing missing values or values outside the scale range
+(`geom_line()`).
+6: Removed 6 rows containing missing values or values outside the scale range
+(`geom_line()`).
+2026-09-29T16:59:26.573661+00:00Z	R_FIGURE /usr/local/bin/Rscript $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/05_SOURCE_TRACEABILITY/figure_scripts/plot_FigureS2_HighSpecificityFlow.R $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL
+2026-09-29T16:59:26.574125+00:00Z	Warning messages:
+1: In grSoftVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/modules//R_X11.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/modules//R_X11.so, 0x0006): Library not loaded: /opt/X11/lib/libSM.6.dylib
+  Referenced from: <5FD378C2-DF88-3BAC-B48D-DF631DE22C72> /Library/Frameworks/R.framework/Versions/4.6/Resources/modules/R_X11.so
+  Reason: tried: '/opt/X11/lib/libSM.6.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libSM.6.dylib' (no such file), '/opt/X11/lib/libSM.6.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libSM.6.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libSM.6.dylib' (no such file)
+2: In cairoVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so, 0x0006): Library not loaded: /opt/X11/lib/libXrender.1.dylib
+  Referenced from: <903A0F3F-3C80-304C-B075-4101215E8841> /Library/Frameworks/R.framework/Versions/4.6/Resources/library/grDevices/libs/cairo.so
+  Reason: tried: '/opt/X11/lib/libXrender.1.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libXrender.1.dylib' (no such file), '/opt/X11/lib/libXrender.1.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libXrender.1.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libXrender.1.dylib' (no such file)
+3: In device(filename = "$WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/04_FIGURES/FigureS2_HighSpecificityFlow.pdf",  :
+  failed to load cairo DLL
+2026-09-29T16:59:27.592392+00:00Z	R_FIGURE /usr/local/bin/Rscript $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/05_SOURCE_TRACEABILITY/figure_scripts/plot_FigureS3_Correlation.R $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL
+2026-09-29T16:59:27.592683+00:00Z	Warning messages:
+1: In grSoftVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/modules//R_X11.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/modules//R_X11.so, 0x0006): Library not loaded: /opt/X11/lib/libSM.6.dylib
+  Referenced from: <5FD378C2-DF88-3BAC-B48D-DF631DE22C72> /Library/Frameworks/R.framework/Versions/4.6/Resources/modules/R_X11.so
+  Reason: tried: '/opt/X11/lib/libSM.6.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libSM.6.dylib' (no such file), '/opt/X11/lib/libSM.6.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libSM.6.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libSM.6.dylib' (no such file)
+2: In cairoVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so, 0x0006): Library not loaded: /opt/X11/lib/libXrender.1.dylib
+  Referenced from: <903A0F3F-3C80-304C-B075-4101215E8841> /Library/Frameworks/R.framework/Versions/4.6/Resources/library/grDevices/libs/cairo.so
+  Reason: tried: '/opt/X11/lib/libXrender.1.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libXrender.1.dylib' (no such file), '/opt/X11/lib/libXrender.1.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libXrender.1.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libXrender.1.dylib' (no such file)
+3: In device(filename = "$WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/04_FIGURES/FigureS3_Core7Correlation.pdf",  :
+  failed to load cairo DLL
+2026-09-29T16:59:28.486863+00:00Z	R_FIGURE /usr/local/bin/Rscript $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/05_SOURCE_TRACEABILITY/figure_scripts/plot_FigureS4_Domains.R $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL
+2026-09-29T16:59:28.487096+00:00Z	Warning messages:
+1: In grSoftVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/modules//R_X11.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/modules//R_X11.so, 0x0006): Library not loaded: /opt/X11/lib/libSM.6.dylib
+  Referenced from: <5FD378C2-DF88-3BAC-B48D-DF631DE22C72> /Library/Frameworks/R.framework/Versions/4.6/Resources/modules/R_X11.so
+  Reason: tried: '/opt/X11/lib/libSM.6.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libSM.6.dylib' (no such file), '/opt/X11/lib/libSM.6.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libSM.6.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libSM.6.dylib' (no such file)
+2: In cairoVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so, 0x0006): Library not loaded: /opt/X11/lib/libXrender.1.dylib
+  Referenced from: <903A0F3F-3C80-304C-B075-4101215E8841> /Library/Frameworks/R.framework/Versions/4.6/Resources/library/grDevices/libs/cairo.so
+  Reason: tried: '/opt/X11/lib/libXrender.1.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libXrender.1.dylib' (no such file), '/opt/X11/lib/libXrender.1.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libXrender.1.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libXrender.1.dylib' (no such file)
+3: In device(filename = "$WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/04_FIGURES/FigureS4_Domains.pdf",  :
+  failed to load cairo DLL
+2026-09-29T16:59:28.922870+00:00Z	ASSEMBLE_PASS; main and supplementary DOCX built from approved aggregates
+2026-09-29T17:01:53.303743+00:00Z	R_FIGURE /usr/local/bin/Rscript $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/05_SOURCE_TRACEABILITY/figure_scripts/plot_Figure1_Flow.R $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL
+2026-09-29T17:01:53.304626+00:00Z	Warning messages:
+1: In grSoftVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/modules//R_X11.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/modules//R_X11.so, 0x0006): Library not loaded: /opt/X11/lib/libSM.6.dylib
+  Referenced from: <5FD378C2-DF88-3BAC-B48D-DF631DE22C72> /Library/Frameworks/R.framework/Versions/4.6/Resources/modules/R_X11.so
+  Reason: tried: '/opt/X11/lib/libSM.6.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libSM.6.dylib' (no such file), '/opt/X11/lib/libSM.6.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libSM.6.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libSM.6.dylib' (no such file)
+2: In cairoVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so, 0x0006): Library not loaded: /opt/X11/lib/libXrender.1.dylib
+  Referenced from: <903A0F3F-3C80-304C-B075-4101215E8841> /Library/Frameworks/R.framework/Versions/4.6/Resources/library/grDevices/libs/cairo.so
+  Reason: tried: '/opt/X11/lib/libXrender.1.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libXrender.1.dylib' (no such file), '/opt/X11/lib/libXrender.1.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libXrender.1.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libXrender.1.dylib' (no such file)
+3: In device(filename = "$WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/04_FIGURES/Figure1_Revised.pdf",  :
+  failed to load cairo DLL
+2026-09-29T17:01:54.387979+00:00Z	R_FIGURE /usr/local/bin/Rscript $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/05_SOURCE_TRACEABILITY/figure_scripts/plot_Figure2_ROC.R $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL
+2026-09-29T17:01:54.388227+00:00Z	Warning messages:
+1: In grSoftVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/modules//R_X11.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/modules//R_X11.so, 0x0006): Library not loaded: /opt/X11/lib/libSM.6.dylib
+  Referenced from: <5FD378C2-DF88-3BAC-B48D-DF631DE22C72> /Library/Frameworks/R.framework/Versions/4.6/Resources/modules/R_X11.so
+  Reason: tried: '/opt/X11/lib/libSM.6.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libSM.6.dylib' (no such file), '/opt/X11/lib/libSM.6.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libSM.6.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libSM.6.dylib' (no such file)
+2: In cairoVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so, 0x0006): Library not loaded: /opt/X11/lib/libXrender.1.dylib
+  Referenced from: <903A0F3F-3C80-304C-B075-4101215E8841> /Library/Frameworks/R.framework/Versions/4.6/Resources/library/grDevices/libs/cairo.so
+  Reason: tried: '/opt/X11/lib/libXrender.1.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libXrender.1.dylib' (no such file), '/opt/X11/lib/libXrender.1.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libXrender.1.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libXrender.1.dylib' (no such file)
+3: In device(filename = "$WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/04_FIGURES/Figure2_Revised.pdf",  :
+  failed to load cairo DLL
+2026-09-29T17:01:55.428573+00:00Z	R_FIGURE /usr/local/bin/Rscript $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/05_SOURCE_TRACEABILITY/figure_scripts/plot_Figure3_Calibration.R $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL
+2026-09-29T17:01:55.429588+00:00Z	Warning messages:
+1: In grSoftVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/modules//R_X11.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/modules//R_X11.so, 0x0006): Library not loaded: /opt/X11/lib/libSM.6.dylib
+  Referenced from: <5FD378C2-DF88-3BAC-B48D-DF631DE22C72> /Library/Frameworks/R.framework/Versions/4.6/Resources/modules/R_X11.so
+  Reason: tried: '/opt/X11/lib/libSM.6.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libSM.6.dylib' (no such file), '/opt/X11/lib/libSM.6.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libSM.6.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libSM.6.dylib' (no such file)
+2: In cairoVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so, 0x0006): Library not loaded: /opt/X11/lib/libXrender.1.dylib
+  Referenced from: <903A0F3F-3C80-304C-B075-4101215E8841> /Library/Frameworks/R.framework/Versions/4.6/Resources/library/grDevices/libs/cairo.so
+  Reason: tried: '/opt/X11/lib/libXrender.1.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libXrender.1.dylib' (no such file), '/opt/X11/lib/libXrender.1.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libXrender.1.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libXrender.1.dylib' (no such file)
+3: In device(filename = "$WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/04_FIGURES/Figure3_Revised.pdf",  :
+  failed to load cairo DLL
+2026-09-29T17:01:56.388712+00:00Z	R_FIGURE /usr/local/bin/Rscript $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/05_SOURCE_TRACEABILITY/figure_scripts/plot_Figure4_DateAxis.R $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL
+2026-09-29T17:01:56.389005+00:00Z	Warning messages:
+1: In grSoftVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/modules//R_X11.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/modules//R_X11.so, 0x0006): Library not loaded: /opt/X11/lib/libSM.6.dylib
+  Referenced from: <5FD378C2-DF88-3BAC-B48D-DF631DE22C72> /Library/Frameworks/R.framework/Versions/4.6/Resources/modules/R_X11.so
+  Reason: tried: '/opt/X11/lib/libSM.6.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libSM.6.dylib' (no such file), '/opt/X11/lib/libSM.6.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libSM.6.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libSM.6.dylib' (no such file)
+2: In cairoVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so, 0x0006): Library not loaded: /opt/X11/lib/libXrender.1.dylib
+  Referenced from: <903A0F3F-3C80-304C-B075-4101215E8841> /Library/Frameworks/R.framework/Versions/4.6/Resources/library/grDevices/libs/cairo.so
+  Reason: tried: '/opt/X11/lib/libXrender.1.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libXrender.1.dylib' (no such file), '/opt/X11/lib/libXrender.1.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libXrender.1.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libXrender.1.dylib' (no such file)
+3: In device(filename = "$WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/04_FIGURES/Figure4_Revised.pdf",  :
+  failed to load cairo DLL
+2026-09-29T17:01:57.648885+00:00Z	R_FIGURE /usr/local/bin/Rscript $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/05_SOURCE_TRACEABILITY/figure_scripts/plot_Figure5_Robustness.R $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL
+2026-09-29T17:01:57.649119+00:00Z	Warning messages:
+1: In grSoftVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/modules//R_X11.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/modules//R_X11.so, 0x0006): Library not loaded: /opt/X11/lib/libSM.6.dylib
+  Referenced from: <5FD378C2-DF88-3BAC-B48D-DF631DE22C72> /Library/Frameworks/R.framework/Versions/4.6/Resources/modules/R_X11.so
+  Reason: tried: '/opt/X11/lib/libSM.6.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libSM.6.dylib' (no such file), '/opt/X11/lib/libSM.6.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libSM.6.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libSM.6.dylib' (no such file)
+2: In cairoVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so, 0x0006): Library not loaded: /opt/X11/lib/libXrender.1.dylib
+  Referenced from: <903A0F3F-3C80-304C-B075-4101215E8841> /Library/Frameworks/R.framework/Versions/4.6/Resources/library/grDevices/libs/cairo.so
+  Reason: tried: '/opt/X11/lib/libXrender.1.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libXrender.1.dylib' (no such file), '/opt/X11/lib/libXrender.1.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libXrender.1.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libXrender.1.dylib' (no such file)
+3: In device(filename = "$WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/04_FIGURES/Figure5_Revised.pdf",  :
+  failed to load cairo DLL
+2026-09-29T17:01:58.711488+00:00Z	R_FIGURE /usr/local/bin/Rscript $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/05_SOURCE_TRACEABILITY/figure_scripts/plot_FigureS1_DCA.R $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL
+2026-09-29T17:01:58.711745+00:00Z	Warning messages:
+1: In grSoftVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/modules//R_X11.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/modules//R_X11.so, 0x0006): Library not loaded: /opt/X11/lib/libSM.6.dylib
+  Referenced from: <5FD378C2-DF88-3BAC-B48D-DF631DE22C72> /Library/Frameworks/R.framework/Versions/4.6/Resources/modules/R_X11.so
+  Reason: tried: '/opt/X11/lib/libSM.6.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libSM.6.dylib' (no such file), '/opt/X11/lib/libSM.6.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libSM.6.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libSM.6.dylib' (no such file)
+2: In cairoVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so, 0x0006): Library not loaded: /opt/X11/lib/libXrender.1.dylib
+  Referenced from: <903A0F3F-3C80-304C-B075-4101215E8841> /Library/Frameworks/R.framework/Versions/4.6/Resources/library/grDevices/libs/cairo.so
+  Reason: tried: '/opt/X11/lib/libXrender.1.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libXrender.1.dylib' (no such file), '/opt/X11/lib/libXrender.1.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libXrender.1.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libXrender.1.dylib' (no such file)
+3: In device(filename = "$WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/04_FIGURES/FigureS1_DCA.pdf",  :
+  failed to load cairo DLL
+4: Removed 6 rows containing missing values or values outside the scale range
+(`geom_line()`).
+5: Removed 6 rows containing missing values or values outside the scale range
+(`geom_line()`).
+6: Removed 6 rows containing missing values or values outside the scale range
+(`geom_line()`).
+2026-09-29T17:01:59.840848+00:00Z	R_FIGURE /usr/local/bin/Rscript $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/05_SOURCE_TRACEABILITY/figure_scripts/plot_FigureS2_HighSpecificityFlow.R $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL
+2026-09-29T17:01:59.841090+00:00Z	Warning messages:
+1: In grSoftVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/modules//R_X11.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/modules//R_X11.so, 0x0006): Library not loaded: /opt/X11/lib/libSM.6.dylib
+  Referenced from: <5FD378C2-DF88-3BAC-B48D-DF631DE22C72> /Library/Frameworks/R.framework/Versions/4.6/Resources/modules/R_X11.so
+  Reason: tried: '/opt/X11/lib/libSM.6.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libSM.6.dylib' (no such file), '/opt/X11/lib/libSM.6.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libSM.6.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libSM.6.dylib' (no such file)
+2: In cairoVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so, 0x0006): Library not loaded: /opt/X11/lib/libXrender.1.dylib
+  Referenced from: <903A0F3F-3C80-304C-B075-4101215E8841> /Library/Frameworks/R.framework/Versions/4.6/Resources/library/grDevices/libs/cairo.so
+  Reason: tried: '/opt/X11/lib/libXrender.1.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libXrender.1.dylib' (no such file), '/opt/X11/lib/libXrender.1.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libXrender.1.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libXrender.1.dylib' (no such file)
+3: In device(filename = "$WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/04_FIGURES/FigureS2_HighSpecificityFlow.pdf",  :
+  failed to load cairo DLL
+2026-09-29T17:02:00.876094+00:00Z	R_FIGURE /usr/local/bin/Rscript $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/05_SOURCE_TRACEABILITY/figure_scripts/plot_FigureS3_Correlation.R $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL
+2026-09-29T17:02:00.876358+00:00Z	Warning messages:
+1: In grSoftVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/modules//R_X11.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/modules//R_X11.so, 0x0006): Library not loaded: /opt/X11/lib/libSM.6.dylib
+  Referenced from: <5FD378C2-DF88-3BAC-B48D-DF631DE22C72> /Library/Frameworks/R.framework/Versions/4.6/Resources/modules/R_X11.so
+  Reason: tried: '/opt/X11/lib/libSM.6.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libSM.6.dylib' (no such file), '/opt/X11/lib/libSM.6.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libSM.6.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libSM.6.dylib' (no such file)
+2: In cairoVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so, 0x0006): Library not loaded: /opt/X11/lib/libXrender.1.dylib
+  Referenced from: <903A0F3F-3C80-304C-B075-4101215E8841> /Library/Frameworks/R.framework/Versions/4.6/Resources/library/grDevices/libs/cairo.so
+  Reason: tried: '/opt/X11/lib/libXrender.1.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libXrender.1.dylib' (no such file), '/opt/X11/lib/libXrender.1.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libXrender.1.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libXrender.1.dylib' (no such file)
+3: In device(filename = "$WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/04_FIGURES/FigureS3_Core7Correlation.pdf",  :
+  failed to load cairo DLL
+2026-09-29T17:02:01.771797+00:00Z	R_FIGURE /usr/local/bin/Rscript $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/05_SOURCE_TRACEABILITY/figure_scripts/plot_FigureS4_Domains.R $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL
+2026-09-29T17:02:01.772162+00:00Z	Warning messages:
+1: In grSoftVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/modules//R_X11.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/modules//R_X11.so, 0x0006): Library not loaded: /opt/X11/lib/libSM.6.dylib
+  Referenced from: <5FD378C2-DF88-3BAC-B48D-DF631DE22C72> /Library/Frameworks/R.framework/Versions/4.6/Resources/modules/R_X11.so
+  Reason: tried: '/opt/X11/lib/libSM.6.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libSM.6.dylib' (no such file), '/opt/X11/lib/libSM.6.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libSM.6.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libSM.6.dylib' (no such file)
+2: In cairoVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so, 0x0006): Library not loaded: /opt/X11/lib/libXrender.1.dylib
+  Referenced from: <903A0F3F-3C80-304C-B075-4101215E8841> /Library/Frameworks/R.framework/Versions/4.6/Resources/library/grDevices/libs/cairo.so
+  Reason: tried: '/opt/X11/lib/libXrender.1.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libXrender.1.dylib' (no such file), '/opt/X11/lib/libXrender.1.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libXrender.1.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libXrender.1.dylib' (no such file)
+3: In device(filename = "$WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/04_FIGURES/FigureS4_Domains.pdf",  :
+  failed to load cairo DLL
+2026-09-29T17:02:02.213419+00:00Z	ASSEMBLE_PASS; main and supplementary DOCX built from approved aggregates
+2026-09-29T17:02:35.320975+00:00Z	RESPONSE_PASS; non-verbatim comment summaries include rendered page locators
+2026-09-29T17:11:10.980056+00:00Z	R_FIGURE /usr/local/bin/Rscript $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/05_SOURCE_TRACEABILITY/figure_scripts/plot_Figure1_Flow.R $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL
+2026-09-29T17:11:10.980629+00:00Z	Warning messages:
+1: In grSoftVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/modules//R_X11.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/modules//R_X11.so, 0x0006): Library not loaded: /opt/X11/lib/libSM.6.dylib
+  Referenced from: <5FD378C2-DF88-3BAC-B48D-DF631DE22C72> /Library/Frameworks/R.framework/Versions/4.6/Resources/modules/R_X11.so
+  Reason: tried: '/opt/X11/lib/libSM.6.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libSM.6.dylib' (no such file), '/opt/X11/lib/libSM.6.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libSM.6.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libSM.6.dylib' (no such file)
+2: In cairoVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so, 0x0006): Library not loaded: /opt/X11/lib/libXrender.1.dylib
+  Referenced from: <903A0F3F-3C80-304C-B075-4101215E8841> /Library/Frameworks/R.framework/Versions/4.6/Resources/library/grDevices/libs/cairo.so
+  Reason: tried: '/opt/X11/lib/libXrender.1.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libXrender.1.dylib' (no such file), '/opt/X11/lib/libXrender.1.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libXrender.1.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libXrender.1.dylib' (no such file)
+3: In device(filename = "$WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/04_FIGURES/Figure1_Revised.pdf",  :
+  failed to load cairo DLL
+2026-09-29T17:11:12.064460+00:00Z	R_FIGURE /usr/local/bin/Rscript $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/05_SOURCE_TRACEABILITY/figure_scripts/plot_Figure2_ROC.R $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL
+2026-09-29T17:11:12.064706+00:00Z	Warning messages:
+1: In grSoftVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/modules//R_X11.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/modules//R_X11.so, 0x0006): Library not loaded: /opt/X11/lib/libSM.6.dylib
+  Referenced from: <5FD378C2-DF88-3BAC-B48D-DF631DE22C72> /Library/Frameworks/R.framework/Versions/4.6/Resources/modules/R_X11.so
+  Reason: tried: '/opt/X11/lib/libSM.6.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libSM.6.dylib' (no such file), '/opt/X11/lib/libSM.6.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libSM.6.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libSM.6.dylib' (no such file)
+2: In cairoVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so, 0x0006): Library not loaded: /opt/X11/lib/libXrender.1.dylib
+  Referenced from: <903A0F3F-3C80-304C-B075-4101215E8841> /Library/Frameworks/R.framework/Versions/4.6/Resources/library/grDevices/libs/cairo.so
+  Reason: tried: '/opt/X11/lib/libXrender.1.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libXrender.1.dylib' (no such file), '/opt/X11/lib/libXrender.1.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libXrender.1.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libXrender.1.dylib' (no such file)
+3: In device(filename = "$WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/04_FIGURES/Figure2_Revised.pdf",  :
+  failed to load cairo DLL
+2026-09-29T17:11:13.163691+00:00Z	R_FIGURE /usr/local/bin/Rscript $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/05_SOURCE_TRACEABILITY/figure_scripts/plot_Figure3_Calibration.R $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL
+2026-09-29T17:11:13.164064+00:00Z	Warning messages:
+1: In grSoftVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/modules//R_X11.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/modules//R_X11.so, 0x0006): Library not loaded: /opt/X11/lib/libSM.6.dylib
+  Referenced from: <5FD378C2-DF88-3BAC-B48D-DF631DE22C72> /Library/Frameworks/R.framework/Versions/4.6/Resources/modules/R_X11.so
+  Reason: tried: '/opt/X11/lib/libSM.6.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libSM.6.dylib' (no such file), '/opt/X11/lib/libSM.6.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libSM.6.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libSM.6.dylib' (no such file)
+2: In cairoVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so, 0x0006): Library not loaded: /opt/X11/lib/libXrender.1.dylib
+  Referenced from: <903A0F3F-3C80-304C-B075-4101215E8841> /Library/Frameworks/R.framework/Versions/4.6/Resources/library/grDevices/libs/cairo.so
+  Reason: tried: '/opt/X11/lib/libXrender.1.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libXrender.1.dylib' (no such file), '/opt/X11/lib/libXrender.1.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libXrender.1.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libXrender.1.dylib' (no such file)
+3: In device(filename = "$WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/04_FIGURES/Figure3_Revised.pdf",  :
+  failed to load cairo DLL
+2026-09-29T17:11:14.139729+00:00Z	R_FIGURE /usr/local/bin/Rscript $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/05_SOURCE_TRACEABILITY/figure_scripts/plot_Figure4_DateAxis.R $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL
+2026-09-29T17:11:14.140080+00:00Z	Warning messages:
+1: In grSoftVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/modules//R_X11.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/modules//R_X11.so, 0x0006): Library not loaded: /opt/X11/lib/libSM.6.dylib
+  Referenced from: <5FD378C2-DF88-3BAC-B48D-DF631DE22C72> /Library/Frameworks/R.framework/Versions/4.6/Resources/modules/R_X11.so
+  Reason: tried: '/opt/X11/lib/libSM.6.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libSM.6.dylib' (no such file), '/opt/X11/lib/libSM.6.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libSM.6.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libSM.6.dylib' (no such file)
+2: In cairoVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so, 0x0006): Library not loaded: /opt/X11/lib/libXrender.1.dylib
+  Referenced from: <903A0F3F-3C80-304C-B075-4101215E8841> /Library/Frameworks/R.framework/Versions/4.6/Resources/library/grDevices/libs/cairo.so
+  Reason: tried: '/opt/X11/lib/libXrender.1.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libXrender.1.dylib' (no such file), '/opt/X11/lib/libXrender.1.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libXrender.1.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libXrender.1.dylib' (no such file)
+3: In device(filename = "$WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/04_FIGURES/Figure4_Revised.pdf",  :
+  failed to load cairo DLL
+2026-09-29T17:11:15.419560+00:00Z	R_FIGURE /usr/local/bin/Rscript $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/05_SOURCE_TRACEABILITY/figure_scripts/plot_Figure5_Robustness.R $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL
+2026-09-29T17:11:15.419930+00:00Z	Warning messages:
+1: In grSoftVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/modules//R_X11.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/modules//R_X11.so, 0x0006): Library not loaded: /opt/X11/lib/libSM.6.dylib
+  Referenced from: <5FD378C2-DF88-3BAC-B48D-DF631DE22C72> /Library/Frameworks/R.framework/Versions/4.6/Resources/modules/R_X11.so
+  Reason: tried: '/opt/X11/lib/libSM.6.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libSM.6.dylib' (no such file), '/opt/X11/lib/libSM.6.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libSM.6.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libSM.6.dylib' (no such file)
+2: In cairoVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so, 0x0006): Library not loaded: /opt/X11/lib/libXrender.1.dylib
+  Referenced from: <903A0F3F-3C80-304C-B075-4101215E8841> /Library/Frameworks/R.framework/Versions/4.6/Resources/library/grDevices/libs/cairo.so
+  Reason: tried: '/opt/X11/lib/libXrender.1.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libXrender.1.dylib' (no such file), '/opt/X11/lib/libXrender.1.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libXrender.1.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libXrender.1.dylib' (no such file)
+3: In device(filename = "$WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/04_FIGURES/Figure5_Revised.pdf",  :
+  failed to load cairo DLL
+2026-09-29T17:11:16.505977+00:00Z	R_FIGURE /usr/local/bin/Rscript $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/05_SOURCE_TRACEABILITY/figure_scripts/plot_FigureS1_DCA.R $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL
+2026-09-29T17:11:16.506402+00:00Z	Warning messages:
+1: In grSoftVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/modules//R_X11.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/modules//R_X11.so, 0x0006): Library not loaded: /opt/X11/lib/libSM.6.dylib
+  Referenced from: <5FD378C2-DF88-3BAC-B48D-DF631DE22C72> /Library/Frameworks/R.framework/Versions/4.6/Resources/modules/R_X11.so
+  Reason: tried: '/opt/X11/lib/libSM.6.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libSM.6.dylib' (no such file), '/opt/X11/lib/libSM.6.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libSM.6.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libSM.6.dylib' (no such file)
+2: In cairoVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so, 0x0006): Library not loaded: /opt/X11/lib/libXrender.1.dylib
+  Referenced from: <903A0F3F-3C80-304C-B075-4101215E8841> /Library/Frameworks/R.framework/Versions/4.6/Resources/library/grDevices/libs/cairo.so
+  Reason: tried: '/opt/X11/lib/libXrender.1.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libXrender.1.dylib' (no such file), '/opt/X11/lib/libXrender.1.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libXrender.1.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libXrender.1.dylib' (no such file)
+3: In device(filename = "$WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/04_FIGURES/FigureS1_DCA.pdf",  :
+  failed to load cairo DLL
+4: Removed 6 rows containing missing values or values outside the scale range
+(`geom_line()`).
+5: Removed 6 rows containing missing values or values outside the scale range
+(`geom_line()`).
+6: Removed 6 rows containing missing values or values outside the scale range
+(`geom_line()`).
+2026-09-29T17:11:17.644811+00:00Z	R_FIGURE /usr/local/bin/Rscript $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/05_SOURCE_TRACEABILITY/figure_scripts/plot_FigureS2_HighSpecificityFlow.R $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL
+2026-09-29T17:11:17.645111+00:00Z	Warning messages:
+1: In grSoftVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/modules//R_X11.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/modules//R_X11.so, 0x0006): Library not loaded: /opt/X11/lib/libSM.6.dylib
+  Referenced from: <5FD378C2-DF88-3BAC-B48D-DF631DE22C72> /Library/Frameworks/R.framework/Versions/4.6/Resources/modules/R_X11.so
+  Reason: tried: '/opt/X11/lib/libSM.6.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libSM.6.dylib' (no such file), '/opt/X11/lib/libSM.6.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libSM.6.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libSM.6.dylib' (no such file)
+2: In cairoVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so, 0x0006): Library not loaded: /opt/X11/lib/libXrender.1.dylib
+  Referenced from: <903A0F3F-3C80-304C-B075-4101215E8841> /Library/Frameworks/R.framework/Versions/4.6/Resources/library/grDevices/libs/cairo.so
+  Reason: tried: '/opt/X11/lib/libXrender.1.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libXrender.1.dylib' (no such file), '/opt/X11/lib/libXrender.1.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libXrender.1.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libXrender.1.dylib' (no such file)
+3: In device(filename = "$WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/04_FIGURES/FigureS2_HighSpecificityFlow.pdf",  :
+  failed to load cairo DLL
+2026-09-29T17:11:18.674662+00:00Z	R_FIGURE /usr/local/bin/Rscript $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/05_SOURCE_TRACEABILITY/figure_scripts/plot_FigureS3_Correlation.R $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL
+2026-09-29T17:11:18.674956+00:00Z	Warning messages:
+1: In grSoftVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/modules//R_X11.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/modules//R_X11.so, 0x0006): Library not loaded: /opt/X11/lib/libSM.6.dylib
+  Referenced from: <5FD378C2-DF88-3BAC-B48D-DF631DE22C72> /Library/Frameworks/R.framework/Versions/4.6/Resources/modules/R_X11.so
+  Reason: tried: '/opt/X11/lib/libSM.6.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libSM.6.dylib' (no such file), '/opt/X11/lib/libSM.6.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libSM.6.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libSM.6.dylib' (no such file)
+2: In cairoVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so, 0x0006): Library not loaded: /opt/X11/lib/libXrender.1.dylib
+  Referenced from: <903A0F3F-3C80-304C-B075-4101215E8841> /Library/Frameworks/R.framework/Versions/4.6/Resources/library/grDevices/libs/cairo.so
+  Reason: tried: '/opt/X11/lib/libXrender.1.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libXrender.1.dylib' (no such file), '/opt/X11/lib/libXrender.1.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libXrender.1.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libXrender.1.dylib' (no such file)
+3: In device(filename = "$WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/04_FIGURES/FigureS3_Core7Correlation.pdf",  :
+  failed to load cairo DLL
+2026-09-29T17:11:19.563160+00:00Z	R_FIGURE /usr/local/bin/Rscript $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/05_SOURCE_TRACEABILITY/figure_scripts/plot_FigureS4_Domains.R $WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL
+2026-09-29T17:11:19.563637+00:00Z	Warning messages:
+1: In grSoftVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/modules//R_X11.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/modules//R_X11.so, 0x0006): Library not loaded: /opt/X11/lib/libSM.6.dylib
+  Referenced from: <5FD378C2-DF88-3BAC-B48D-DF631DE22C72> /Library/Frameworks/R.framework/Versions/4.6/Resources/modules/R_X11.so
+  Reason: tried: '/opt/X11/lib/libSM.6.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libSM.6.dylib' (no such file), '/opt/X11/lib/libSM.6.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libSM.6.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libSM.6.dylib' (no such file)
+2: In cairoVersion() :
+  unable to load shared object '/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so':
+  dlopen(/Library/Frameworks/R.framework/Resources/library/grDevices/libs//cairo.so, 0x0006): Library not loaded: /opt/X11/lib/libXrender.1.dylib
+  Referenced from: <903A0F3F-3C80-304C-B075-4101215E8841> /Library/Frameworks/R.framework/Versions/4.6/Resources/library/grDevices/libs/cairo.so
+  Reason: tried: '/opt/X11/lib/libXrender.1.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/X11/lib/libXrender.1.dylib' (no such file), '/opt/X11/lib/libXrender.1.dylib' (no such file), '/Library/Frameworks/R.framework/Resources/lib/libXrender.1.dylib' (no such file), '/Library/Java/JavaVirtualMachines/jdk-21.0.8+9/Contents/Home/lib/server/libXrender.1.dylib' (no such file)
+3: In device(filename = "$WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/04_FIGURES/FigureS4_Domains.pdf",  :
+  failed to load cairo DLL
+2026-09-29T17:11:20.005212+00:00Z	ASSEMBLE_PASS; main and supplementary DOCX built from approved aggregates
+2026-09-29T17:11:52.682412+00:00Z	RESPONSE_PASS; non-verbatim comment summaries include rendered page locators
+Warning messages:
+1: Removed 6 rows containing missing values or values outside the scale range
+(`geom_line()`).
+2: Removed 6 rows containing missing values or values outside the scale range
+(`geom_line()`).
+3: Removed 6 rows containing missing values or values outside the scale range
+(`geom_line()`).
+2026-09-29T17:21:59.952707+00:00Z	FINALIZE_PASS gate=WP3_HOLD_COMMENT_UNANSWERED; crosschecks=81; zip_sha256=2f54082dfddd9da3071da62c84e15bd3f01571691be1e41e10346d5e56ea6063
+2026-09-29T17:27:46.494584+00:00Z	FINALIZE_PASS gate=WP3_HOLD_COMMENT_UNANSWERED; crosschecks=81; zip_sha256=fb4ca54d08a97820ff4e16d2d87c8f6d81038116b1f526f1140f2cb2bcf91891
+2026-09-29T17:30:09.747871+00:00Z	FINALIZE_PASS gate=WP3_HOLD_COMMENT_UNANSWERED; crosschecks=81; zip_sha256=e7b9b7ef55be0859253ff6fd2c422cd9568bd2c7b4c22ceb757059485e01d30f

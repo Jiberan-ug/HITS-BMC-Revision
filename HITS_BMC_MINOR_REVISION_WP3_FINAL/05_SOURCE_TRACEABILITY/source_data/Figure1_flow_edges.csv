@@ -1,0 +1,9 @@
+from_id,to_id
+source,patients
+patients,dx_available
+patients,dx_missing
+dx_available,ami
+dx_available,nonami
+dx_available,other
+ami,primary
+nonami,primary

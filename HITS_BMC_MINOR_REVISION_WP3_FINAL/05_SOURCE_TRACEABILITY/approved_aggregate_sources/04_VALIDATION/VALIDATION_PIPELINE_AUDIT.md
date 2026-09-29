@@ -1,0 +1,12 @@
+# Canonical validation pipeline
+Source `HITS_V0.3.1_verified_completion_20260825/scripts/01_run_hits_v0_3_1_verified_completion.py`: FoldPreprocessor lines156-216, make_tuned_pipeline219-246, repeated_splits397-406, run_nested_oof409 onward, patient_mean_predictions501-506, main1327 onward.
+
+Outer: stratified 5-fold repeated10, seed20260825. Each patient receives10 out-of-training-fold predictions per model; total18200 before averaging in the primary cohort. Final reported metrics use ONE arithmetic mean probability per patient, not all repeated rows as independent cases and not mean repeat AUC. Repeat-wise median and quantiles are separate columns.
+
+Inner: stratified5-fold; GridSearchCV on an sklearn Pipeline with training-local preprocessing. Elastic-net logistic SAGA; l1_ratio in0.25,0.5,0.75; C in0.1,1,10 (inverse regularization strength; not numerical glmnet lambda). Inner validation selects ROC AUC and refits on the outer training set. Core, Enhanced and clinical combination models use this path. Single-marker comparators have no tuned hyperparameters and use unpenalized logistic regression.
+
+Preprocessing: missing medians fitted on the training split; Enhanced and Clinical allow imputation; CBC-only Core is complete. log1p(max(x,0)) for Neut/Lymph/Mono/PLT/Fbg and all seven ratios, specified in advance. MPV/RDW/Hb and clinical variables are standardized without that log transform. Mean/SD are training-fitted (ddof0); zero SD replaced by1. No winsorization. Deterministic variable construction and cohort selection occur before splitting; no evidence of leakage from fitted medians/scales/tuning in this canonical code. This does not eliminate selection bias or phenotype/timing validity concerns.
+
+Identical outer partitions: code-supported YES for Core, Enhanced, PIV and all four clinical models on the same ordered1820 rows with the same target and outer seed. They are generated in separate analysis branches but deterministic same ordering/seed. Fbg complete-case models share their own1705-row folds. Inner seeds are model-label-specific; do not claim identical inner tuning partitions. Saved tuning records support10 repeats. Exact patient-fold artifacts were not persisted, so partition identity is code-based, not an independent stored-prediction audit.
+
+Critical provenance boundary: `HITS_V0.3_score_development` is a DIFFERENT20-repeat legacy run. Its existing patient predictions must not be substituted for the verified10-repeat canonical run. No model has been rerun in WP1.
