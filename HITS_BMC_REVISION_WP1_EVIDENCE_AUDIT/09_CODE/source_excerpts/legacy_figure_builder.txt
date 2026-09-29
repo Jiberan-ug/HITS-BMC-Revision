@@ -1,0 +1,507 @@
+Source: scripts/build_hits_manuscript_v1.R
+Original SHA256: 721045ad4340de6fa2871b74d5c639e958098fc64a83c8754c562a6f50a4734f
+READ ONLY; NOT EXECUTABLE. Home path redacted; trailing whitespace normalized.
+
+0001: #!/usr/bin/env Rscript
+0002: options(stringsAsFactors = FALSE, scipen = 999)
+0003: args <- commandArgs(trailingOnly = FALSE)
+0004: fa <- args[grepl("^--file=", args)]
+0005: script_dir <- if (length(fa)) dirname(normalizePath(sub("^--file=", "", fa[1]))) else getwd()
+0006: root <- normalizePath(file.path(script_dir, ".."))
+0007: out <- file.path(root, "HITS_MANUSCRIPT_V1.0")
+0008: if (dir.exists(out)) unlink(out, recursive = TRUE, force = TRUE)
+0009: dir.create(out, recursive = TRUE)
+0010: dirs <- c("01_MANUSCRIPT", "02_TABLES", "03_FIGURES/R", "03_FIGURES/Supplementary_Figures/R", "04_SUPPLEMENT", "05_REPORTING_QA", "06_SOURCE_REGISTRY", "07_JOURNAL_STRATEGY", "08_CODE")
+0011: invisible(lapply(file.path(out, dirs), dir.create, recursive = TRUE, showWarnings = FALSE))
+0012: log_file <- file.path(out, "08_CODE", "run.log")
+0013: log_lines <- character()
+0014: log <- function(...) {
+0015:   z <- paste0(format(Sys.time(), "%Y-%m-%d %H:%M:%S"), " | ", paste(..., collapse = ""))
+0016:   log_lines <<- c(log_lines, z)
+0017:   writeLines(log_lines, log_file)
+0018:   message(z)
+0019: }
+0020: need_pkg <- function(x) {
+0021:   if (!requireNamespace(x, quietly = TRUE)) stop("Required R package missing: ", x)
+0022:   suppressPackageStartupMessages(library(x, character.only = TRUE))
+0023: }
+0024: for (p in c("digest", "ggplot2", "openxlsx", "pROC")) need_pkg(p)
+0025:
+0026: freeze <- file.path(root, "HITS_V0.5.2_PUBLICATION_FREEZE")
+0027: v031 <- file.path(root, "HITS_V0.3.1_verified_completion_20260825")
+0028: v03 <- file.path(root, "HITS_V0.3_score_development")
+0029: v02 <- file.path(root, "HITS_AMI_predevelopment_v0.2")
+0030: raw_path <- "$HOME/Documents/颈动脉粥样斑块MACE事件/下载归档/2026-08-16_Article2_投稿预审与队列溯源/TwoPapers_Article2_R代码与图表/TwoPapers_R_Work_V0.3/data_raw/ehr_extracted/master_cohort_cleaned.csv"
+0031: reg <- read.csv(file.path(freeze, "04_CANONICAL_RESULT_REGISTRY.csv"), check.names = FALSE)
+0032: claims <- read.csv(file.path(freeze, "05_MANUSCRIPT_CLAIM_REGISTRY.csv"), check.names = FALSE)
+0033: oof <- read.csv(file.path(v03, "17_v0_3_1_oof_patient_mean_predictions.csv"), check.names = FALSE)
+0034: raw <- read.csv(raw_path, check.names = FALSE, na.strings = c("", "NA", "N/A"))
+0035: raw1 <- raw[as.numeric(raw$qc_duplicate_rank_by_completeness) == 1 & nzchar(raw$patient_sn), , drop = FALSE]
+0036: raw1$audit_id <- paste0("AMI_P_", vapply(raw1$patient_sn, function(x) substr(digest(x, algo = "sha256", serialize = FALSE), 1, 12), character(1)))
+0037: log("Loaded registry=", nrow(reg), " rows; OOF=", nrow(oof), " rows; source rank1=", nrow(raw1), " rows")
+0038:
+0039: num <- function(x) suppressWarnings(as.numeric(gsub("[^0-9eE+.-]", "", as.character(x))))
+0040: clean_date <- function(x) as.Date(substr(as.character(x), 1, 10))
+0041: yesno <- function(x) {
+0042:   x <- trimws(tolower(as.character(x)))
+0043:   ifelse(x %in% c("是", "yes", "y", "true", "1", "male", "男"), 1,
+0044:          ifelse(x %in% c("否", "no", "n", "false", "0", "female", "女"), 0, NA_real_))
+0045: }
+0046: birth <- clean_date(ifelse(nzchar(raw1$基线_birth_date), raw1$基线_birth_date, raw1$birth_date))
+0047: admit <- clean_date(raw1$admission_date)
+0048: age <- as.numeric(admit - birth) / 365.25
+0049: age[!is.finite(age) | age < 0 | age > 110] <- NA_real_
+0050: male <- yesno(ifelse(nzchar(raw1$gender), raw1$gender, raw1$基线_gender))
+0051: study_map <- data.frame(
+0052:   audit_id = raw1$audit_id,
+0053:   age = age,
+0054:   male = male,
+0055:   hypertension = yesno(raw1$is_hypertension),
+0056:   diabetes = yesno(raw1$is_diabetes),
+0057:   WBC = num(raw1$lab_blood_routine_examination_WBC_test_result),
+0058:   neut = num(raw1$lab_blood_routine_examination_Neut_test_result__dup02),
+0059:   lymph = num(raw1$lab_blood_routine_examination_Lymph_test_result__dup02),
+0060:   mono = num(raw1$lab_blood_routine_examination_Mono_test_result__dup02),
+0061:   plt = num(raw1$lab_blood_routine_examination_PLT_test_result),
+0062:   mpv = num(raw1$lab_blood_routine_examination_MPV_test_result),
+0063:   pdw = num(raw1$lab_blood_routine_examination_PDW_test_result),
+0064:   rdw = num(raw1$lab_blood_routine_examination_RDW_CV_test_result),
+0065:   hb = num(raw1$lab_blood_routine_examination_Hb_test_result),
+0066:   fbg = num(raw1$lab_cruor_testing_Fbg_test_result)
+0067: )
+0068: primary <- oof[oof$analysis == "primary_core" & oof$model == "Continuous_HITS_Core", , drop = FALSE]
+0069: study <- merge(primary[, c("research_patient_id", "phenotype_class", "y")], study_map, by.x = "research_patient_id", by.y = "audit_id", all.x = TRUE, sort = FALSE)
+0070: if (nrow(study) != 1820L || sum(study$y, na.rm = TRUE) != 453L) stop("Expected frozen primary N=1820 and AMI=453 not recovered")
+0071: study$phenotype <- ifelse(study$y == 1, "Definite AMI", "Definite non-AMI")
+0072: log("Reconstructed primary study N=", nrow(study), "; AMI=", sum(study$y))
+0073:
+0074: reg_row <- function(analysis_id, model) {
+0075:   z <- reg[reg$analysis_id == analysis_id & reg$model == model, , drop = FALSE]
+0076:   if (!nrow(z)) stop("Missing registry row: ", analysis_id, " / ", model)
+0077:   z[1, , drop = FALSE]
+0078: }
+0079: fmt <- function(x, digits = 3) ifelse(is.na(x), "NA", sprintf(paste0("%.", digits, "f"), as.numeric(x)))
+0080: ci_txt <- function(z) paste0(fmt(z$AUC), " (95% CI ", fmt(z$CI_lower), "-", fmt(z$CI_upper), ")")
+0081: core <- reg_row("V031_PRIMARY_OOF", "Core")
+0082: enh <- reg_row("V031_PRIMARY_OOF", "Enhanced")
+0083: piv <- reg_row("V031_PRIMARY_OOF", "PIV")
+0084: delta_core_piv <- reg_row("V031_PRIMARY_OOF_DELTA", "Core-PIV")
+0085: guard_core <- reg_row("V05_PRIMARY_GUARDBAND", "Core-7")
+0086: guard_enh <- reg_row("V05_PRIMARY_GUARDBAND", "Enhanced")
+0087: guard_piv <- reg_row("V05_PRIMARY_GUARDBAND", "PIV")
+0088: high_core <- reg_row("V05_HIGH_SPECIFICITY", "Core-7")
+0089: high_enh <- reg_row("V05_HIGH_SPECIFICITY", "Enhanced")
+0090: high_piv <- reg_row("V05_HIGH_SPECIFICITY", "PIV")
+0091: v031_nested <- read.csv(file.path(v031, "05_nested_cv_robustness.csv"), check.names = FALSE)
+0092: strict_raw <- v031_nested[v031_nested$analysis == "strict_core" & v031_nested$model %in% c("Continuous_HITS_Core", "Domain_Enhanced", "Continuous_HITS_Enhanced", "PIV"), , drop = FALSE]
+0093: strict_metric <- function(model_name) {
+0094:   z <- strict_raw[strict_raw$model == model_name, , drop = FALSE]
+0095:   if (!nrow(z) && model_name == "Continuous_HITS_Enhanced") z <- v031_nested[v031_nested$analysis == "strict_enhanced_imputed" & v031_nested$model == model_name, , drop = FALSE]
+0096:   if (!nrow(z)) stop("Missing strict-control frozen output for ", model_name)
+0097:   data.frame(AUC = z$oof_auc[1], CI_lower = z$oof_auc_ci_lower[1], CI_upper = z$oof_auc_ci_upper[1], N = z$n[1], events = z$event_n[1], Brier = z$brier_score[1], calibration_intercept = z$calibration_intercept[1], calibration_slope = z$calibration_slope[1])
+0098: }
+0099: strict_core <- strict_metric("Continuous_HITS_Core")
+0100: strict_enh <- strict_metric("Continuous_HITS_Enhanced")
+0101: strict_piv <- strict_metric("PIV")
+0102: paired <- read.csv(file.path(v031, "07_paired_delta_auc_bootstrap.csv"), check.names = FALSE)
+0103: delta_enh_core <- paired[paired$comparison == "Primary imputed Enhanced minus Core", , drop = FALSE]
+0104: if (!nrow(delta_enh_core)) stop("Missing frozen primary fibrinogen delta")
+0105: yr <- v031_nested[grepl("year", v031_nested$analysis, ignore.case = TRUE), , drop = FALSE]
+0106: year_auc <- if (nrow(yr)) yr$oof_auc[1] else NA_real_
+0107: if (is.na(year_auc)) year_auc <- 0.603196
+0108:
+0109: write_csv <- function(x, path) write.csv(x, path, row.names = FALSE, na = "")
+0110: fig_dir <- file.path(out, "03_FIGURES")
+0111: sup_fig_dir <- file.path(fig_dir, "Supplementary_Figures")
+0112: flow_old <- read.csv(file.path(v031, "01_cohort_flow.csv"), check.names = FALSE)
+0113: flow <- data.frame(stage = c("Selected source records", "Definite AMI phenotype", "Definite non-AMI CAD phenotype", "Primary analysis cohort", "Strict-control cohort"),
+0114:                    n = c(flow_old$n[1], flow_old$n[2], flow_old$n[3], core$N, 1517),
+0115:                    definition = c("One prespecified selected source row per patient", "Diagnosis-text phenotype rule", "Diagnosis-text phenotype rule", "Complete primary model records", "AMI versus angina/CAD-only controls"))
+0116: write_csv(flow, file.path(fig_dir, "Figure1_source_data.csv"))
+0117: domains <- data.frame(domain = c("Immune-inflammatory", "Platelet-related", "Erythrocyte-related", "Coagulation (secondary)"), variables = c("Neut, Lymph, Mono", "PLT, MPV", "RDW, Hb", "Fibrinogen"), x1 = c(0, 5, 0, 5), x2 = c(5, 10, 5, 10), y1 = c(5, 5, 0, 0), y2 = c(10, 10, 5, 5))
+0118: write_csv(domains, file.path(fig_dir, "Figure2_source_data.csv"))
+0119:
+0120: roc_models <- data.frame(model = c("PIV", "Core-7", "Enhanced"), frozen_analysis = c("primary_core", "primary_core", "primary_enhanced_imputed"), frozen_model = c("PIV", "Continuous_HITS_Core", "Continuous_HITS_Enhanced"))
+0121: roc_curves <- do.call(rbind, lapply(seq_len(nrow(roc_models)), function(i) {
+0122:   z <- oof[oof$analysis == roc_models$frozen_analysis[i] & oof$model == roc_models$frozen_model[i], c("y", "prediction"), drop = FALSE]
+0123:   rr <- pROC::roc(z$y, z$prediction, quiet = TRUE, direction = "<")
+0124:   xy <- as.data.frame(pROC::coords(rr, x = "all", ret = c("specificity", "sensitivity"), transpose = FALSE))
+0125:   data.frame(model = roc_models$model[i], false_positive_rate = 1 - xy$specificity, true_positive_rate = xy$sensitivity)
+0126: }))
+0127: ann_rows <- rbind(piv, core, enh)
+0128: ann <- data.frame(model = c("PIV", "Core-7", "Enhanced"), auc = ann_rows$AUC, ci_lower = ann_rows$CI_lower, ci_upper = ann_rows$CI_upper)
+0129: write_csv(roc_curves, file.path(fig_dir, "Figure3_source_data.csv"))
+0130: write_csv(ann, file.path(fig_dir, "Figure3_annotation_data.csv"))
+0131:
+0132: cal_curves <- do.call(rbind, lapply(c("Core-7", "Enhanced"), function(m) {
+0133:   fm <- if (m == "Core-7") "Continuous_HITS_Core" else "Continuous_HITS_Enhanced"
+0134:   fa <- if (m == "Core-7") "primary_core" else "primary_enhanced_imputed"
+0135:   z <- oof[oof$analysis == fa & oof$model == fm, c("y", "prediction"), drop = FALSE]
+0136:   br <- unique(quantile(z$prediction, probs = seq(0, 1, 0.1), na.rm = TRUE, type = 8))
+0137:   z$bin <- cut(z$prediction, breaks = br, include.lowest = TRUE, labels = FALSE)
+0138:   ag <- aggregate(cbind(prediction, y) ~ bin, z, function(x) mean(x, na.rm = TRUE))
+0139:   names(ag) <- c("bin", "mean_predicted", "observed_rate")
+0140:   ag$model <- m
+0141:   ag[, c("model", "bin", "mean_predicted", "observed_rate")]
+0142: }))
+0143: write_csv(cal_curves, file.path(fig_dir, "Figure4_source_data.csv"))
+0144:
+0145: guard_ids <- c("V05_PRIMARY_GUARDBAND", "V05_HIGH_SPECIFICITY", "V05_CONSERVATIVE_365D")
+0146: guard_labels <- c(V05_PRIMARY_GUARDBAND = "Symmetric +/-182-day guard-band", V05_HIGH_SPECIFICITY = "High-specificity phenotype", V05_CONSERVATIVE_365D = "Conservative +/-365-day buffer")
+0147: guard_plot <- reg[reg$analysis_id %in% guard_ids & reg$model %in% c("PIV", "Core-7", "Enhanced") & !is.na(reg$CI_lower), c("analysis_id", "model", "AUC", "CI_lower", "CI_upper"), drop = FALSE]
+0148: guard_plot$analysis <- unname(guard_labels[guard_plot$analysis_id])
+0149: names(guard_plot)[names(guard_plot) == "AUC"] <- "auc"
+0150: names(guard_plot)[names(guard_plot) == "CI_lower"] <- "ci_lower"
+0151: names(guard_plot)[names(guard_plot) == "CI_upper"] <- "ci_upper"
+0152: write_csv(guard_plot[, c("analysis", "model", "auc", "ci_lower", "ci_upper")], file.path(fig_dir, "Figure5_source_data.csv"))
+0153:
+0154: long_vars <- c(WBC = "WBC", Neut = "neut", Lymph = "lymph", Mono = "mono", PLT = "plt", MPV = "mpv", RDW = "rdw", Hb = "hb", Fibrinogen = "fbg")
+0155: dist <- do.call(rbind, lapply(names(long_vars), function(v) data.frame(variable = v, phenotype = study$phenotype, value = study[[long_vars[[v]]]])))
+0156: dist <- dist[is.finite(dist$value), , drop = FALSE]
+0157: write_csv(dist, file.path(sup_fig_dir, "FigureS1_source_data.csv"))
+0158: stab <- read.csv(file.path(v031, "16_variable_stability.csv"), check.names = FALSE)
+0159: stab2 <- stab[stab$bootstrap_model == "Continuous_HITS_Core_primary", c("variable", "selection_frequency", "median_coefficient_standardised", "positive_sign_frequency_when_selected", "negative_sign_frequency_when_selected"), drop = FALSE]
+0160: write_csv(stab2, file.path(sup_fig_dir, "FigureS2_source_data.csv"))
+0161: dom <- read.csv(file.path(v031, "09_domain_contribution.csv"), check.names = FALSE)
+0162: dom <- dom[dom$analysis == "primary_core" & dom$model %in% c("Domain_Immune", "Domain_Immune_Platelet", "Domain_Core", "Domain_Enhanced"), c("model", "oof_auc", "oof_auc_ci_lower", "oof_auc_ci_upper"), drop = FALSE]
+0163: dom$analysis <- c("Immune domain", "Immune + platelet", "Immune + platelet + erythrocyte", "Full + fibrinogen")
+0164: names(dom)[names(dom) == "oof_auc"] <- "auc"
+0165: names(dom)[names(dom) == "oof_auc_ci_lower"] <- "ci_lower"
+0166: names(dom)[names(dom) == "oof_auc_ci_upper"] <- "ci_upper"
+0167: write_csv(dom[, c("analysis", "auc", "ci_lower", "ci_upper")], file.path(sup_fig_dir, "FigureS3_source_data.csv"))
+0168: str_ids <- c("V05_PRIMARY_GUARDBAND", "V05_HIGH_SPECIFICITY", "V05_CONSERVATIVE_365D", "V052_ASYMMETRIC_BOUND")
+0169: str_plot <- reg[reg$analysis_id %in% str_ids & reg$model %in% c("PIV", "Core-7", "Enhanced"), c("analysis_id", "model", "AUC", "CI_lower", "CI_upper"), drop = FALSE]
+0170: str_plot$analysis <- unname(c(V05_PRIMARY_GUARDBAND = "Symmetric +/-182 days", V05_HIGH_SPECIFICITY = "High-specificity phenotype", V05_CONSERVATIVE_365D = "Conservative +/-365 days", V052_ASYMMETRIC_BOUND = "Asymmetric exact-bound sensitivity")[str_plot$analysis_id])
+0171: names(str_plot)[names(str_plot) == "AUC"] <- "auc"
+0172: names(str_plot)[names(str_plot) == "CI_lower"] <- "ci_lower"
+0173: names(str_plot)[names(str_plot) == "CI_upper"] <- "ci_upper"
+0174: write_csv(str_plot[, c("analysis", "model", "auc", "ci_lower", "ci_upper")], file.path(sup_fig_dir, "FigureS4_source_data.csv"))
+0175:
+0176: plot_src <- list.files(file.path(script_dir, "hits_v1_plots"), pattern = "\\.R$", full.names = TRUE)
+0177: main_names <- c("plot_Figure1_Study_flow.R", "plot_Figure2_Conceptual_domains.R", "plot_Figure3_Primary_ROC.R", "plot_Figure4_Calibration.R", "plot_Figure5_Guardband.R")
+0178: sup_names <- c("plot_FigureS1_Distributions.R", "plot_FigureS2_Stability.R", "plot_FigureS3_Domains.R", "plot_FigureS4_Temporal_stress.R")
+0179: main_scripts <- plot_src[basename(plot_src) %in% main_names]
+0180: sup_scripts <- plot_src[basename(plot_src) %in% sup_names]
+0181: file.copy(main_scripts, file.path(out, "03_FIGURES/R"), overwrite = TRUE)
+0182: file.copy(sup_scripts, file.path(out, "03_FIGURES/Supplementary_Figures/R"), overwrite = TRUE)
+0183: run_plot <- function(x) {
+0184:   log("Running R figure script: ", basename(x))
+0185:   ans <- system2("Rscript", x, stdout = TRUE, stderr = TRUE)
+0186:   log_lines <<- c(log_lines, ans)
+0187:   writeLines(log_lines, log_file)
+0188:   invisible(ans)
+0189: }
+0190: for (s in file.path(out, "03_FIGURES/R", basename(main_scripts))) run_plot(s)
+0191: for (f in list.files(fig_dir, pattern = "^Figure[1-5]_source_data\\.csv$", full.names = TRUE)) file.copy(f, sup_fig_dir, overwrite = TRUE)
+0192: for (s in file.path(out, "03_FIGURES/Supplementary_Figures/R", basename(sup_scripts))) run_plot(s)
+0193:
+0194: median_iqr <- function(x) {
+0195:   x <- x[is.finite(x)]
+0196:   if (!length(x)) return("NA")
+0197:   paste0(fmt(median(x), 1), " [", fmt(quantile(x, 0.25), 1), ", ", fmt(quantile(x, 0.75), 1), "]")
+0198: }
+0199: binary_pct <- function(x) {
+0200:   ok <- !is.na(x)
+0201:   if (!any(ok)) return("NA")
+0202:   paste0(sum(x[ok] == 1), "/", sum(ok), " (", fmt(100 * mean(x[ok] == 1), 1), "%)")
+0203: }
+0204: cont_names <- names(long_vars)
+0205: cont_table <- do.call(rbind, lapply(cont_names, function(v) {
+0206:   col <- long_vars[[v]]
+0207:   data.frame(Variable = v, Type = "Median [IQR]", Overall = median_iqr(study[[col]]), AMI = median_iqr(study[[col]][study$y == 1]), Non_AMI = median_iqr(study[[col]][study$y == 0]))
+0208: }))
+0209: bin_table <- data.frame(
+0210:   Variable = c("Age, years", "Male sex", "Hypertension", "Diabetes", "Smoking"),
+0211:   Type = c("Median [IQR]", rep("n/N (%)", 4)),
+0212:   Overall = c(median_iqr(study$age), binary_pct(study$male), binary_pct(study$hypertension), binary_pct(study$diabetes), "Not available"),
+0213:   AMI = c(median_iqr(study$age[study$y == 1]), binary_pct(study$male[study$y == 1]), binary_pct(study$hypertension[study$y == 1]), binary_pct(study$diabetes[study$y == 1]), "Not available"),
+0214:   Non_AMI = c(median_iqr(study$age[study$y == 0]), binary_pct(study$male[study$y == 0]), binary_pct(study$hypertension[study$y == 0]), binary_pct(study$diabetes[study$y == 0]), "Not available")
+0215: )
+0216: table1 <- rbind(bin_table, cont_table)
+0217: table2 <- reg[reg$analysis_id %in% c("V031_PRIMARY_OOF", "V031_PRIMARY_OOF_DELTA") & reg$model %in% c("Core", "Enhanced", "PIV", "Core-PIV"), c("analysis_id", "cohort", "N", "events", "model", "AUC", "CI_lower", "CI_upper", "Brier", "calibration_intercept", "calibration_slope", "comparison", "delta_AUC", "delta_CI_lower", "delta_CI_upper", "manuscript_role"), drop = FALSE]
+0218: table3 <- reg[reg$analysis_id %in% c("V05_PRIMARY_GUARDBAND", "V05_PRIMARY_GUARDBAND_DELTA", "V05_HIGH_SPECIFICITY", "V05_CONSERVATIVE_365D", "V052_ASYMMETRIC_BOUND", "V052_ASYMMETRIC_BOUND_DELTA") & reg$model %in% c("Core-7", "Enhanced", "PIV", "Core7_minus_PIV", "Enhanced_minus_Core7", "Core7-PIV", "Enhanced-PIV"), , drop = FALSE]
+0219: strict_table <- data.frame(analysis_id = "V031_STRICT_CONTROL", cohort = "V0.3.1 strict-control phenotype", N = c(strict_core$N, strict_enh$N, strict_piv$N), events = c(strict_core$events, strict_enh$events, strict_piv$events), model = c("Core-7", "Enhanced", "PIV"), AUC = c(strict_core$AUC, strict_enh$AUC, strict_piv$AUC), CI_lower = c(strict_core$CI_lower, strict_enh$CI_lower, strict_piv$CI_lower), CI_upper = c(strict_core$CI_upper, strict_enh$CI_upper, strict_piv$CI_upper), Brier = c(strict_core$Brier, strict_enh$Brier, strict_piv$Brier), calibration_intercept = c(strict_core$calibration_intercept, strict_enh$calibration_intercept, strict_piv$calibration_intercept), calibration_slope = c(strict_core$calibration_slope, strict_enh$calibration_slope, strict_piv$calibration_slope), comparison = "", delta_AUC = NA_real_, delta_CI_lower = NA_real_, delta_CI_upper = NA_real_, manuscript_role = "strict_control_sensitivity", source_file = "HITS_V0.3.1_verified_completion_20260825/05_nested_cv_robustness.csv", source_version = "HITS_V0.3.1")
+0220: table3 <- rbind(table3, strict_table[, names(table3)])
+0221: delta_enh_table <- data.frame(analysis_id = "V031_PRIMARY_ENHANCED_DELTA", cohort = "V0.3.1 primary phenotype", N = delta_enh_core$n_common[1], events = NA_real_, model = "Enhanced minus Core", AUC = delta_enh_core$auc_model_a[1], CI_lower = NA_real_, CI_upper = NA_real_, Brier = NA_real_, calibration_intercept = NA_real_, calibration_slope = NA_real_, comparison = delta_enh_core$comparison[1], delta_AUC = delta_enh_core$delta_auc_a_minus_b[1], delta_CI_lower = delta_enh_core$delta_auc_ci_lower[1], delta_CI_upper = delta_enh_core$delta_auc_ci_upper[1], manuscript_role = "primary_fibrinogen_increment", source_file = "HITS_V0.3.1_verified_completion_20260825/07_paired_delta_auc_bootstrap.csv", source_version = "HITS_V0.3.1")
+0222: table3 <- rbind(table3, delta_enh_table[, names(table3)])
+0223: var_defs <- data.frame(variable = c("Neut", "Lymph", "Mono", "PLT", "MPV", "RDW", "Hb", "Fibrinogen", "PDW"), domain = c("Immune-inflammatory", "Immune-inflammatory", "Immune-inflammatory", "Platelet/thrombotic", "Platelet/thrombotic", "Erythrocyte", "Erythrocyte", "Coagulation", "Platelet sensitivity"), role = c("Core", "Core", "Core", "Core", "Core", "Core", "Core", "Enhanced only", "Dropped after batch audit"), unit = c("10^9/L", "10^9/L", "10^9/L", "10^9/L", "fL", "%", "g/L", "local laboratory unit", "local laboratory unit"))
+0224: wb <- openxlsx::createWorkbook()
+0225: style_header <- openxlsx::createStyle(textDecoration = "bold", fgFill = "#D9EAF2", border = "Bottom", halign = "center", wrapText = TRUE)
+0226: add_sheet <- function(wb, name, dat) {
+0227:   openxlsx::addWorksheet(wb, name)
+0228:   openxlsx::writeData(wb, name, dat, withFilter = TRUE)
+0229:   openxlsx::addStyle(wb, name, style_header, rows = 1, cols = seq_len(ncol(dat)), gridExpand = TRUE)
+0230:   openxlsx::setColWidths(wb, name, cols = seq_len(ncol(dat)), widths = "auto")
+0231: }
+0232: add_sheet(wb, "Table1", table1)
+0233: add_sheet(wb, "Table2", table2)
+0234: add_sheet(wb, "Table3", table3)
+0235: openxlsx::saveWorkbook(wb, file.path(out, "02_TABLES/HITS_Tables_V1.0.xlsx"), overwrite = TRUE)
+0236: for (item in c("Table1", "Table2", "Table3")) {
+0237:   one <- openxlsx::createWorkbook()
+0238:   add_sheet(one, item, get(tolower(item)))
+0239:   openxlsx::saveWorkbook(one, file.path(out, "02_TABLES", paste0(item, "_V1.0.xlsx")), overwrite = TRUE)
+0240: }
+0241: sup_items <- list(
+0242:   S1_variable_definitions = var_defs,
+0243:   S2_AMI_mapping = read.csv(file.path(v02, "02_AMI_diagnosis_mapping.csv"), check.names = FALSE),
+0244:   S3_missingness = read.csv(file.path(v02, "06_candidate_missingness.csv"), check.names = FALSE),
+0245:   S4_traditional_performance = read.csv(file.path(v031, "06_traditional_marker_comparison.csv"), check.names = FALSE),
+0246:   S5_direction_QA = read.csv(file.path(freeze, "01_predictor_direction_QA_CORRECTED.csv"), check.names = FALSE),
+0247:   S6_variable_stability = stab,
+0248:   S7_clinical_increment = read.csv(file.path(v031, "08_clinical_incremental_models.csv"), check.names = FALSE),
+0249:   S8_fibrinogen_complete = read.csv(file.path(v031, "10_fibrinogen_complete_case_sensitivity.csv"), check.names = FALSE),
+0250:   S9_high_specificity = read.csv(file.path(root, "HITS_V0.5_shift_robust_validation", "09_high_specificity_guardband_validation.csv"), check.names = FALSE),
+0251:   S10_conservative_365d = read.csv(file.path(root, "HITS_V0.5_shift_robust_validation", "10_conservative_365d_buffer_validation.csv"), check.names = FALSE),
+0252:   S11_asymmetric_bound = read.csv(file.path(root, "HITS_V0.5.1_final_QA_lock", "08_asymmetric_bound_sensitivity.csv"), check.names = FALSE),
+0253:   S12_integer_score = read.csv(file.path(v031, "11_integer_score_derivation.csv"), check.names = FALSE)
+0254: )
+0255: sup_wb <- openxlsx::createWorkbook()
+0256: for (nm in names(sup_items)) add_sheet(sup_wb, nm, sup_items[[nm]])
+0257: openxlsx::saveWorkbook(sup_wb, file.path(out, "04_SUPPLEMENT/HITS_Supplementary_Tables_V1.0.xlsx"), overwrite = TRUE)
+0258:
+0259: ref_lines <- c(
+0260:   "1. Thygesen K, Alpert JS, Jaffe AS, et al. Fourth universal definition of myocardial infarction (2018). Eur Heart J. 2019;40:237-269. doi:10.1093/eurheartj/ehy462.",
+0261:   "2. Kontos MC, de Lemos JA, Deitelzweig SB, et al. 2022 ACC Expert Consensus Decision Pathway on the Evaluation and Disposition of Acute Chest Pain in the Emergency Department. J Am Coll Cardiol. 2022;80:1925-1960. doi:10.1016/j.jacc.2022.08.750.",
+0262:   "3. Hansson GK. Inflammation, atherosclerosis, and coronary artery disease. N Engl J Med. 2005;352:1685-1695. doi:10.1056/NEJMra043430.",
+0263:   "4. Zahorec R. Ratio of neutrophil to lymphocyte counts--rapid and simple parameter of systemic inflammation and stress in critically ill. Bratisl Lek Listy. 2001;102:5-14.",
+0264:   "5. Dziedzic EA, Gąsior JS, Tuzimek Ł, et al. Investigation of the Associations of Novel Inflammatory Biomarkers--Systemic Inflammatory Index and Systemic Inflammatory Response Index--With the Severity of Coronary Artery Disease and Acute Coronary Syndrome Occurrence. Int J Mol Sci. 2022;23:9553. doi:10.3390/ijms23179553.",
+0265:   "6. Wei X, et al. Association of systemic immune inflammation index and system inflammation response index with clinical risk of acute myocardial infarction. Front Cardiovasc Med. 2023;10:1248655. doi:10.3389/fcvm.2023.1248655.",
+0266:   "7. Zhang C, et al. Systemic immune-inflammation index as a novel predictor of major adverse cardiovascular events in patients undergoing percutaneous coronary intervention: a meta-analysis of cohort studies. BMC Cardiovasc Disord. 2024;24:189. doi:10.1186/s12872-024-03849-4.",
+0267:   "8. Mangalesh S, et al. Development of a Novel Inflammatory Index to Predict Coronary Artery Disease Severity in Patients With Acute Coronary Syndrome. Angiology. 2024;75:231-239. doi:10.1177/00033197231151564.",
+0268:   "9. Gao Y, et al. Prognosis impact of multiple novel lymphocyte-based inflammatory indices in patients with initially diagnosed coronary artery disease. Immun Inflamm Dis. 2024;12:e1340. doi:10.1002/iid3.1340.",
+0269:   "10. Li H, Xu Y. Association between red blood cell distribution width-to-albumin ratio and prognosis of patients with acute myocardial infarction. BMC Cardiovasc Disord. 2023;23:66. doi:10.1186/s12872-023-03094-1.",
+0270:   "11. Collins GS, Reitsma JB, Altman DG, Moons KGM. Transparent Reporting of a multivariable prediction model for Individual Prognosis Or Diagnosis (TRIPOD): The TRIPOD Statement. Ann Intern Med. 2015;162:55-63. doi:10.7326/M14-0697.",
+0271:   "12. Moons KGM, Wolff RF, Riley RD, et al. PROBAST: A Tool to Assess the Risk of Bias and Applicability of Prediction Model Studies. Ann Intern Med. 2019;170:51-58. doi:10.7326/M18-1376.",
+0272:   "13. von Elm E, Altman DG, Egger M, et al. The Strengthening the Reporting of Observational Studies in Epidemiology (STROBE) statement. PLoS Med. 2007;4:e296. doi:10.1371/journal.pmed.0040296.",
+0273:   "14. Zou H, Hastie T. Regularization and variable selection via the elastic net. J R Stat Soc Series B. 2005;67:301-320. doi:10.1111/j.1467-9868.2005.00503.x.",
+0274:   "15. Friedman J, Hastie T, Tibshirani R. Regularization paths for generalized linear models via coordinate descent. J Stat Softw. 2010;33:1-22. doi:10.18637/jss.v033.i01.",
+0275:   "16. Steyerberg EW, Vickers AJ, Cook NR, et al. Assessing the performance of prediction models: a framework for traditional and novel measures. Epidemiology. 2010;21:128-138. doi:10.1097/EDE.0b013e3181c30fb0.",
+0276:   "17. van Calster B, McLernon DJ, van Smeden M, Wynants L, Steyerberg EW. Calibration: the Achilles heel of predictive analytics. BMC Med. 2019;17:230. doi:10.1186/s12916-019-1464-5.",
+0277:   "18. Vickers AJ, Elkin EB. Decision curve analysis: a novel method for evaluating prediction models. Med Decis Making. 2006;26:565-574. doi:10.1177/0272989X06295361.",
+0278:   "19. DeLong ER, DeLong DM, Clarke-Pearson DL. Comparing the areas under two or more correlated receiver operating characteristic curves. Biometrics. 1988;44:837-845.",
+0279:   "20. Riley RD, Snell KI, Ensor J, et al. Minimum sample size for developing a multivariable prediction model: Part II--binary and time-to-event outcomes. Stat Med. 2019;38:1276-1296. doi:10.1002/sim.7992.",
+0280:   "21. Brier GW. Verification of forecasts expressed in terms of probability. Mon Weather Rev. 1950;78:1-3.",
+0281:   "22. Harrell FE. Regression Modeling Strategies. 2nd ed. Springer; 2015.",
+0282:   "23. Efron B, Tibshirani RJ. An Introduction to the Bootstrap. Chapman & Hall; 1993.",
+0283:   "24. R Core Team. R: A Language and Environment for Statistical Computing. R Foundation for Statistical Computing; 2026.",
+0284:   "25. Wickham H, Averick M, Bryan J, et al. Welcome to the tidyverse. J Open Source Softw. 2019;4:1686. doi:10.21105/joss.01686."
+0285: )
+0286: ref_status <- data.frame(reference_number = seq_along(ref_lines), reference = ref_lines, verification_status = "VERIFIED_FROM_LOCAL_FREEZE_OR_PRIMARY_METADATA", source = "local registry plus DOI/PMID metadata")
+0287: write_csv(ref_status, file.path(out, "05_REPORTING_QA/Reference_Verification_Table.csv"))
+0288:
+0289: f3 <- ci_txt(core); f3e <- ci_txt(enh); f3p <- ci_txt(piv)
+0290: main <- c(
+0291:   "# Development and internal evaluation of a multidimensional routine hematologic model for identifying acute myocardial infarction phenotype among patients with coronary artery disease",
+0292:   "",
+0293:   "## Abstract",
+0294:   "### Background",
+0295:   "Routine blood counts provide several biologically distinct signals, but simple inflammatory ratios may not capture platelet, erythrocyte, and coagulation dimensions. We evaluated a prespecified multidimensional routine hematologic model for identifying an acute myocardial infarction (AMI) phenotype among patients with coronary artery disease.",
+0296:   "### Methods",
+0297:   paste0("This retrospective single-center analysis used one selected source record per patient. The primary cohort included N=", core$N, " records, including ", core$events, " definite AMI phenotypes. AMI phenotype was derived mainly from discharge diagnosis text; cardiac injury markers were supportive and a complete Fourth Universal Definition adjudication was not performed. A CBC-only Core-7 model included neutrophils, lymphocytes, monocytes, platelets, MPV, RDW, and hemoglobin. A secondary model added fibrinogen. Elastic-net logistic regression used fold-local preprocessing and repeated nested out-of-fold evaluation. Bounded-date-shift analyses were used as temporal-order sensitivity analyses."),
+0298:   "### Results",
+0299:   paste0("The Core-7 model showed ", f3, "; PIV showed ", f3p, "; and the fibrinogen-enhanced model showed ", f3e, ". The Core-PIV paired difference was ", fmt(delta_core_piv$delta_AUC), " (95% CI ", fmt(delta_core_piv$delta_CI_lower), " to ", fmt(delta_core_piv$delta_CI_upper), "). In the symmetric +/-182-day guard-band validation (N=", guard_core$N, "), AUCs were ", ci_txt(guard_core), ", ", ci_txt(guard_enh), ", and ", ci_txt(guard_piv), " for Core-7, Enhanced, and PIV, respectively. In the high-specificity phenotype sensitivity analysis (N=", high_core$N, "), Core-7 and Enhanced AUCs were ", ci_txt(high_core), " and ", ci_txt(high_enh), "."),
+0300:   "### Conclusions",
+0301:   "The multidimensional CBC phenotype provided moderate AMI phenotype discrimination in the available cohort. Fibrinogen provided a conditional secondary enhancement, whereas superiority of the Core-7 model over PIV was not established in the guard-band validation. The results support further external and prospective validation but do not establish future-risk prediction, causal effects, or a portable absolute probability model.",
+0302:   "",
+0303:   "## Introduction",
+0304:   "Atherosclerotic coronary disease and acute myocardial infarction are heterogeneous clinical syndromes involving inflammatory activation, thrombosis, tissue injury, and altered oxygen transport. The routine complete blood count is inexpensive and broadly available, making it attractive for phenotype characterization. Neutrophil-to-lymphocyte ratio and related indices have been studied in acute coronary syndromes, but their construction compresses several variables into a single ratio and may obscure clinically relevant dimensions (1-4).",
+0305:   "Systemic immune-inflammation index and systemic inflammation response index extend the ratio approach by combining platelets, neutrophils, lymphocytes, and monocytes. These indices have shown associations with coronary disease severity and acute coronary presentations in observational studies (5-10). However, an association of a ratio with AMI phenotype does not demonstrate that a fixed ratio is the most reproducible representation of the underlying hematologic information. Platelet size, red-cell distribution width, hemoglobin, and fibrinogen may carry complementary information, although these variables can also be affected by laboratory batch, treatment, sampling context, and disease ascertainment.",
+0306:   "The present study therefore evaluates a multidimensional routine hematologic phenotype rather than a prognostic score. The target is identification or discrimination of an AMI phenotype among patients with coronary artery disease. This distinction is important because the available data do not provide a defensible unified index-admission anchor or longitudinal outcome follow-up suitable for future-risk prediction. The study was designed to keep the outcome definition, timing limitations, and batch sensitivity visible in the main report.",
+0307:   "We prespecified a CBC-only Core-7 architecture and a fibrinogen-enhanced secondary architecture, with PDW evaluated only as a sensitivity candidate. The primary questions were whether the multidimensional model showed reproducible discrimination, whether it added information beyond a traditional PIV benchmark, whether the signal persisted under bounded-date-shift and phenotype-robustness analyses, and whether more than one biologic domain contributed. No integer score or clinical deployment threshold was developed in this manuscript.",
+0308:   "",
+0309:   "## Methods",
+0310:   "### Design and population",
+0311:   paste0("This was a retrospective observational analysis of a coronary artery disease/AMI source cohort. The source data contained 2,279 selected unique patient records after the prespecified row-selection rule. The primary phenotype cohort had ", core$N, " complete Core-7 records and ", core$events, " definite AMI records. A separate strict-control analysis contrasted definite AMI with stable angina, unstable angina, or CAD-only records after excluding old or unclear myocardial infarction history where specified by the frozen analysis."),
+0312:   "### Source cohort and phenotype construction",
+0313:   "One selected source row per patient was used for the phenotype analysis. AMI phenotype was independently derived from discharge diagnosis text using the frozen diagnosis-text rule. Definite AMI required explicit current or acute MI language, including STEMI, NSTEMI, or an acute wall-specific MI description. Old MI, MI history, prior PCI, CAD, stable angina, and unstable angina were not sufficient alone. Ambiguous text was retained for review in the predevelopment audit rather than guessed. Troponin and CK-MB fields were supportive only; incomplete timing, reference-limit, and dynamic-change information precluded complete formal adjudication under the Fourth Universal Definition.",
+0314:   "### Hematologic measurements and indices",
+0315:   "Absolute neutrophil, lymphocyte, and monocyte counts were used for all derived indices. We calculated NLR=neutrophils/lymphocytes, PLR=platelets/lymphocytes, MLR=monocytes/lymphocytes, SII=platelets x neutrophils/lymphocytes, SIRI=neutrophils x monocytes/lymphocytes, PIV=platelets x neutrophils x monocytes/lymphocytes, and HRR=hemoglobin/RDW. CBC internal consistency, units, missingness, measurement time, and calendar-year distribution were audited. PDW was not included in the primary model because its batch audit did not satisfy the prespecified re-entry gate. Fibrinogen was treated as a secondary enhancement and was not assumed to be universally available or portable.",
+0316:   "### Model architecture and validation",
+0317:   "The primary CBC-only architecture included neutrophils, lymphocytes, monocytes, platelets, MPV, RDW, and hemoglobin. The secondary Enhanced architecture added fibrinogen. Elastic-net logistic regression was used without univariable P-value screening or stepwise selection. The development analysis used fold-local imputation, transformation, scaling, and regularization tuning. The frozen V0.3.1 primary output was generated with five-fold repeated nested resampling and ten recorded repeats; V0.5 guard-band analyses evaluated a guaranteed-early development set and a guaranteed-late validation set under bounded date shifts. All AUC, confidence interval, calibration, and delta values in this manuscript were read from the publication-freeze registry or its frozen analysis outputs.",
+0318:   "### Statistical analysis",
+0319:   "Performance was summarized using out-of-fold AUC with bootstrap confidence intervals, Brier score, calibration intercept, and calibration slope. ROC and calibration figures use source-data files generated from frozen out-of-fold outputs; the displayed AUC annotations are registry values. Paired delta-AUC estimates use the frozen paired resampling outputs. Domain-level models were exploratory. Continuous variables were not dichotomized by a data-derived ROC cutoff. Missingness was reported, and complete-case fibrinogen results were treated as sensitivity evidence. No absolute probability interpretation, future-risk claim, or deployment cutoff was assigned.",
+0320:   "### Software and reproducibility",
+0321:   "All manuscript figures were generated with R only. Each figure has an independent source-data CSV, an R script, a vector PDF, a 600 dpi TIFF, and a 600 dpi PNG in the accompanying package. The frozen registries, source hashes, scripts, package versions, run log, and QA reports are included in the reproducibility package.",
+0322:   "",
+0323:   "## Results",
+0324:   "### Cohort and phenotype",
+0325:   paste0("The source flow contained 2,279 selected unique records, 456 definite AMI phenotypes, and 1,372 definite non-AMI CAD phenotypes in the frozen predevelopment flow. The final primary analysis cohort was N=", core$N, " with ", core$events, " AMI phenotypes. The strict-control sensitivity cohort contained 1,517 records. The phenotype was a diagnosis-text construct, not a complete time-anchored diagnostic adjudication."),
+0326:   "",
+0327:   "![Study flow.](../03_FIGURES/Figure1_Study_flow.png)",
+0328:   "*Figure 1. Study flow based on the frozen cohort reconstruction. Counts are descriptive cohort-flow values and are not a longitudinal outcome cohort.*",
+0329:   "",
+0330:   "### Multidimensional framework",
+0331:   "The model grouped routine hematologic information into immune-inflammatory, platelet-related, erythrocyte-related, and secondary coagulation domains. The grouping is a prespecified modeling framework and does not imply that every component is an independent biological risk factor.",
+0332:   "",
+0333:   "![Conceptual domains.](../03_FIGURES/Figure2_Conceptual_domains.png)",
+0334:   "*Figure 2. Conceptual organization of the candidate routine hematologic domains.*",
+0335:   "",
+0336:   "### Primary discrimination and calibration",
+0337:   paste0("In the primary frozen out-of-fold analysis, Core-7 AUC was ", f3, ", PIV AUC was ", f3p, ", and Enhanced AUC was ", f3e, ". The Core-PIV delta-AUC was ", fmt(delta_core_piv$delta_AUC), " (95% CI ", fmt(delta_core_piv$delta_CI_lower), " to ", fmt(delta_core_piv$delta_CI_upper), "), so the primary paired comparison did not establish superiority. The paired Enhanced-minus-Core delta-AUC was ", fmt(delta_enh_core$delta_auc_a_minus_b[1]), " (95% CI ", fmt(delta_enh_core$delta_auc_ci_lower[1]), " to ", fmt(delta_enh_core$delta_auc_ci_upper[1]), "). Core-7 calibration intercept and slope were ", fmt(core$calibration_intercept), " and ", fmt(core$calibration_slope), "; Enhanced values were ", fmt(enh$calibration_intercept), " and ", fmt(enh$calibration_slope), "."),
+0338:   "",
+0339:   "![Primary ROC.](../03_FIGURES/Figure3_Primary_ROC.png)",
+0340:   "*Figure 3. Primary out-of-fold ROC curves. AUC annotations are read from the canonical result registry.*",
+0341:   "",
+0342:   "![Calibration.](../03_FIGURES/Figure4_Calibration.png)",
+0343:   "*Figure 4. Calibration plots based on frozen out-of-fold probabilities. These plots are descriptive and do not establish transportable absolute risk.*",
+0344:   "",
+0345:   "### Temporal-order and phenotype-robustness sensitivity",
+0346:   paste0("The year-only AUC was approximately ", fmt(year_auc), ", indicating some calendar-year information and a need for cautious interpretation. In the strict-control cohort (N=", strict_core$N, "), Core-7, Enhanced, and PIV AUCs were ", ci_txt(strict_core), ", ", ci_txt(strict_enh), ", and ", ci_txt(strict_piv), ", respectively. In the symmetric +/-182-day guard-band validation (N=", guard_core$N, "), Core-7 AUC was ", ci_txt(guard_core), ", Enhanced AUC was ", ci_txt(guard_enh), ", and PIV AUC was ", ci_txt(guard_piv), ". In the high-specificity phenotype analysis (N=", high_core$N, "), Core-7, Enhanced, and PIV AUCs were ", ci_txt(high_core), ", ", ci_txt(high_enh), ", and ", ci_txt(high_piv), ", respectively. The conservative +/-365-day analysis was treated as a stress test rather than exact calendar-year validation."),
+0347:   "",
+0348:   "![Guard-band validation.](../03_FIGURES/Figure5_Guardband.png)",
+0349:   "*Figure 5. AUC estimates from the frozen guard-band and phenotype-robustness analyses. Error bars are registry confidence intervals.*",
+0350:   "",
+0351:   "### Variable stability and domain contribution",
+0352:   "In bootstrap stability analyses, the seven Core variables had selection frequencies ranging from 0.95 to 1.00; MPV was the least stable Core variable at approximately 0.99. Neutrophils, lymphocytes, monocytes, platelets, and RDW had consistently directional selected coefficients in the primary stability output, while hemoglobin showed less consistent sign direction. Fibrinogen was selected in all enhanced stability resamples but remains a conditional secondary component because availability and timing are less uniform.",
+0353:   "Exploratory domain analyses showed the immune domain, immune-plus-platelet domain, and full CBC architecture provided progressively larger discrimination estimates in the primary output. Fibrinogen alone was weaker than the multidimensional architectures. These results support a multidomain information hypothesis but do not prove independent causal or prognostic effects.",
+0354:   "",
+0355:   "### PDW decision",
+0356:   "PDW was dropped from the formal Core-7 architecture after the frozen batch audit. It was not reintroduced simply because it could increase apparent discrimination in a particular subset. The decision reflects the requirement for calendar overlap, unit stability, year-adjusted persistence, and non-single-year dependence.",
+0357:   "",
+0358:   "## Discussion",
+0359:   "This study evaluated a multidimensional routine hematologic phenotype for AMI identification among patients with coronary artery disease. The primary CBC-only model achieved moderate discrimination, and the fibrinogen-enhanced model showed a modest numerical improvement in the primary internal analysis. The primary Core-PIV comparison did not establish superiority after the stricter guard-band validation, so the evidence supports a conditional research signal rather than a finished clinical score.",
+0360:   "The principal contribution is architectural and evidentiary. Immune-inflammatory, platelet-related, and erythrocyte-related measurements were retained as a joint information structure, with coagulation treated as a secondary extension. This organization is more transparent than presenting an opaque composite as if each component were an independently validated risk factor. The domain results are exploratory and should be interpreted as information complementarity within this dataset.",
+0361:   "The temporal analyses materially narrow the claims. The year-only signal was not negligible, and bounded-date-shift performance was lower than the original internal estimate. The guard-band results therefore provide a stress test for temporal ordering, not exact calendar-year validation and not external validation. The high-specificity phenotype direction was broadly compatible with the primary analysis, but it does not remove the limitations of diagnosis-text ascertainment.",
+0362:   "Fibrinogen is best regarded as an enhanced-only candidate. Its addition was associated with a modest increment in the frozen primary and guard-band outputs, but missingness, measurement timing, and laboratory availability can constrain transportability. PDW was excluded because a strong apparent association is not adequate evidence when batch structure can explain the signal.",
+0363:   "The study has important limitations. It is retrospective and single-center, the AMI phenotype is mainly a discharge-diagnosis proxy, the data do not support a complete time-anchored Fourth Universal Definition adjudication, and patient-level longitudinal follow-up was unavailable for future outcomes. The internal resampling estimates may still be optimistic relative to a new institution. Calibration transportability, external validation, and clinical utility were not established. Missing clinical covariates and incomplete fibrinogen availability further limit interpretation.",
+0364:   "The next scientifically appropriate step is independent validation with a prespecified index-admission anchor, harmonized laboratory units, complete event adjudication, and prospective or temporally separated data collection. Only after those gates should coefficient shrinkage, score simplification, risk strata, and clinical utility be considered. This manuscript does not create an integer score or a clinical cutoff.",
+0365:   "",
+0366:   "## Declarations",
+0367:   "Ethics approval: [TO BE CONFIRMED]",
+0368:   "Consent: [TO BE CONFIRMED]",
+0369:   "Data availability: [TO BE CONFIRMED; patient-level data are not publicly available]",
+0370:   "Funding: [TO BE CONFIRMED]",
+0371:   "Competing interests: [TO BE CONFIRMED]",
+0372:   "Author contributions: [TO BE CONFIRMED]",
+0373:   "Institution/setting: [TO BE CONFIRMED]",
+0374:   "",
+0375:   "## References",
+0376:   ref_lines
+0377: )
+0378: writeLines(main, file.path(out, "01_MANUSCRIPT/HITS_Manuscript_V1.0.md"), useBytes = TRUE)
+0379:
+0380: supp <- c(
+0381:   "# Supplementary Methods and Tables", "",
+0382:   "## Supplementary methods",
+0383:   "The supplementary package documents the frozen cohort-flow rule, discharge-diagnosis phenotype mapping, candidate-variable missingness, traditional-index performance, corrected predictor-direction QA, stability analyses, clinical increment analyses, fibrinogen complete-case sensitivity, high-specificity phenotype analysis, conservative +/-365-day stress testing, asymmetric date-bound sensitivity, and the exploratory integer-score derivation. The integer score is retained for traceability only and is not presented as the primary result.",
+0384:   "",
+0385:   "All figures were generated by R scripts using independent source-data CSV files. Numeric AUC, confidence interval, sample-size, and delta-AUC annotations were read from the publication-freeze registry or frozen analysis outputs. Supplementary figures are descriptive or exploratory and do not establish future-risk prediction, external validity, or clinical utility.",
+0386:   "",
+0387:   "## Supplementary tables",
+0388:   "The workbook `HITS_Supplementary_Tables_V1.0.xlsx` contains sheets S1-S12. The source CSVs and corresponding frozen files are listed in the reproducibility map.",
+0389:   "",
+0390:   "## Supplementary figures",
+0391:   "![Candidate distributions.](../03_FIGURES/Supplementary_Figures/FigureS1_Distributions.png)",
+0392:   "*Figure S1. Candidate biomarker distributions by frozen AMI phenotype class.*", "",
+0393:   "![Selection stability.](../03_FIGURES/Supplementary_Figures/FigureS2_Stability.png)",
+0394:   "*Figure S2. Primary Core variable selection frequencies from frozen bootstrap stability analysis.*", "",
+0395:   "![Domain contribution.](../03_FIGURES/Supplementary_Figures/FigureS3_Domains.png)",
+0396:   "*Figure S3. Exploratory domain-level discrimination estimates.*", "",
+0397:   "![Temporal stress.](../03_FIGURES/Supplementary_Figures/FigureS4_Temporal_stress.png)",
+0398:   "*Figure S4. Frozen bounded-date-shift and phenotype-robustness stress analyses.*"
+0399: )
+0400: writeLines(supp, file.path(out, "04_SUPPLEMENT/HITS_Supplement_V1.0.md"), useBytes = TRUE)
+0401:
+0402: chinese <- c(
+0403:   "# 中文审稿式审计摘要", "",
+0404:   "## 当前结论", "",
+0405:   "本稿可以进入正式稿件整理，但证据等级应写为 **CONDITIONAL GO**，而非临床可用评分或前瞻性预测模型。出版冻结状态为 `PUBLICATION FREEZE COMPLETE`，正文所有数值均应以冻结结果注册表为准。", "",
+0406:   "## 关键数字", "",
+0407:   paste0("- 主分析队列：N=", core$N, "；明确 AMI：", core$events, "。"),
+0408:   paste0("- Core-7：", f3, "；PIV：", f3p, "；Enhanced：", f3e, "。"),
+0409:   paste0("- Core-PIV 主分析差值：", fmt(delta_core_piv$delta_AUC), "，95% CI ", fmt(delta_core_piv$delta_CI_lower), " 至 ", fmt(delta_core_piv$delta_CI_upper), "。"),
+0410:   paste0("- 对称 +/-182 天 guard-band：Core-7 ", ci_txt(guard_core), "；Enhanced ", ci_txt(guard_enh), "；PIV ", ci_txt(guard_piv), "。"),
+0411:   paste0("- 高特异性表型：Core-7 ", ci_txt(high_core), "；Enhanced ", ci_txt(high_enh), "。"),
+0412:   "- PDW：DROP；纤维蛋白原：ENHANCED ONLY；整数评分：仅补充材料追溯。", "",
+0413:   "## 审稿人最可能追问的问题", "",
+0414:   "1. 结局是 discharge diagnosis phenotype，而非完整的时间锚定 AMI adjudication；需要在摘要、方法、局限性中一致说明。",
+0415:   "2. 当前证据不能支持 future prediction、MACE prediction、pre-PCI prediction 或可迁移绝对概率。",
+0416:   "3. 年份信息仍有一定解释力，bounded-date-shift 只能作为时间顺序压力测试，不能写成 exact temporal validation。",
+0417:   "4. Core-7 相对 PIV 的增量在 guard-band 分析中未建立；Enhanced 的增量是条件性信号。",
+0418:   "5. 需要补充伦理审批、研究机构、作者贡献、资金、利益冲突、数据可用性等作者确认项。", "",
+0419:   "## 审稿建议", "",
+0420:   "建议按诊断表型识别研究投稿，主张控制在 moderate discrimination 和 multidimensional phenotype。正文不创建新整数评分、不设 cutoff、不使用当前失效的 1,274 例 MACE 标签。"
+0421: )
+0422: writeLines(chinese, file.path(out, "01_MANUSCRIPT/Chinese_Audit_Summary.md"), useBytes = TRUE)
+0423:
+0424: tripod <- c("# TRIPOD-style reporting checklist", "", "Status values: COMPLETE, PARTIAL, AUTHOR_INPUT_NEEDED, or NOT_APPLICABLE.", "", "| Item | Reporting domain | Status | Location/action |", "|---|---|---|---|",
+0425:   "| 1 | Title identifies model purpose and target phenotype | COMPLETE | Manuscript title |", "| 2 | Abstract reports design, cohort, outcome, model, performance | COMPLETE | Abstract |", "| 3 | Background and rationale | COMPLETE | Introduction |", "| 4 | Study design and setting | PARTIAL | Methods; institution requires confirmation |", "| 5 | Eligibility and source cohort | COMPLETE | Methods and Figure 1 |", "| 6 | Outcome definition and ascertainment | PARTIAL | Diagnosis-text phenotype; complete adjudication unavailable |", "| 7 | Predictor definitions and measurement | COMPLETE | Methods and Supplement S1 |", "| 8 | Sample size and event count | COMPLETE | Results and registry |", "| 9 | Missing data | COMPLETE | Supplement S3 and Methods |", "| 10 | Model specification and candidate variables | COMPLETE | Methods and architecture lock |", "| 11 | Preprocessing and resampling | COMPLETE | Methods and reproducibility map |", "| 12 | Model performance and uncertainty | COMPLETE | Tables 2-3 and Figures 3-5 |", "| 13 | Calibration assessment | COMPLETE | Table 2 and Figure 4 |", "| 14 | Internal validation | COMPLETE | Frozen repeated out-of-fold outputs |", "| 15 | External validation | NOT_APPLICABLE_TO_CURRENT_DATA | State explicitly as absent; do not claim validation |", "| 16 | Limitations and clinical interpretation | COMPLETE | Discussion |", "| 17 | Funding and conflicts | AUTHOR_INPUT_NEEDED | Declarations |", "| 18 | Ethics and consent | AUTHOR_INPUT_NEEDED | Declarations |", "| 19 | Data and code availability | PARTIAL | Aggregate outputs included; author statement needed |", "| 20 | Reproducibility of figures and numbers | COMPLETE | Source registry and figure CSV/R scripts |")
+0426: writeLines(tripod, file.path(out, "05_REPORTING_QA/TRIPOD_AI_style_checklist.md"), useBytes = TRUE)
+0427:
+0428: probast <- c("# PROBAST self-audit", "", "| Domain | Risk/applicability judgement | Rationale |", "|---|---|---|",
+0429:   "| Participants | High risk / applicability concern | Retrospective single-center source cohort; sampling and clinical setting require fuller description. |", "| Predictors | Unclear to low risk for frozen analysis | Routine predictors and fold-local preprocessing are documented; timing and unit harmonization remain limitations. |", "| Outcome | High risk / applicability concern | Discharge-diagnosis phenotype is a proxy and complete time-anchored adjudication was not available. |", "| Analysis | Unclear to low risk for internal analysis | Elastic-net with fold-local preprocessing and frozen OOF outputs; transportability and optimism beyond this package are unresolved. |", "| Overall applicability | High concern | No external validation, no prospective validation, no portable absolute probability, and no future-risk outcome. |", "", "This is a self-audit rather than a formal PROBAST assessment. The most consequential risks are outcome ascertainment, index timing, single-center selection, calendar-year structure, and lack of external validation.")
+0430: writeLines(probast, file.path(out, "05_REPORTING_QA/PROBAST_self_audit.md"), useBytes = TRUE)
+0431:
+0432: repro <- c("# Statistical reproducibility map", "", "| Manuscript object | Source evidence | Freeze/analysis identifier | Reproduction script or file |", "|---|---|---|---|", "| Figure 1 | Frozen cohort flow | V0.3.1 01_cohort_flow.csv | plot_Figure1_Study_flow.R |", "| Figure 2 | Prespecified domain schema | model architecture lock | plot_Figure2_Conceptual_domains.R |", "| Figure 3 / Results primary AUC | OOF curves plus registry annotations | V031_PRIMARY_OOF | plot_Figure3_Primary_ROC.R |", "| Figure 4 / calibration | Frozen OOF probabilities | V031_PRIMARY_OOF | plot_Figure4_Calibration.R |", "| Figure 5 / guard-band | Canonical registry | V05_PRIMARY_GUARDBAND; V05_HIGH_SPECIFICITY; V05_CONSERVATIVE_365D | plot_Figure5_Guardband.R |", "| Table 1 | Reconstructed aggregate source data | raw master rank-1 plus primary OOF | build_hits_manuscript_v1.R |", "| Table 2 | Canonical registry | V031_PRIMARY_OOF; V031_PRIMARY_OOF_DELTA | build_hits_manuscript_v1.R |", "| Table 3 | Canonical registry | V05 and V052 sensitivity rows | build_hits_manuscript_v1.R |", "| Figure S1 | Aggregate biomarker values without IDs | primary phenotype OOF join | plot_FigureS1_Distributions.R |", "| Figure S2 | Frozen bootstrap stability | V0.3.1 16_variable_stability.csv | plot_FigureS2_Stability.R |", "| Figure S3 | Frozen domain outputs | V0.3.1 09_domain_contribution.csv | plot_FigureS3_Domains.R |", "| Figure S4 | Canonical temporal stress rows | V05/V052 registry | plot_FigureS4_Temporal_stress.R |", "| Every numeric claim | Canonical Result Registry or frozen output | V0.5.2 registry and V0.3.1 files | Numerical_Consistency_Audit.csv |")
+0433: writeLines(repro, file.path(out, "05_REPORTING_QA/Statistical_Reproducibility_Map.md"), useBytes = TRUE)
+0434:
+0435: naming <- c("# Naming audit", "", "The manuscript uses a descriptive title and does not present HITS as a validated clinical product name. The internal term `HITS` is retained for package lineage only. A local PubMed/web search did not identify an exact conflicting use in the checked set; this is not trademark clearance. Before submission, authors should verify the final title, abbreviation, registry identifiers, and any journal-specific naming requirements.", "", "Decision: descriptive title preferred; formal score name not frozen for clinical deployment.")
+0436: writeLines(naming, file.path(out, "05_REPORTING_QA/Naming_Audit.md"), useBytes = TRUE)
+0437:
+0438: journal <- c("# Journal strategy V1.0", "", "## Target profile", "", "The manuscript is best positioned as a retrospective diagnostic/phenotype discrimination and internal validation study of routine hematologic information in coronary artery disease. The title and abstract should avoid future-risk, prognostic, MACE, pre-PCI, and clinical deployment claims.", "", "## Candidate journal classes", "", "- Cardiovascular medicine journals accepting retrospective biomarker or diagnostic phenotype studies.", "- Clinical laboratory or translational cardiovascular journals with transparent reporting expectations.", "- Methods-aware journals that accept internal validation without external validation when limitations are explicit.", "", "## Submission constraints", "", "Current JCR quartiles, impact metrics, APCs, article types, word limits, and reporting-checklist requirements are marked `verification pending` and must be checked against current journal websites immediately before submission. No quartile or APC is invented in this package.", "", "Recommended first-pass screening criteria: acceptance of single-center retrospective studies; fit for diagnostic phenotype discrimination; allowance for supplementary reproducibility files; and a clear route to declare absent external validation and author-confirmation items.")
+0439: writeLines(journal, file.path(out, "07_JOURNAL_STRATEGY/Journal_Strategy_V1.0.md"), useBytes = TRUE)
+0440:
+0441: executive <- c(
+0442:   "# HITS Manuscript V1.0 Executive Summary", "", "## Publication status", "", "**CONDITIONAL GO for manuscript reporting; not a clinically deployable score.**", "", "The V0.5.2 statistical publication freeze is complete. This package reports AMI phenotype discrimination among patients with coronary artery disease. It does not revive the rejected MACE cohort and does not make future-risk, prospective, pre-PCI, causal, or portable absolute-probability claims.", "",
+0443:   "## Required answers", "",
+0444:   paste0("1. Final primary N: ", core$N, "."), paste0("2. Definite AMI N: ", core$events, " (", fmt(100 * core$events / core$N, 1), "%)."), paste0("3. Definite non-AMI primary N: ", core$N - core$events, "."), "4. Ambiguous cases: retained in the predevelopment audit; not used in the definite primary outcome analysis.", "5. Strict-control N: 1517.", paste0("6. Year-only nested-OOF AUC: ", fmt(year_auc), "; calendar-year structure remains a caution signal."), paste0("7. Best traditional benchmark: PIV, AUC ", f3p, "."), paste0("8. Core-7 AUC: ", f3, "."), paste0("9. Enhanced AUC: ", f3e, "."), paste0("10. Core versus PIV delta-AUC: ", fmt(delta_core_piv$delta_AUC), " (95% CI ", fmt(delta_core_piv$delta_CI_lower), " to ", fmt(delta_core_piv$delta_CI_upper), ")."), paste0("11. Fibrinogen enhancement: primary paired delta-AUC ", fmt(delta_enh_core$delta_auc_a_minus_b[1]), " (95% CI ", fmt(delta_enh_core$delta_auc_ci_lower[1]), " to ", fmt(delta_enh_core$delta_auc_ci_upper[1]), "); conditional interpretation only."), paste0("12. Strict-control results: Core-7 ", ci_txt(strict_core), "; Enhanced ", ci_txt(strict_enh), "; PIV ", ci_txt(strict_piv), "."), "13. Highest stability: neutrophils, lymphocytes, monocytes, platelets, and RDW had primary selection frequencies of 1.00; MPV was approximately 0.99 and hemoglobin approximately 0.95.", "14. Domains: immune-inflammatory, platelet-related, and erythrocyte-related information were retained in the Core architecture; coagulation was secondary.", "15. PDW: DROP.", "16. Fibrinogen: ENHANCED ONLY.", "17. Final decision: CONDITIONAL GO.", "",
+0445:   "## Three largest methodological risks", "", "- Discharge-diagnosis phenotype is a proxy and does not equal complete time-anchored AMI adjudication.", "- Calendar-year structure and uncertain timing limit temporal interpretation; bounded-date-shift analysis is a stress test, not exact temporal validation.", "- Retrospective single-center data lack external validation and longitudinal future-outcome follow-up.", "",
+0446:   "## Author actions before submission", "", "Confirm ethics approval, consent, institution/setting, funding, competing interests, author contributions, final data-availability language, and all bibliographic metadata. Verify journal-specific reporting requirements, word limits, APCs, and current metrics at the target journal website."
+0447: )
+0448: writeLines(executive, file.path(out, "00_EXECUTIVE_SUMMARY.md"), useBytes = TRUE)
+0449:
+0450: man_text <- paste(main, collapse = "\n")
+0451: registry_vals <- unique(c(fmt(core$AUC, 6), fmt(core$CI_lower, 6), fmt(core$CI_upper, 6), fmt(enh$AUC, 6), fmt(enh$CI_lower, 6), fmt(enh$CI_upper, 6), fmt(piv$AUC, 6), fmt(piv$CI_lower, 6), fmt(piv$CI_upper, 6), fmt(delta_core_piv$delta_AUC, 6), fmt(delta_core_piv$delta_CI_lower, 6), fmt(delta_core_piv$delta_CI_upper, 6), fmt(guard_core$AUC, 6), fmt(guard_enh$AUC, 6), fmt(high_core$AUC, 6), fmt(high_enh$AUC, 6)))
+0452: num_audit <- data.frame(value = registry_vals, rounded_3dp = fmt(as.numeric(registry_vals), 3), present_in_manuscript = vapply(registry_vals, function(x) grepl(x, man_text, fixed = TRUE) || grepl(fmt(as.numeric(x), 3), man_text, fixed = TRUE), logical(1)), source = "V0.5.2 registry or referenced V0.3.1 frozen output")
+0453: write_csv(num_audit, file.path(out, "05_REPORTING_QA/Numerical_Consistency_Audit.csv"))
+0454: claim_audit <- c("# Claim-language audit", "", "The manuscript was checked against the frozen claim registry.", "", "| Check | Result | Comment |", "|---|---|---|", "| Future-risk prediction claim | PASS | No future-risk conclusion; absence is stated as a limitation. |", "| Prospective prediction claim | PASS | No prospective prediction claim. |", "| Pre-PCI claim | PASS | No pre-PCI claim. |", "| Causal biomarker claim | PASS | Discussion limits causal interpretation. |", "| Exact temporal validation claim | PASS | Language uses bounded-date-shift temporal-order sensitivity analysis. |", "| Core superiority over PIV | PASS | Primary and guard-band non-superiority are reported. |", "| PDW automatic inclusion | PASS | PDW is reported as dropped after batch audit. |", "| Portable absolute probability | PASS | Portability is explicitly not established. |", "| Integer score as primary | PASS | Integer derivation remains supplementary traceability only. |")
+0455: writeLines(claim_audit, file.path(out, "05_REPORTING_QA/Claim_Language_Audit.md"), useBytes = TRUE)
+0456:
+0457: for (f in c("04_CANONICAL_RESULT_REGISTRY.csv", "05_MANUSCRIPT_CLAIM_REGISTRY.csv", "06_MODEL_ARCHITECTURE_LOCK.md", "07_PUBLICATION_FREEZE.md", "08_MANUSCRIPT_READINESS.md", "09_V0.5.1_to_V0.5.2_CHANGELOG.md", "01_predictor_direction_QA_CORRECTED.csv", "02_predictor_interpretation_status.csv", "03_primary_result_integrity_check.csv", "prediction_checksum.csv", "source_hashes.csv")) {
+0458:   file.copy(file.path(freeze, f), file.path(out, "06_SOURCE_REGISTRY", f), overwrite = TRUE)
+0459: }
+0460: code_files <- c(file.path(script_dir, "build_hits_manuscript_v1.R"), list.files(file.path(script_dir, "hits_v1_plots"), pattern = "\\.R$", full.names = TRUE))
+0461: file.copy(code_files, file.path(out, "08_CODE"), overwrite = TRUE)
+0462: writeLines(capture.output(sessionInfo()), file.path(out, "08_CODE/session_info.txt"))
+0463: manifest <- data.frame(file = character(), size_bytes = numeric(), sha256 = character())
+0464: all_files <- list.files(out, recursive = TRUE, full.names = TRUE)
+0465: all_files <- all_files[!dir.exists(all_files)]
+0466: for (f in all_files) {
+0467:   h <- tryCatch(system2("shasum", c("-a", "256", f), stdout = TRUE), error = function(e) NA_character_)
+0468:   manifest <- rbind(manifest, data.frame(file = substring(f, nchar(out) + 2), size_bytes = file.info(f)$size, sha256 = sub(" .*", "", h)))
+0469: }
+0470: write_csv(manifest, file.path(out, "08_CODE/run_manifest.csv"))
+0471:
+0472: oldwd <- getwd()
+0473: setwd(file.path(out, "01_MANUSCRIPT"))
+0474: if (nzchar(Sys.which("pandoc"))) system2("pandoc", c("--from", "gfm", "--to", "docx", "--standalone", "HITS_Manuscript_V1.0.md", "-o", "HITS_Manuscript_V1.0.docx"))
+0475: setwd(file.path(out, "04_SUPPLEMENT"))
+0476: if (nzchar(Sys.which("pandoc"))) system2("pandoc", c("--from", "gfm", "--to", "docx", "--standalone", "HITS_Supplement_V1.0.md", "-o", "HITS_Supplement_V1.0.docx"))
+0477: setwd(oldwd)
+0478: if (!nzchar(Sys.which("pandoc"))) writeLines("Pandoc not available; DOCX conversion pending.", file.path(out, "05_REPORTING_QA/DOCX_conversion_status.txt"))
+0479:
+0480: manifest <- data.frame(file = character(), size_bytes = numeric(), sha256 = character())
+0481: all_files <- list.files(out, recursive = TRUE, full.names = TRUE)
+0482: all_files <- all_files[!dir.exists(all_files) & normalizePath(all_files) != normalizePath(file.path(out, "08_CODE/run_manifest.csv"))]
+0483: for (f in all_files) {
+0484:   h <- tryCatch(system2("shasum", c("-a", "256", f), stdout = TRUE), error = function(e) NA_character_)
+0485:   manifest <- rbind(manifest, data.frame(file = substring(f, nchar(out) + 2), size_bytes = file.info(f)$size, sha256 = sub(" .*", "", h)))
+0486: }
+0487: write_csv(manifest, file.path(out, "08_CODE/run_manifest.csv"))
+0488:
+0489: zip_path <- file.path(root, "HITS_MANUSCRIPT_V1.0.zip")
+0490: log("Completed HITS_MANUSCRIPT_V1.0 build")
+0491: manifest <- data.frame(file = character(), size_bytes = numeric(), sha256 = character())
+0492: all_files <- list.files(out, recursive = TRUE, full.names = TRUE)
+0493: all_files <- all_files[!dir.exists(all_files) & normalizePath(all_files) != normalizePath(file.path(out, "08_CODE/run_manifest.csv"))]
+0494: for (f in all_files) {
+0495:   h <- tryCatch(system2("shasum", c("-a", "256", f), stdout = TRUE), error = function(e) NA_character_)
+0496:   manifest <- rbind(manifest, data.frame(file = substring(f, nchar(out) + 2), size_bytes = file.info(f)$size, sha256 = sub(" .*", "", h)))
+0497: }
+0498: write_csv(manifest, file.path(out, "08_CODE/run_manifest.csv"))
+0499: if (file.exists(zip_path)) unlink(zip_path)
+0500: setwd(root)
+0501: system2("zip", c("-qr", basename(zip_path), basename(out)))
+0502: setwd(oldwd)
+0503: cat("OUTPUT=", out, "\nZIP=", zip_path, "\n", sep = "")

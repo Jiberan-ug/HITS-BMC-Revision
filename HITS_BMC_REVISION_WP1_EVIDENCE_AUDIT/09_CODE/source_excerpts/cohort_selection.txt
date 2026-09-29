@@ -1,0 +1,1208 @@
+Source: scripts/06_hits_ami_predevelopment_v0_2.py
+Original SHA256: 089924ec5a58d09c3e96bdedd2a9316690eebd3f70377a058760a90b267ad91a
+READ ONLY; NOT EXECUTABLE. Home path redacted; trailing whitespace normalized.
+
+0001: #!/usr/bin/env python3
+0002: """HITS AMI phenotype pre-development V0.2.
+0003:
+0004: This is a phenotype-discrimination feasibility analysis, not future-risk
+0005: prediction and not final score development. No MACE labels are used.
+0006:
+0007: All patient identifiers in outputs are one-way audit identifiers. Raw patient
+0008: IDs are never written to the output directory.
+0009: """
+0010:
+0011: from __future__ import annotations
+0012:
+0013: import hashlib
+0014: import json
+0015: import math
+0016: import platform
+0017: import re
+0018: import sys
+0019: import time
+0020: import warnings
+0021: from pathlib import Path
+0022:
+0023: import matplotlib
+0024: matplotlib.use("Agg")
+0025: import matplotlib.pyplot as plt
+0026: import numpy as np
+0027: import pandas as pd
+0028: import scipy
+0029: import sklearn
+0030: import statsmodels.api as sm
+0031: from scipy import stats
+0032: from sklearn.impute import SimpleImputer
+0033: from sklearn.linear_model import LogisticRegressionCV
+0034: from sklearn.metrics import brier_score_loss, roc_auc_score, roc_curve
+0035: from sklearn.model_selection import RepeatedStratifiedKFold, StratifiedKFold
+0036: from sklearn.pipeline import Pipeline
+0037: from sklearn.preprocessing import StandardScaler
+0038:
+0039:
+0040: SEED = 20260822
+0041: OUTER_SPLITS = 5
+0042: OUTER_REPEATS = 20
+0043: INNER_SPLITS = 5
+0044: ALPHA_GRID = [0.25, 0.50, 0.75]
+0045: C_GRID = np.logspace(-3, 2, 8)
+0046: BOOTSTRAP_N = 500
+0047:
+0048: ROOT = Path(__file__).resolve().parents[1]
+0049: SOURCE = Path(
+0050:     "$HOME/Documents/颈动脉粥样斑块MACE事件/下载归档/"
+0051:     "2026-08-16_Article2_投稿预审与队列溯源/TwoPapers_Article2_R代码与图表/"
+0052:     "TwoPapers_R_Work_V0.3/data_raw/ehr_extracted/master_cohort_cleaned.csv"
+0053: )
+0054: OUT = ROOT / "HITS_AMI_predevelopment_v0.2"
+0055: OUT.mkdir(parents=True, exist_ok=True)
+0056:
+0057: WARNINGS: list[str] = []
+0058: FIT_RECORDS: list[dict] = []
+0059: COEF_RECORDS: list[dict] = []
+0060:
+0061: COL = {
+0062:     "patient": "patient_sn",
+0063:     "diagnosis": "discharge_diagnosis",
+0064:     "admission": "admission_date",
+0065:     "birth": "birth_date",
+0066:     "birth_baseline": "基线_birth_date",
+0067:     "sex": "gender",
+0068:     "sex_baseline": "基线_gender",
+0069:     "hypertension": "is_hypertension",
+0070:     "diabetes": "is_diabetes",
+0071:     "wbc": "lab_blood_routine_examination_WBC_test_result",
+0072:     "wbc_unit": "lab_blood_routine_examination_WBC_unit",
+0073:     "wbc_time": "lab_blood_routine_examination_WBC_test_time",
+0074:     "neut_pct": "lab_blood_routine_examination_Neut_test_result",
+0075:     "neut_pct_unit": "lab_blood_routine_examination_Neut_unit",
+0076:     "neut_pct_time": "lab_blood_routine_examination_Neut_test_time",
+0077:     "neut": "lab_blood_routine_examination_Neut_test_result__dup02",
+0078:     "neut_unit": "lab_blood_routine_examination_Neut_unit__dup02",
+0079:     "neut_time": "lab_blood_routine_examination_Neut_test_time__dup02",
+0080:     "lymph_pct": "lab_blood_routine_examination_Lymph_test_result",
+0081:     "lymph_pct_unit": "lab_blood_routine_examination_Lymph_unit",
+0082:     "lymph_pct_time": "lab_blood_routine_examination_Lymph_test_time",
+0083:     "lymph": "lab_blood_routine_examination_Lymph_test_result__dup02",
+0084:     "lymph_unit": "lab_blood_routine_examination_Lymph_unit__dup02",
+0085:     "lymph_time": "lab_blood_routine_examination_Lymph_test_time__dup02",
+0086:     "mono_pct": "lab_blood_routine_examination_Mono_test_result",
+0087:     "mono_pct_unit": "lab_blood_routine_examination_Mono_unit",
+0088:     "mono_pct_time": "lab_blood_routine_examination_Mono_test_time",
+0089:     "mono": "lab_blood_routine_examination_Mono_test_result__dup02",
+0090:     "mono_unit": "lab_blood_routine_examination_Mono_unit__dup02",
+0091:     "mono_time": "lab_blood_routine_examination_Mono_test_time__dup02",
+0092:     "plt": "lab_blood_routine_examination_PLT_test_result",
+0093:     "plt_unit": "lab_blood_routine_examination_PLT_unit",
+0094:     "plt_time": "lab_blood_routine_examination_PLT_test_time",
+0095:     "mpv": "lab_blood_routine_examination_MPV_test_result",
+0096:     "mpv_unit": "lab_blood_routine_examination_MPV_unit",
+0097:     "mpv_time": "lab_blood_routine_examination_MPV_test_time",
+0098:     "pdw": "lab_blood_routine_examination_PDW_test_result",
+0099:     "pdw_unit": "lab_blood_routine_examination_PDW_unit",
+0100:     "pdw_time": "lab_blood_routine_examination_PDW_test_time",
+0101:     "rdw": "lab_blood_routine_examination_RDW_CV_test_result",
+0102:     "rdw_unit": "lab_blood_routine_examination_RDW_CV_unit",
+0103:     "rdw_time": "lab_blood_routine_examination_RDW_CV_test_time",
+0104:     "hb": "lab_blood_routine_examination_Hb_test_result",
+0105:     "hb_unit": "lab_blood_routine_examination_Hb_unit",
+0106:     "hb_time": "lab_blood_routine_examination_Hb_test_time",
+0107:     "fbg": "lab_cruor_testing_Fbg_test_result",
+0108:     "fbg_unit": "lab_cruor_testing_Fbg_unit",
+0109:     "fbg_time": "lab_cruor_testing_Fbg_test_time",
+0110: }
+0111:
+0112: BIOMARKERS = ["neut", "lymph", "mono", "plt", "mpv", "pdw", "rdw", "hb", "fbg"]
+0113: CORE = ["neut", "lymph", "mono", "plt", "mpv", "rdw", "hb"]
+0114: ENHANCED = CORE + ["fbg"]
+0115: CORE_REQUIRED = ["neut", "lymph", "mono", "plt"]
+0116: LOG_VARS = {"neut", "lymph", "mono", "plt", "fbg", "pdw"}
+0117: BENCHMARKS = ["NLR", "PLR", "MLR", "SII", "SIRI", "PIV", "HRR"]
+0118: BENCHMARK_DIRECTION = {"NLR": 1, "PLR": 1, "MLR": 1, "SII": 1, "SIRI": 1, "PIV": 1, "HRR": -1}
+0119:
+0120: PLAUSIBLE = {
+0121:     "neut": (0.0, 100.0),
+0122:     "lymph": (0.0, 50.0),
+0123:     "mono": (0.0, 20.0),
+0124:     "plt": (1.0, 2000.0),
+0125:     "mpv": (1.0, 30.0),
+0126:     "pdw": (1.0, 50.0),
+0127:     "rdw": (5.0, 50.0),
+0128:     "hb": (20.0, 250.0),
+0129:     "fbg": (0.1, 20.0),
+0130: }
+0131:
+0132:
+0133: def log(message: str) -> None:
+0134:     print(message, flush=True)
+0135:
+0136:
+0137: def warn(message: str) -> None:
+0138:     WARNINGS.append(message)
+0139:     warnings.warn(message)
+0140:
+0141:
+0142: def sha256(path: Path) -> str:
+0143:     h = hashlib.sha256()
+0144:     with path.open("rb") as f:
+0145:         for chunk in iter(lambda: f.read(1024 * 1024), b""):
+0146:             h.update(chunk)
+0147:     return h.hexdigest()
+0148:
+0149:
+0150: def parse_numeric(s: pd.Series) -> pd.Series:
+0151:     x = s.astype("string").str.strip()
+0152:     x = x.replace({"": pd.NA, "NA": pd.NA, "N/A": pd.NA, "NULL": pd.NA})
+0153:     x = x.str.replace(",", "", regex=False).str.replace(r"^[<>]=?\s*", "", regex=True)
+0154:     return pd.to_numeric(x, errors="coerce")
+0155:
+0156:
+0157: def parse_datetime(s: pd.Series) -> pd.Series:
+0158:     x = s.astype("string").str.strip().replace({"": pd.NA, "NA": pd.NA, "N/A": pd.NA})
+0159:     out = pd.to_datetime(x, errors="coerce", format="mixed")
+0160:     numeric = pd.to_numeric(x, errors="coerce")
+0161:     excel = numeric.between(20000, 70000, inclusive="neither") & out.isna()
+0162:     if excel.any():
+0163:         out.loc[excel] = pd.Timestamp("1899-12-30") + pd.to_timedelta(numeric.loc[excel], unit="D")
+0164:     return out
+0165:
+0166:
+0167: def audit_id(value: object) -> str:
+0168:     raw = "" if pd.isna(value) else str(value)
+0169:     return "AMI_P_" + hashlib.sha256(raw.encode("utf-8")).hexdigest()[:12]
+0170:
+0171:
+0172: def normalize_text(value: object) -> str:
+0173:     if value is None or pd.isna(value):
+0174:         return ""
+0175:     return str(value).strip()
+0176:
+0177:
+0178: def binary_flag(s: pd.Series) -> pd.Series:
+0179:     text = s.astype("string").str.strip().str.lower()
+0180:     out = pd.Series(np.nan, index=s.index, dtype=float)
+0181:     yes = {"是", "有", "1", "true", "yes", "y", "阳性"}
+0182:     no = {"否", "无", "0", "false", "no", "n", "阴性"}
+0183:     out[text.isin(yes)] = 1.0
+0184:     out[text.isin(no)] = 0.0
+0185:     numeric = pd.to_numeric(text, errors="coerce")
+0186:     out[numeric.eq(1)] = 1.0
+0187:     out[numeric.eq(0)] = 0.0
+0188:     return out
+0189:
+0190:
+0191: def sex_binary(primary: pd.Series, baseline: pd.Series) -> pd.Series:
+0192:     text = primary.astype("string").fillna(baseline.astype("string")).str.strip().str.lower()
+0193:     out = pd.Series(np.nan, index=primary.index, dtype=float)
+0194:     out[text.str.contains("男|male|^m$", regex=True, na=False)] = 1.0
+0195:     out[text.str.contains("女|female|^f$", regex=True, na=False)] = 0.0
+0196:     return out
+0197:
+0198:
+0199: MI_RE = re.compile(r"心肌梗(?:死|塞)|myocardial\s+infarction|(?<![A-Za-z])(?:STEMI|NSTEMI|MI)(?![A-Za-z])", re.I)
+0200: ACUTE_RE = re.compile(
+0201:     r"急性|亚急(?:性)?|acute|subacute|ST\s*段\s*(?:抬高|非抬高)|非ST\s*段\s*(?:抬高|非抬高)", re.I
+0202: )
+0203: OLD_RE = re.compile(r"陈旧|既往|病史|old|prior|previous|history\s+of", re.I)
+0204: UNCERTAIN_RE = re.compile(r"待排|疑似|疑诊|考虑|可能|待查|排除|rule\s*out|suspected", re.I)
+0205: NEGATED_MI_RE = re.compile(r"(?:无|否认|未见|没有).{0,4}(?:心肌梗(?:死|塞)|myocardial\s+infarction|MI)", re.I)
+0206: CAD_RE = re.compile(
+0207:     r"冠状动脉粥样硬化性心脏病|冠心病|冠状动脉疾病|coronary\s+artery\s+disease|"
+0208:     r"(?<![A-Za-z])CAD(?![A-Za-z])|稳定型?心绞痛|不稳定型?心绞痛|stable\s+angina|"
+0209:     r"unstable\s+angina|PCI|冠状动脉支架|冠脉支架|冠状动脉旁路|CABG|冠脉搭桥|"
+0210:     r"急性冠脉综合征|acute\s+coronary\s+syndrome",
+0211:     re.I,
+0212: )
+0213: ANGINA_CAD_RE = re.compile(
+0214:     r"冠状动脉粥样硬化性心脏病|冠心病|冠状动脉疾病|coronary\s+artery\s+disease|"
+0215:     r"(?<![A-Za-z])CAD(?![A-Za-z])|稳定型?心绞痛|不稳定型?心绞痛|stable\s+angina|"
+0216:     r"unstable\s+angina|PCI|冠状动脉支架|冠脉支架|冠状动脉旁路|CABG|冠脉搭桥",
+0217:     re.I,
+0218: )
+0219: ACS_RE = re.compile(r"急性冠脉综合征|acute\s+coronary\s+syndrome|\bACS\b", re.I)
+0220:
+0221:
+0222: def split_diagnosis(text: str) -> list[str]:
+0223:     return [x.strip() for x in re.split(r"[,，;；。|]+", text) if x.strip()]
+0224:
+0225:
+0226: def acute_mi_pattern(component: str) -> bool:
+0227:     if not MI_RE.search(component):
+0228:         return False
+0229:     if UNCERTAIN_RE.search(component):
+0230:         return False
+0231:     direct = re.search(
+0232:         r"(?:急性|亚急(?:性)?|acute|subacute).{0,20}(?:心肌梗(?:死|塞)|myocardial\s+infarction)|"
+0233:         r"(?:心肌梗(?:死|塞)|myocardial\s+infarction).{0,12}(?:急性|亚急(?:性)?|acute|subacute)|"
+0234:         r"(?:STEMI|NSTEMI|ST\s*段\s*(?:抬高|非抬高)|非ST\s*段\s*(?:抬高|非抬高)).{0,18}(?:心肌梗(?:死|塞)|myocardial\s+infarction)|"
+0235:         r"(?:心肌梗(?:死|塞)|myocardial\s+infarction).{0,18}(?:STEMI|NSTEMI)",
+0236:         component,
+0237:         re.I,
+0238:     )
+0239:     return bool(direct)
+0240:
+0241:
+0242: def classify_diagnosis(text: str) -> dict:
+0243:     text = normalize_text(text)
+0244:     if not text:
+0245:         return {
+0246:             "phenotype_class": "C_ambiguous_or_review",
+0247:             "ami_binary": np.nan,
+0248:             "mi_any": False,
+0249:             "acute_mi": False,
+0250:             "old_mi": False,
+0251:             "uncertain_mi": False,
+0252:             "cad_marker": False,
+0253:             "acs_marker": False,
+0254:             "strict_control_candidate": False,
+0255:             "trigger_keywords": "missing discharge diagnosis",
+0256:             "classification_reason": "missing discharge diagnosis",
+0257:         }
+0258:     components = split_diagnosis(text)
+0259:     mi_components = [c for c in components if MI_RE.search(c)]
+0260:     any_mi = bool(mi_components) or bool(MI_RE.search(text))
+0261:     if any_mi and NEGATED_MI_RE.search(text):
+0262:         any_mi = False
+0263:         mi_components = []
+0264:     acute_components = [c for c in mi_components if acute_mi_pattern(c)]
+0265:     acute = bool(acute_components)
+0266:     # Handle dense, delimiter-free discharge text with an explicit acute MI phrase.
+0267:     if not acute:
+0268:         acute = bool(
+0269:             re.search(
+0270:                 r"(?:急性|亚急(?:性)?|acute|subacute).{0,20}(?:心肌梗(?:死|塞)|myocardial\s+infarction)|"
+0271:                 r"(?:STEMI|NSTEMI).{0,20}(?:心肌梗(?:死|塞)|myocardial\s+infarction)",
+0272:                 text,
+0273:                 re.I,
+0274:             )
+0275:         )
+0276:     old = any(OLD_RE.search(c) for c in mi_components)
+0277:     uncertain = any(UNCERTAIN_RE.search(c) for c in mi_components)
+0278:     cad = bool(CAD_RE.search(text))
+0279:     strict_cad = bool(ANGINA_CAD_RE.search(text))
+0280:     acs = bool(ACS_RE.search(text))
+0281:     acute_uncertain = uncertain or bool(re.search(r"(?:急性|亚急(?:性)?).{0,12}(?:待排|疑似|疑诊|考虑|可能)", text, re.I))
+0282:     if acute and acute_uncertain:
+0283:         cls = "C_ambiguous_or_review"
+0284:         reason = "acute-MI-like text with uncertainty marker"
+0285:         ami = np.nan
+0286:     elif acute:
+0287:         cls = "A_definite_AMI"
+0288:         reason = "explicit current acute/subacute MI marker"
+0289:         ami = 1
+0290:     elif any_mi and old:
+0291:         cls = "B_definite_nonAMI_CAD"
+0292:         reason = "explicit old/prior MI without current acute MI marker"
+0293:         ami = 0
+0294:     elif any_mi:
+0295:         cls = "C_ambiguous_or_review"
+0296:         reason = "MI keyword without acute or old/prior context"
+0297:         ami = np.nan
+0298:     elif cad:
+0299:         cls = "B_definite_nonAMI_CAD"
+0300:         reason = "CAD/angina/revascularization diagnosis without current MI"
+0301:         ami = 0
+0302:     else:
+0303:         cls = "out_of_scope_nonCAD"
+0304:         reason = "no MI or CAD/angina marker"
+0305:         ami = np.nan
+0306:     strict = cls == "B_definite_nonAMI_CAD" and strict_cad and not old and not acs
+0307:     trigger = []
+0308:     if any_mi:
+0309:         trigger.append("MI keyword")
+0310:     if acute:
+0311:         trigger.append("acute/subacute marker")
+0312:     if old:
+0313:         trigger.append("old/prior marker")
+0314:     if uncertain:
+0315:         trigger.append("uncertainty marker")
+0316:     if cad:
+0317:         trigger.append("CAD/angina/revascularization marker")
+0318:     if acs:
+0319:         trigger.append("ACS marker")
+0320:     return {
+0321:         "phenotype_class": cls,
+0322:         "ami_binary": ami,
+0323:         "mi_any": any_mi,
+0324:         "acute_mi": acute,
+0325:         "old_mi": old,
+0326:         "uncertain_mi": uncertain,
+0327:         "cad_marker": cad,
+0328:         "acs_marker": acs,
+0329:         "strict_control_candidate": strict,
+0330:         "trigger_keywords": "; ".join(trigger) if trigger else "none",
+0331:         "classification_reason": reason,
+0332:     }
+0333:
+0334:
+0335: def select_one_row_per_patient(raw: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
+0336:     work = raw.copy()
+0337:     work["_source_row"] = np.arange(1, len(work) + 1)
+0338:     diagnosis = work[COL["diagnosis"]].astype("string").fillna("").str.strip()
+0339:     work["_has_diagnosis"] = diagnosis.ne("").astype(int)
+0340:     core_count = work[[COL[x] for x in CORE_REQUIRED]].notna().sum(axis=1)
+0341:     work["_core_required_count"] = core_count
+0342:     work["_has_cbc_time"] = parse_datetime(work[COL["wbc_time"]]).notna().astype(int)
+0343:     work["_qc_nonmissing"] = pd.to_numeric(work.get("qc_nonmissing_count"), errors="coerce").fillna(0)
+0344:     work = work.sort_values(
+0345:         [COL["patient"], "_has_diagnosis", "_core_required_count", "_has_cbc_time", "_qc_nonmissing", "_source_row"],
+0346:         ascending=[True, False, False, False, False, True],
+0347:         kind="stable",
+0348:     )
+0349:     selected = work.drop_duplicates(COL["patient"], keep="first").copy()
+0350:     audit = work[[COL["patient"], "_source_row", "_has_diagnosis", "_core_required_count", "_has_cbc_time", "_qc_nonmissing"]].copy()
+0351:     audit["research_patient_id"] = audit[COL["patient"]].map(audit_id)
+0352:     audit["selected"] = ~audit.duplicated(COL["patient"], keep="first")
+0353:     return selected, audit
+0354:
+0355:
+0356: def build_patient_frame(selected: pd.DataFrame) -> pd.DataFrame:
+0357:     out = pd.DataFrame(index=selected.index)
+0358:     out["research_patient_id"] = selected[COL["patient"]].map(audit_id)
+0359:     out["diagnosis_text"] = selected[COL["diagnosis"]].astype("string")
+0360:     out["source_row_anonymous"] = pd.to_numeric(selected["_source_row"], errors="coerce")
+0361:     out["cbc_datetime"] = parse_datetime(selected[COL["wbc_time"]])
+0362:     out["cbc_year"] = out["cbc_datetime"].dt.year.astype("Float64")
+0363:     out["admission_datetime"] = parse_datetime(selected[COL["admission"]])
+0364:     birth = parse_datetime(selected[COL["birth"]]).fillna(parse_datetime(selected[COL["birth_baseline"]]))
+0365:     reference = out["admission_datetime"].fillna(out["cbc_datetime"])
+0366:     out["age"] = (reference - birth).dt.days / 365.2425
+0367:     out.loc[~out["age"].between(18, 120), "age"] = np.nan
+0368:     out["male"] = sex_binary(selected[COL["sex"]], selected[COL["sex_baseline"]])
+0369:     out["hypertension"] = binary_flag(selected[COL["hypertension"]])
+0370:     out["diabetes"] = binary_flag(selected[COL["diabetes"]])
+0371:     out["smoking"] = np.nan
+0372:     for name in BIOMARKERS + ["wbc", "neut_pct", "lymph_pct", "mono_pct"]:
+0373:         source_key = name
+0374:         if source_key in COL:
+0375:             out[name] = parse_numeric(selected[COL[source_key]])
+0376:     for name in ["wbc", "neut_pct", "lymph_pct", "mono_pct"]:
+0377:         out[f"{name}_unit"] = selected[COL[f"{name}_unit"]].astype("string").str.strip()
+0378:     for name in ["neut", "lymph", "mono", "plt", "mpv", "pdw", "rdw", "hb", "fbg"]:
+0379:         out[f"{name}_unit"] = selected[COL[f"{name}_unit"]].astype("string").str.strip()
+0380:         out[f"{name}_datetime"] = parse_datetime(selected[COL[f"{name}_time"]])
+0381:     pheno = pd.DataFrame([classify_diagnosis(x) for x in out["diagnosis_text"]], index=out.index)
+0382:     out = pd.concat([out, pheno], axis=1)
+0383:     out["core_required_available"] = out[CORE_REQUIRED].notna().all(axis=1)
+0384:     out["primary_analysis"] = out["core_required_available"] & out["phenotype_class"].isin(["A_definite_AMI", "B_definite_nonAMI_CAD"])
+0385:     out["strict_analysis"] = out["core_required_available"] & (
+0386:         (out["phenotype_class"] == "A_definite_AMI") | out["strict_control_candidate"]
+0387:     )
+0388:     out["y_primary"] = np.where(out["phenotype_class"] == "A_definite_AMI", 1, np.where(out["phenotype_class"] == "B_definite_nonAMI_CAD", 0, np.nan))
+0389:     out["y_strict"] = np.where(out["phenotype_class"] == "A_definite_AMI", 1, np.where(out["strict_control_candidate"], 0, np.nan))
+0390:     return out.reset_index(drop=True)
+0391:
+0392:
+0393: def write_cohort_outputs(raw: pd.DataFrame, selected: pd.DataFrame, audit: pd.DataFrame, d: pd.DataFrame) -> None:
+0394:     rows = [
+0395:         ("raw_master_rows", len(raw), "all source rows"),
+0396:         ("unique_patients", d["research_patient_id"].nunique(), "one selected row per patient"),
+0397:         ("diagnosis_available", int(d["diagnosis_text"].fillna("").str.strip().ne("").sum()), "non-empty discharge diagnosis"),
+0398:         ("definite_AMI", int((d["phenotype_class"] == "A_definite_AMI").sum()), "explicit current acute/subacute MI"),
+0399:         ("definite_nonAMI_CAD", int((d["phenotype_class"] == "B_definite_nonAMI_CAD").sum()), "CAD/angina/revascularization or old MI without current acute MI"),
+0400:         ("ambiguous_or_review", int((d["phenotype_class"] == "C_ambiguous_or_review").sum()), "missing or semantically incomplete MI diagnosis"),
+0401:         ("out_of_scope_nonCAD", int((d["phenotype_class"] == "out_of_scope_nonCAD").sum()), "no MI or CAD/angina marker"),
+0402:         ("AMI_phenotype_classifiable_A_or_B", int(d["phenotype_class"].isin(["A_definite_AMI", "B_definite_nonAMI_CAD"]).sum()), "primary phenotype population before core CBC requirement"),
+0403:         ("core_CBC_available_in_A_or_B", int(d["primary_analysis"].sum()), "Neut, Lymph, Mono and PLT all available"),
+0404:         ("strict_control_available_with_core_CBC", int(d["strict_analysis"].sum()), "AMI or strict angina/CAD-only control with core CBC"),
+0405:     ]
+0406:     flow = pd.DataFrame(rows, columns=["stage", "n", "definition"])
+0407:     flow["percent_of_unique_patients"] = 100 * flow["n"] / max(1, d["research_patient_id"].nunique())
+0408:     flow["percent_of_previous_stage"] = np.nan
+0409:     # Only use a previous-stage denominator where the stages are genuinely nested;
+0410:     # phenotype classes are sibling categories and must not be divided by each other.
+0411:     flow.loc[1, "percent_of_previous_stage"] = 100 * flow.loc[1, "n"] / max(1, flow.loc[0, "n"])
+0412:     flow.loc[2, "percent_of_previous_stage"] = 100 * flow.loc[2, "n"] / max(1, flow.loc[1, "n"])
+0413:     for i in [3, 4, 5, 6, 7]:
+0414:         flow.loc[i, "percent_of_previous_stage"] = 100 * flow.loc[i, "n"] / max(1, flow.loc[2, "n"])
+0415:     flow.loc[8, "percent_of_previous_stage"] = 100 * flow.loc[8, "n"] / max(1, flow.loc[7, "n"])
+0416:     flow.loc[9, "percent_of_previous_stage"] = 100 * flow.loc[9, "n"] / max(1, flow.loc[7, "n"])
+0417:     flow.to_csv(OUT / "01_cohort_flow.csv", index=False)
+0418:     d.loc[d["phenotype_class"] == "C_ambiguous_or_review", [
+0419:         "research_patient_id", "diagnosis_text", "phenotype_class", "trigger_keywords", "classification_reason", "core_required_available", "cbc_year"
+0420:     ]].to_csv(OUT / "03_AMI_ambiguous_cases_for_review.csv", index=False)
+0421:     mapping_rows = [
+0422:         ("AMI-A1", "positive", "急性/亚急性/acute/subacute + myocardial infarction", "explicit current acute or subacute MI", int((d["phenotype_class"] == "A_definite_AMI").sum())),
+0423:         ("AMI-A2", "positive", "STEMI or NSTEMI with no uncertainty marker", "specific MI subtype", int(((d["phenotype_class"] == "A_definite_AMI") & d["acute_mi"]).sum())),
+0424:         ("CAD-B1", "negative", "CAD/冠心病/angina/PCI/CABG without current MI", "definite non-AMI CAD control", int(((d["phenotype_class"] == "B_definite_nonAMI_CAD") & ~d["old_mi"]).sum())),
+0425:         ("CAD-B2", "negative-primary-only", "陈旧/既往 MI without current acute MI", "primary non-AMI CAD; excluded from strict control", int(((d["phenotype_class"] == "B_definite_nonAMI_CAD") & d["old_mi"]).sum())),
+0426:         ("REVIEW-C1", "review", "MI keyword without acute or old/prior context", "requires manual review", int(((d["phenotype_class"] == "C_ambiguous_or_review") & d["mi_any"]).sum())),
+0427:         ("REVIEW-C2", "review", "missing discharge diagnosis", "requires manual review", int((d["phenotype_class"] == "C_ambiguous_or_review").sum() - int(((d["phenotype_class"] == "C_ambiguous_or_review") & d["mi_any"]).sum()))),
+0428:         ("EXCLUDE-O1", "excluded", "no MI or CAD/angina marker", "outside CAD/AMI phenotype target", int((d["phenotype_class"] == "out_of_scope_nonCAD").sum())),
+0429:     ]
+0430:     pd.DataFrame(mapping_rows, columns=["rule_id", "role", "pattern_or_marker", "operational_definition", "selected_patient_n"]).to_csv(OUT / "02_AMI_diagnosis_mapping.csv", index=False)
+0431:     strict_rows = [
+0432:         {"rule_id": "S1", "include": True, "condition": "phenotype_class == A_definite_AMI", "reason": "retain all definite AMI"},
+0433:         {"rule_id": "S2", "include": True, "condition": "stable/unstable angina or CAD/revascularization; no acute MI; no old/prior MI; no ACS-only marker", "reason": "strict CAD/angina control"},
+0434:         {"rule_id": "S3", "include": False, "condition": "old/prior MI", "reason": "strict sensitivity excludes old MI"},
+0435:         {"rule_id": "S4", "include": False, "condition": "ambiguous MI, missing diagnosis, out-of-scope non-CAD", "reason": "not a defensible strict control"},
+0436:         {"rule_id": "S5", "include": "eligibility", "condition": "Neut, Lymph, Mono and PLT all non-missing", "reason": "required for core CBC phenotype"},
+0437:     ]
+0438:     strict = pd.DataFrame(strict_rows)
+0439:     strict["primary_patient_n"] = [int(d["primary_analysis"].sum()), int(d["strict_control_candidate"].sum()), int((d["phenotype_class"] == "B_definite_nonAMI_CAD").sum() - d["old_mi"].sum()), int((d["phenotype_class"] == "C_ambiguous_or_review").sum() + (d["phenotype_class"] == "out_of_scope_nonCAD").sum()), int(d["core_required_available"].sum())]
+0440:     strict.to_csv(OUT / "04_strict_control_definition.csv", index=False)
+0441:     audit.drop(columns=[COL["patient"]], errors="ignore").to_csv(OUT / "20_patient_row_selection_audit.csv", index=False)
+0442:
+0443:
+0444: def missingness_output(d: pd.DataFrame) -> None:
+0445:     clinical = ["age", "male", "hypertension", "diabetes", "smoking"]
+0446:     vars_all = BIOMARKERS + clinical
+0447:     groups = {
+0448:         "overall_selected_patients": np.ones(len(d), dtype=bool),
+0449:         "definite_AMI": d["phenotype_class"].eq("A_definite_AMI").to_numpy(),
+0450:         "definite_nonAMI_CAD": d["phenotype_class"].eq("B_definite_nonAMI_CAD").to_numpy(),
+0451:         "primary_analysis": d["primary_analysis"].to_numpy(),
+0452:         "strict_analysis": d["strict_analysis"].to_numpy(),
+0453:     }
+0454:     rows = []
+0455:     for group, mask in groups.items():
+0456:         sub = d.loc[mask]
+0457:         for var in vars_all:
+0458:             miss = int(sub[var].isna().sum())
+0459:             rows.append({"cohort": group, "variable": var, "denominator_n": len(sub), "available_n": len(sub) - miss, "missing_n": miss, "missing_pct": 100 * miss / max(1, len(sub))})
+0460:     pd.DataFrame(rows).to_csv(OUT / "06_candidate_missingness.csv", index=False)
+0461:
+0462:
+0463: def unit_range_output(d: pd.DataFrame) -> None:
+0464:     rows = []
+0465:     cohort_masks = {
+0466:         "overall_selected_patients": np.ones(len(d), dtype=bool),
+0467:         "definite_AMI": d["phenotype_class"].eq("A_definite_AMI").to_numpy(),
+0468:         "definite_nonAMI_CAD": d["phenotype_class"].eq("B_definite_nonAMI_CAD").to_numpy(),
+0469:         "primary_analysis": d["primary_analysis"].to_numpy(),
+0470:     }
+0471:     for cohort, mask in cohort_masks.items():
+0472:         sub = d.loc[mask]
+0473:         for var in BIOMARKERS:
+0474:             units = sub[f"{var}_unit"].fillna("<missing>").replace({"<NA>": "<missing>", "nan": "<missing>"})
+0475:             for unit, n in units.value_counts(dropna=False).items():
+0476:                 rows.append({"audit_type": "unit", "cohort": cohort, "variable": var, "unit": unit, "n": int(n), "percent": 100 * int(n) / max(1, len(sub)), "flag": "multiple_or_missing_units" if unit == "<missing>" or units.nunique() > 2 else "review"})
+0477:             x = sub[var].dropna()
+0478:             if len(x):
+0479:                 lo, hi = PLAUSIBLE[var]
+0480:                 rows.append({"audit_type": "range", "cohort": cohort, "variable": var, "unit": "value", "n": len(x), "percent": np.nan, "min": float(x.min()), "p1": float(x.quantile(.01)), "median": float(x.median()), "p99": float(x.quantile(.99)), "max": float(x.max()), "plausibility_flag_n": int(((x < lo) | (x > hi)).sum()), "audit_lower": lo, "audit_upper": hi})
+0481:     pd.DataFrame(rows).to_csv(OUT / "07_unit_range_audit.csv", index=False)
+0482:
+0483:
+0484: def time_audit_output(d: pd.DataFrame) -> None:
+0485:     rows = []
+0486:     for var in ["neut", "lymph", "mono", "plt", "mpv", "pdw", "rdw", "hb"]:
+0487:         gap = (d[f"{var}_datetime"] - d["cbc_datetime"]).dt.total_seconds() / 3600
+0488:         rows.append({"comparison": f"{var}_time_vs_WBC_time", "denominator_n": len(d), "value_available_n": int(d[var].notna().sum()), "time_available_n": int(d[f"{var}_datetime"].notna().sum()), "exact_time_n": int(gap.dropna().eq(0).sum()), "within_1h_n": int(gap.dropna().abs().le(1).sum()), "within_24h_n": int(gap.dropna().abs().le(24).sum()), "median_abs_gap_hours": float(gap.dropna().abs().median()) if gap.notna().any() else np.nan, "note": "CBC component timing relative to WBC"})
+0489:     fbg_gap = (d["fbg_datetime"] - d["cbc_datetime"]).dt.total_seconds() / 3600
+0490:     adm_gap = (d["cbc_datetime"] - d["admission_datetime"]).dt.total_seconds() / 3600
+0491:     rows += [
+0492:         {"comparison": "fbg_time_vs_WBC_time", "denominator_n": len(d), "value_available_n": int(d["fbg"].notna().sum()), "time_available_n": int(d["fbg_datetime"].notna().sum()), "exact_time_n": int(fbg_gap.dropna().eq(0).sum()), "within_1h_n": int(fbg_gap.dropna().abs().le(1).sum()), "within_24h_n": int(fbg_gap.dropna().abs().le(24).sum()), "median_abs_gap_hours": float(fbg_gap.dropna().abs().median()) if fbg_gap.notna().any() else np.nan, "note": "Fibrinogen timing relative to CBC"},
+0493:         {"comparison": "CBC_time_vs_admission_time", "denominator_n": len(d), "value_available_n": int(d["cbc_datetime"].notna().sum()), "time_available_n": int(d["admission_datetime"].notna().sum()), "exact_time_n": int(adm_gap.dropna().eq(0).sum()), "within_1h_n": int(adm_gap.dropna().abs().le(1).sum()), "within_24h_n": int(adm_gap.dropna().abs().le(24).sum()), "median_abs_gap_hours": float(adm_gap.dropna().abs().median()) if adm_gap.notna().any() else np.nan, "note": "Admission date is sparse and is not treated as a validated index date"},
+0494:     ]
+0495:     pd.DataFrame(rows).to_csv(OUT / "08_measurement_time_audit.csv", index=False)
+0496:
+0497:
+0498: def internal_consistency_output(d: pd.DataFrame) -> None:
+0499:     formulas = {"neut": ("neut_pct", "neut"), "lymph": ("lymph_pct", "lymph"), "mono": ("mono_pct", "mono")}
+0500:     groups = {
+0501:         "overall_selected_patients": np.ones(len(d), dtype=bool),
+0502:         "definite_AMI": d["phenotype_class"].eq("A_definite_AMI").to_numpy(),
+0503:         "definite_nonAMI_CAD": d["phenotype_class"].eq("B_definite_nonAMI_CAD").to_numpy(),
+0504:         "primary_analysis": d["primary_analysis"].to_numpy(),
+0505:     }
+0506:     rows = []
+0507:     for group, mask in groups.items():
+0508:         sub = d.loc[mask]
+0509:         for var, (pct, absolute) in formulas.items():
+0510:             valid = sub[["wbc", pct, absolute]].notna().all(axis=1) & sub["wbc"].gt(0) & sub[pct].ge(0)
+0511:             expected = sub.loc[valid, "wbc"] * sub.loc[valid, pct] / 100
+0512:             observed = sub.loc[valid, absolute]
+0513:             rel = (observed - expected).abs() / expected.replace(0, np.nan)
+0514:             rows.append({"cohort": group, "variable": var, "n_valid": int(rel.notna().sum()), "median_relative_error": float(rel.median()) if rel.notna().any() else np.nan, "p95_relative_error": float(rel.quantile(.95)) if rel.notna().any() else np.nan, "within_5_pct": int(rel.le(.05).sum()), "within_10_pct": int(rel.le(.10).sum()), "within_20_pct": int(rel.le(.20).sum()), "pct_within_5": 100 * float(rel.le(.05).mean()) if rel.notna().any() else np.nan, "pct_within_10": 100 * float(rel.le(.10).mean()) if rel.notna().any() else np.nan, "pct_within_20": 100 * float(rel.le(.20).mean()) if rel.notna().any() else np.nan})
+0515:     pd.DataFrame(rows).to_csv(OUT / "05_CBC_internal_consistency.csv", index=False)
+0516:
+0517:
+0518: def benchmark_indices(d: pd.DataFrame) -> pd.DataFrame:
+0519:     out = d.copy()
+0520:     valid_l = out["lymph"].gt(0)
+0521:     out["NLR"] = (out["neut"] / out["lymph"]).where(valid_l)
+0522:     out["PLR"] = (out["plt"] / out["lymph"]).where(valid_l)
+0523:     out["MLR"] = (out["mono"] / out["lymph"]).where(valid_l)
+0524:     out["SII"] = (out["plt"] * out["neut"] / out["lymph"]).where(valid_l)
+0525:     out["SIRI"] = (out["neut"] * out["mono"] / out["lymph"]).where(valid_l)
+0526:     out["PIV"] = (out["plt"] * out["neut"] * out["mono"] / out["lymph"]).where(valid_l)
+0527:     out["HRR"] = (out["hb"] / out["rdw"]).where(out["rdw"].gt(0))
+0528:     return out
+0529:
+0530:
+0531: def index_summary_output(d: pd.DataFrame) -> None:
+0532:     rows = []
+0533:     for cohort, mask in {
+0534:         "primary_all_A_B": d["phenotype_class"].isin(["A_definite_AMI", "B_definite_nonAMI_CAD"]),
+0535:         "definite_AMI": d["phenotype_class"].eq("A_definite_AMI"),
+0536:         "definite_nonAMI_CAD": d["phenotype_class"].eq("B_definite_nonAMI_CAD"),
+0537:         "strict_analysis": d["strict_analysis"],
+0538:     }.items():
+0539:         for var in BENCHMARKS:
+0540:             x = d.loc[mask, var].dropna()
+0541:             rows.append({"cohort": cohort, "index": var, "n": len(x), "median": float(x.median()) if len(x) else np.nan, "q1": float(x.quantile(.25)) if len(x) else np.nan, "q3": float(x.quantile(.75)) if len(x) else np.nan, "IQR": float(x.quantile(.75) - x.quantile(.25)) if len(x) else np.nan})
+0542:     pd.DataFrame(rows).to_csv(OUT / "12_traditional_indices_summary.csv", index=False)
+0543:
+0544:
+0545: class TrainWinsorizer:
+0546:     def fit(self, X, y=None):
+0547:         x = np.asarray(X, dtype=float)
+0548:         self.lower_ = np.nanquantile(x, .01, axis=0)
+0549:         self.upper_ = np.nanquantile(x, .99, axis=0)
+0550:         return self
+0551:
+0552:     def transform(self, X):
+0553:         x = np.asarray(X, dtype=float)
+0554:         return np.clip(x, self.lower_, self.upper_)
+0555:
+0556:
+0557: class TrainLogTransformer:
+0558:     def __init__(self, log_indices: list[int]):
+0559:         self.log_indices = list(log_indices)
+0560:
+0561:     def fit(self, X, y=None):
+0562:         return self
+0563:
+0564:     def transform(self, X):
+0565:         x = np.asarray(X, dtype=float).copy()
+0566:         for i in self.log_indices:
+0567:             x[:, i] = np.log1p(np.maximum(x[:, i], 0))
+0568:         return x
+0569:
+0570:
+0571: def feature_matrix(df: pd.DataFrame, features: list[str]) -> pd.DataFrame:
+0572:     return df[features].apply(pd.to_numeric, errors="coerce")
+0573:
+0574:
+0575: def make_pipeline(features: list[str], seed: int) -> Pipeline:
+0576:     log_indices = [i for i, f in enumerate(features) if f in LOG_VARS]
+0577:     model = LogisticRegressionCV(
+0578:         Cs=C_GRID,
+0579:         cv=StratifiedKFold(n_splits=INNER_SPLITS, shuffle=True, random_state=seed),
+0580:         penalty="elasticnet",
+0581:         solver="saga",
+0582:         l1_ratios=ALPHA_GRID,
+0583:         scoring="roc_auc",
+0584:         max_iter=3500,
+0585:         tol=1e-3,
+0586:         n_jobs=1,
+0587:         random_state=seed,
+0588:         refit=True,
+0589:     )
+0590:     return Pipeline([
+0591:         ("imputer", SimpleImputer(strategy="median")),
+0592:         ("winsorizer", TrainWinsorizer()),
+0593:         ("log_transform", TrainLogTransformer(log_indices)),
+0594:         ("scaler", StandardScaler()),
+0595:         ("model", model),
+0596:     ])
+0597:
+0598:
+0599: def get_splits(y: np.ndarray) -> list[tuple[int, int, np.ndarray, np.ndarray]]:
+0600:     cv = RepeatedStratifiedKFold(n_splits=OUTER_SPLITS, n_repeats=OUTER_REPEATS, random_state=SEED)
+0601:     out = []
+0602:     for i, (train, test) in enumerate(cv.split(np.zeros(len(y)), y)):
+0603:         out.append((i // OUTER_SPLITS + 1, i % OUTER_SPLITS + 1, train, test))
+0604:     return out
+0605:
+0606:
+0607: def fit_nested_model(df: pd.DataFrame, analysis: str, model_name: str, features: list[str], splits: list[tuple[int, int, np.ndarray, np.ndarray]]) -> pd.DataFrame:
+0608:     y_col = "y_primary" if analysis == "primary" else "y_strict"
+0609:     work = df.loc[df["primary_analysis"] if analysis == "primary" else df["strict_analysis"]].reset_index(drop=True)
+0610:     y = work[y_col].astype(int).to_numpy()
+0611:     X = feature_matrix(work, features)
+0612:     predictions = []
+0613:     for repeat, fold, train_idx, test_idx in splits:
+0614:         fit_seed = SEED + repeat * 100 + fold + len(features)
+0615:         pipe = make_pipeline(features, fit_seed)
+0616:         with warnings.catch_warnings(record=True) as caught:
+0617:             warnings.simplefilter("always")
+0618:             pipe.fit(X.iloc[train_idx], y[train_idx])
+0619:             for w in caught:
+0620:                 if "converg" in str(w.message).lower():
+0621:                     warn(f"{analysis}/{model_name}/repeat{repeat}/fold{fold}: {w.message}")
+0622:         p = pipe.predict_proba(X.iloc[test_idx])[:, 1]
+0623:         test_rows = work.iloc[test_idx]
+0624:         predictions.extend([
+0625:             {"analysis": analysis, "model": model_name, "research_patient_id": pid, "phenotype_class": cls, "y": int(yy), "repeat": repeat, "fold": fold, "prediction": float(pp)}
+0626:             for pid, cls, yy, pp in zip(test_rows["research_patient_id"], test_rows["phenotype_class"], y[test_idx], p)
+0627:         ])
+0628:         fitted_model = pipe.named_steps["model"]
+0629:         alpha_value = float(np.asarray(getattr(fitted_model, "l1_ratio_", np.nan)).ravel()[0])
+0630:         best_c = float(np.asarray(getattr(fitted_model, "C_", np.nan)).ravel()[0])
+0631:         inner_score = float(np.nanmax(getattr(fitted_model, "scores_", {1: np.array([np.nan])})[1]))
+0632:         FIT_RECORDS.append({"analysis": analysis, "model": model_name, "repeat": repeat, "fold": fold, "selected_alpha": alpha_value, "selected_C": best_c, "best_inner_auc": inner_score, "features": ";".join(features)})
+0633:         coef = fitted_model.coef_.ravel()
+0634:         for var, value in zip(features, coef):
+0635:             COEF_RECORDS.append({"analysis": analysis, "model": model_name, "repeat": repeat, "fold": fold, "variable": var, "coefficient": float(value), "selected": bool(abs(value) > 1e-6), "selected_alpha": alpha_value})
+0636:     return pd.DataFrame(predictions)
+0637:
+0638:
+0639: def run_benchmark_oof(df: pd.DataFrame, analysis: str, var: str, splits: list[tuple[int, int, np.ndarray, np.ndarray]]) -> pd.DataFrame:
+0640:     y_col = "y_primary" if analysis == "primary" else "y_strict"
+0641:     work = df.loc[df["primary_analysis"] if analysis == "primary" else df["strict_analysis"]].reset_index(drop=True)
+0642:     y = work[y_col].astype(int).to_numpy()
+0643:     scores = work[var] * BENCHMARK_DIRECTION[var]
+0644:     rows = []
+0645:     for repeat, fold, _, test_idx in splits:
+0646:         test_rows = work.iloc[test_idx]
+0647:         vals = scores.iloc[test_idx]
+0648:         keep = vals.notna().to_numpy()
+0649:         for pid, cls, yy, pp in zip(test_rows.loc[keep, "research_patient_id"], test_rows.loc[keep, "phenotype_class"], y[test_idx][keep], vals.loc[keep]):
+0650:             rows.append({"analysis": analysis, "model": f"Traditional_{var}", "research_patient_id": pid, "phenotype_class": cls, "y": int(yy), "repeat": repeat, "fold": fold, "prediction": float(pp)})
+0651:     return pd.DataFrame(rows)
+0652:
+0653:
+0654: def bootstrap_ci(y: np.ndarray, p: np.ndarray, seed: int = SEED, n: int = BOOTSTRAP_N) -> tuple[float, float]:
+0655:     if len(y) < 10 or len(np.unique(y)) < 2:
+0656:         return np.nan, np.nan
+0657:     rng = np.random.default_rng(seed)
+0658:     values = []
+0659:     for _ in range(n):
+0660:         idx = rng.integers(0, len(y), len(y))
+0661:         if len(np.unique(y[idx])) < 2:
+0662:             continue
+0663:         values.append(roc_auc_score(y[idx], p[idx]))
+0664:     return (float(np.quantile(values, .025)), float(np.quantile(values, .975))) if values else (np.nan, np.nan)
+0665:
+0666:
+0667: def calibration_stats(y: np.ndarray, p: np.ndarray) -> tuple[float, float]:
+0668:     if len(y) < 20 or len(np.unique(y)) < 2:
+0669:         return np.nan, np.nan
+0670:     p = np.clip(p, 1e-6, 1 - 1e-6)
+0671:     z = np.log(p / (1 - p))
+0672:     try:
+0673:         fit = sm.GLM(y, sm.add_constant(z), family=sm.families.Binomial()).fit()
+0674:         return float(fit.params[0]), float(fit.params[1])
+0675:     except Exception as exc:
+0676:         warn(f"calibration fit failed: {exc}")
+0677:         return np.nan, np.nan
+0678:
+0679:
+0680: def metrics_from_predictions(pred: pd.DataFrame, probability: bool = True) -> dict:
+0681:     if pred.empty:
+0682:         return {"n": 0, "auc": np.nan, "auc_ci_lower": np.nan, "auc_ci_upper": np.nan, "brier": np.nan, "calibration_intercept": np.nan, "calibration_slope": np.nan, "sensitivity_at_0_5": np.nan, "specificity_at_0_5": np.nan, "repeat_auc_median": np.nan, "repeat_auc_p2_5": np.nan, "repeat_auc_p97_5": np.nan, "valid_repeats": 0}
+0683:     patient = pred.groupby(["research_patient_id", "phenotype_class", "y"], as_index=False)["prediction"].mean()
+0684:     y = patient["y"].to_numpy(dtype=int)
+0685:     p = patient["prediction"].to_numpy(dtype=float)
+0686:     auc = roc_auc_score(y, p) if len(np.unique(y)) == 2 else np.nan
+0687:     lo, hi = bootstrap_ci(y, p)
+0688:     if probability:
+0689:         brier = brier_score_loss(y, np.clip(p, 0, 1))
+0690:         intercept, slope = calibration_stats(y, p)
+0691:         positive = p >= .5
+0692:         sensitivity = float(((positive == 1) & (y == 1)).sum() / max(1, (y == 1).sum()))
+0693:         specificity = float(((positive == 0) & (y == 0)).sum() / max(1, (y == 0).sum()))
+0694:     else:
+0695:         brier, intercept, slope, sensitivity, specificity = np.nan, np.nan, np.nan, np.nan, np.nan
+0696:     repeat_auc = pred.groupby("repeat").apply(lambda x: roc_auc_score(x["y"], x["prediction"]) if x["y"].nunique() == 2 else np.nan, include_groups=False).dropna()
+0697:     return {"n": len(patient), "auc": float(auc), "auc_ci_lower": lo, "auc_ci_upper": hi, "brier": float(brier), "calibration_intercept": intercept, "calibration_slope": slope, "sensitivity_at_0_5": sensitivity, "specificity_at_0_5": specificity, "repeat_auc_median": float(repeat_auc.median()) if len(repeat_auc) else np.nan, "repeat_auc_p2_5": float(repeat_auc.quantile(.025)) if len(repeat_auc) else np.nan, "repeat_auc_p97_5": float(repeat_auc.quantile(.975)) if len(repeat_auc) else np.nan, "valid_repeats": int(len(repeat_auc))}
+0698:
+0699:
+0700: def performance_table(predictions: list[pd.DataFrame]) -> pd.DataFrame:
+0701:     rows = []
+0702:     for pred in predictions:
+0703:         if pred.empty:
+0704:             continue
+0705:         meta = metrics_from_predictions(pred, probability=not pred["model"].iloc[0].startswith("Traditional_"))
+0706:         rows.append({"analysis": pred["analysis"].iloc[0], "model": pred["model"].iloc[0], **meta})
+0707:     return pd.DataFrame(rows)
+0708:
+0709:
+0710: def selection_stability_output() -> pd.DataFrame:
+0711:     coef = pd.DataFrame(COEF_RECORDS)
+0712:     keep_models = {"Model_C_Core", "Model_E_Enhanced", "Model_P_Core_PDW", "Model_EP_Enhanced_PDW"}
+0713:     coef = coef[coef["model"].isin(keep_models)].copy()
+0714:     rows = []
+0715:     if coef.empty:
+0716:         return pd.DataFrame()
+0717:     for (analysis, model, var), sub in coef.groupby(["analysis", "model", "variable"]):
+0718:         selected = sub.loc[sub["selected"], "coefficient"]
+0719:         signs = np.sign(selected)
+0720:         positive = int((signs > 0).sum())
+0721:         negative = int((signs < 0).sum())
+0722:         rows.append({"analysis": analysis, "model": model, "variable": var, "fit_count": len(sub), "selection_frequency": float(sub["selected"].mean()), "median_coefficient": float(sub["coefficient"].median()), "mean_coefficient": float(sub["coefficient"].mean()), "selected_fit_n": len(selected), "positive_selected_n": positive, "negative_selected_n": negative, "sign_consistency": max(positive, negative) / max(1, len(selected))})
+0723:     out = pd.DataFrame(rows)
+0724:     out.to_csv(OUT / "16_variable_selection_stability.csv", index=False)
+0725:     return out
+0726:
+0727:
+0728: def oof_delta(a: pd.DataFrame, b: pd.DataFrame, label: str) -> dict:
+0729:     x = a.groupby(["analysis", "research_patient_id", "y"], as_index=False)["prediction"].mean().rename(columns={"prediction": "pred_a"})
+0730:     y = b.groupby(["analysis", "research_patient_id", "y"], as_index=False)["prediction"].mean().rename(columns={"prediction": "pred_b"})
+0731:     common = x.merge(y, on=["analysis", "research_patient_id", "y"], how="inner")
+0732:     if len(common) < 20 or common["y"].nunique() < 2:
+0733:         return {"analysis": a["analysis"].iloc[0] if not a.empty else "", "comparison": label, "n_common": len(common), "auc_a": np.nan, "auc_b": np.nan, "delta_auc_a_minus_b": np.nan, "delta_ci_lower": np.nan, "delta_ci_upper": np.nan}
+0734:     ya = common["y"].to_numpy(dtype=int)
+0735:     pa = common["pred_a"].to_numpy(dtype=float)
+0736:     pb = common["pred_b"].to_numpy(dtype=float)
+0737:     auc_a = roc_auc_score(ya, pa)
+0738:     auc_b = roc_auc_score(ya, pb)
+0739:     rng = np.random.default_rng(SEED + len(label))
+0740:     deltas = []
+0741:     for _ in range(BOOTSTRAP_N):
+0742:         idx = rng.integers(0, len(ya), len(ya))
+0743:         if len(np.unique(ya[idx])) == 2:
+0744:             deltas.append(roc_auc_score(ya[idx], pa[idx]) - roc_auc_score(ya[idx], pb[idx]))
+0745:     return {"analysis": a["analysis"].iloc[0], "comparison": label, "n_common": len(common), "auc_a": float(auc_a), "auc_b": float(auc_b), "delta_auc_a_minus_b": float(auc_a - auc_b), "delta_ci_lower": float(np.quantile(deltas, .025)) if deltas else np.nan, "delta_ci_upper": float(np.quantile(deltas, .975)) if deltas else np.nan}
+0746:
+0747:
+0748: def support_marker_audit(raw: pd.DataFrame, d: pd.DataFrame) -> None:
+0749:     marker_families = {
+0750:         "cTnT": ["lab_myocardial_injury_markers_cTnT_test_result", "lab_myocardial_injury_markers_cTnT_test_result__dup02"],
+0751:         "cTnI": ["lab_myocardial_injury_markers_cTnI_test_result", "lab_myocardial_injury_markers_cTnI_test_result__dup02"],
+0752:         "hs_cTnT": ["lab_myocardial_injury_markers_hs_cTnT_test_result", "lab_myocardial_injury_markers_hs_cTnT_test_result__dup02"],
+0753:         "CK_MB": ["lab_myocardial_injury_markers_CK_MB_test_result", "lab_myocardial_injury_markers_CK_MB_test_result__dup02"],
+0754:     }
+0755:     rows = []
+0756:     source_row = d["source_row_anonymous"].astype(int)
+0757:     selected_rows = raw.iloc[source_row - 1]
+0758:     for family, cols in marker_families.items():
+0759:         present_cols = [c for c in cols if c in selected_rows.columns]
+0760:         if not present_cols:
+0761:             continue
+0762:         values = pd.concat([parse_numeric(selected_rows[c]).reset_index(drop=True) for c in present_cols], axis=1).max(axis=1, skipna=True)
+0763:         for cohort, mask in {"definite_AMI": d["phenotype_class"].eq("A_definite_AMI"), "definite_nonAMI_CAD": d["phenotype_class"].eq("B_definite_nonAMI_CAD"), "strict_control": d["strict_analysis"] & d["y_strict"].eq(0)}.items():
+0764:             x = values[mask.reset_index(drop=True)].dropna()
+0765:             rows.append({"marker_family": family, "cohort": cohort, "n_available": len(x), "measurement_rate_pct": 100 * len(x) / max(1, int(mask.sum())), "median": float(x.median()) if len(x) else np.nan, "q1": float(x.quantile(.25)) if len(x) else np.nan, "q3": float(x.quantile(.75)) if len(x) else np.nan, "interpretation": "supportive descriptive validation only; no formal AMI re-adjudication"})
+0766:     pd.DataFrame(rows).to_csv(OUT / "21_supportive_cardiac_marker_audit.csv", index=False)
+0767:
+0768:
+0769: def pdw_audit(d: pd.DataFrame) -> dict:
+0770:     primary = d.loc[d["primary_analysis"]].copy()
+0771:     complete = primary[["y_primary", "pdw", "cbc_year"]].dropna()
+0772:     rows = []
+0773:     for cohort, sub in {"primary_all": primary, "definite_AMI": primary[primary["y_primary"] == 1], "definite_nonAMI_CAD": primary[primary["y_primary"] == 0]}.items():
+0774:         x = sub["pdw"].dropna()
+0775:         rho, pval = stats.spearmanr(sub.loc[x.index, "pdw"], sub.loc[x.index, "cbc_year"]) if len(x) >= 3 and sub.loc[x.index, "cbc_year"].notna().sum() >= 3 else (np.nan, np.nan)
+0776:         rows.append({"audit": "spearman_pdw_vs_year", "cohort": cohort, "n": len(x), "estimate": rho, "p_value": pval, "unit": "correlation"})
+0777:         if len(x):
+0778:             rows.append({"audit": "pdw_median", "cohort": cohort, "n": len(x), "estimate": float(x.median()), "p_value": np.nan, "unit": "raw recorded units; unit harmonization not assumed"})
+0779:     if len(complete) and complete["y_primary"].nunique() == 2:
+0780:         raw_auc = roc_auc_score(complete["y_primary"], complete["pdw"])
+0781:         rows += [
+0782:             {"audit": "pdw_apparent_auc_higher_value", "cohort": "primary_complete_PDW", "n": len(complete), "estimate": raw_auc, "p_value": np.nan, "unit": "AUC"},
+0783:             {"audit": "pdw_apparent_auc_direction_free", "cohort": "primary_complete_PDW", "n": len(complete), "estimate": max(raw_auc, 1 - raw_auc), "p_value": np.nan, "unit": "max(AUC, 1-AUC); descriptive only"},
+0784:         ]
+0785:         years = sorted(complete["cbc_year"].astype(int).unique())
+0786:         common = [yr for yr in years if ((complete["cbc_year"] == yr) & (complete["y_primary"] == 1)).sum() >= 5 and ((complete["cbc_year"] == yr) & (complete["y_primary"] == 0)).sum() >= 5]
+0787:         common_df = complete[complete["cbc_year"].isin(common)]
+0788:         if len(common_df) and common_df["y_primary"].nunique() == 2:
+0789:             common_auc = roc_auc_score(common_df["y_primary"], common_df["pdw"])
+0790:         else:
+0791:             common_auc = np.nan
+0792:         yearly = []
+0793:         for year in common:
+0794:             sub = complete[complete["cbc_year"] == year]
+0795:             yearly.append({"audit": "pdw_year_stratified_auc", "cohort": str(year), "n": len(sub), "estimate": roc_auc_score(sub["y_primary"], sub["pdw"]) if sub["y_primary"].nunique() == 2 else np.nan, "p_value": np.nan, "unit": "AUC"})
+0796:         rows += yearly
+0797:         rows.append({"audit": "pdw_common_year_auc", "cohort": ";".join(map(str, common)), "n": len(common_df), "estimate": common_auc, "p_value": np.nan, "unit": "AUC; years with >=5 per class"})
+0798:         if complete["cbc_year"].nunique() >= 3:
+0799:             X = sm.add_constant(pd.DataFrame({"pdw_z": (complete["pdw"] - complete["pdw"].mean()) / complete["pdw"].std(), "year_z": (complete["cbc_year"] - complete["cbc_year"].mean()) / complete["cbc_year"].std()}))
+0800:             try:
+0801:                 fit = sm.Logit(complete["y_primary"].astype(float).to_numpy(), X.astype(float)).fit(disp=False)
+0802:                 rows.append({"audit": "pdw_year_adjusted_or_per_sd", "cohort": "primary_complete_PDW", "n": len(complete), "estimate": float(np.exp(fit.params["pdw_z"])), "p_value": float(fit.pvalues["pdw_z"]), "unit": "OR per SD; adjusted for CBC year"})
+0803:             except Exception as exc:
+0804:                 warn(f"PDW year-adjusted model failed: {exc}")
+0805:     unit_rows = primary["pdw_unit"].fillna("<missing>").value_counts(dropna=False)
+0806:     for unit, n in unit_rows.items():
+0807:         rows.append({"audit": "pdw_unit", "cohort": "primary", "n": int(n), "estimate": np.nan, "p_value": np.nan, "unit": str(unit)})
+0808:     annual = primary.dropna(subset=["pdw", "cbc_year"]).assign(year=lambda x: x["cbc_year"].astype(int)).groupby(["year", "phenotype_class"], as_index=False)["pdw"].median().rename(columns={"pdw": "estimate"})
+0809:     annual["audit"] = "pdw_yearly_median"
+0810:     annual["n"] = primary.dropna(subset=["pdw", "cbc_year"]).assign(year=lambda x: x["cbc_year"].astype(int)).groupby(["year", "phenotype_class"])["pdw"].size().values
+0811:     annual["p_value"] = np.nan
+0812:     annual["unit"] = "raw recorded units"
+0813:     result = pd.concat([pd.DataFrame(rows), annual[["audit", "phenotype_class", "n", "estimate", "p_value", "unit"]].rename(columns={"phenotype_class": "cohort"})], ignore_index=True, sort=False)
+0814:     result.to_csv(OUT / "10_PDW_specific_audit.csv", index=False)
+0815:     unit_count = primary["pdw_unit"].dropna().nunique()
+0816:     rho_abs = max([abs(float(x["estimate"])) for x in rows if x["audit"] == "spearman_pdw_vs_year" and pd.notna(x["estimate"])] or [0])
+0817:     common_auc = next((x["estimate"] for x in rows if x["audit"] == "pdw_common_year_auc"), np.nan)
+0818:     decision = "DROP" if unit_count > 1 or rho_abs >= .30 or (pd.notna(common_auc) and max(common_auc, 1 - common_auc) < .55) else "HOLD"
+0819:     return {"decision": decision, "unit_count": unit_count, "rho_abs_max": rho_abs, "common_auc": common_auc}
+0820:
+0821:
+0822: def fibrinogen_audit(d: pd.DataFrame) -> dict:
+0823:     primary = d.loc[d["primary_analysis"]].copy()
+0824:     rows = []
+0825:     gap = (primary["fbg_datetime"] - primary["cbc_datetime"]).dt.total_seconds() / 3600
+0826:     for cohort, sub in {"primary_all": primary, "definite_AMI": primary[primary["y_primary"] == 1], "definite_nonAMI_CAD": primary[primary["y_primary"] == 0], "strict_analysis": primary[primary["strict_analysis"]]}.items():
+0827:         x = sub["fbg"].dropna()
+0828:         rows.append({"audit": "fbg_measurement_rate", "cohort": cohort, "n": len(x), "denominator": len(sub), "percent": 100 * len(x) / max(1, len(sub)), "median": float(x.median()) if len(x) else np.nan, "q1": float(x.quantile(.25)) if len(x) else np.nan, "q3": float(x.quantile(.75)) if len(x) else np.nan, "unit": "g/L"})
+0829:     rows += [
+0830:         {"audit": "fbg_cbc_abs_gap_hours_median", "cohort": "primary_fbg_time_available", "n": int(gap.notna().sum()), "denominator": len(primary), "percent": np.nan, "median": float(gap.dropna().abs().median()) if gap.notna().any() else np.nan, "q1": np.nan, "q3": np.nan, "unit": "hours"},
+0831:         {"audit": "fbg_within_24h_of_cbc", "cohort": "primary_fbg_time_available", "n": int(gap.dropna().abs().le(24).sum()), "denominator": int(gap.notna().sum()), "percent": 100 * float(gap.dropna().abs().le(24).mean()) if gap.notna().any() else np.nan, "median": np.nan, "q1": np.nan, "q3": np.nan, "unit": "percent"},
+0832:     ]
+0833:     for unit, n in primary["fbg_unit"].fillna("<missing>").value_counts(dropna=False).items():
+0834:         rows.append({"audit": "fbg_unit", "cohort": "primary", "n": int(n), "denominator": len(primary), "percent": 100 * int(n) / len(primary), "median": np.nan, "q1": np.nan, "q3": np.nan, "unit": str(unit)})
+0835:     pd.DataFrame(rows).to_csv(OUT / "11_fibrinogen_specific_audit.csv", index=False)
+0836:     primary_missing = 100 * primary["fbg"].isna().mean()
+0837:     return {"missing_pct": float(primary_missing), "unit_count": int(primary["fbg_unit"].dropna().nunique()), "within_24h_pct": 100 * float(gap.dropna().abs().le(24).mean()) if gap.notna().any() else np.nan}
+0838:
+0839:
+0840: def year_audit(d: pd.DataFrame, performance: pd.DataFrame) -> None:
+0841:     primary = d.loc[d["primary_analysis"]].copy()
+0842:     rows = []
+0843:     for year, sub in primary.dropna(subset=["cbc_year"]).assign(year=lambda x: x["cbc_year"].astype(int)).groupby("year"):
+0844:         rows.append({"cbc_year": int(year), "n": len(sub), "AMI_n": int(sub["y_primary"].sum()), "nonAMI_n": int((sub["y_primary"] == 0).sum()), "AMI_percent": 100 * float(sub["y_primary"].mean()), "PDW_available_n": int(sub["pdw"].notna().sum()), "Fibrinogen_available_n": int(sub["fbg"].notna().sum())})
+0845:     out = pd.DataFrame(rows)
+0846:     out.to_csv(OUT / "09_year_batch_audit.csv", index=False)
+0847:
+0848:
+0849: def transformation_output(d: pd.DataFrame) -> None:
+0850:     rows = []
+0851:     for var in CORE + ["pdw", "fbg"]:
+0852:         x = d.loc[d["primary_analysis"], var].dropna()
+0853:         skew = stats.skew(x, bias=False) if len(x) > 2 else np.nan
+0854:         rows.append({"variable": var, "n": len(x), "skewness_raw": skew, "suggested_transform": "log1p_in_nested_pipeline" if var in LOG_VARS else "identity_in_nested_pipeline", "cutoff_used": "none", "note": "exploratory transformation choice is pre-specified and fitted/applied within training folds"})
+0855:     pd.DataFrame(rows).to_csv(OUT / "22_transformation_exploration.csv", index=False)
+0856:
+0857:
+0858: def run_analysis_models(d: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame, str, dict]:
+0859:     primary = d.loc[d["primary_analysis"]]
+0860:     primary_splits = get_splits(primary["y_primary"].astype(int).to_numpy())
+0861:     strict = d.loc[d["strict_analysis"]]
+0862:     strict_splits = get_splits(strict["y_strict"].astype(int).to_numpy())
+0863:     all_predictions = []
+0864:     for analysis, splits in [("primary", primary_splits), ("strict", strict_splits)]:
+0865:         for var in BENCHMARKS:
+0866:             all_predictions.append(run_benchmark_oof(d, analysis, var, splits))
+0867:     benchmark_perf = performance_table(all_predictions)
+0868:     benchmark_perf["model_type"] = "traditional_benchmark_formula; no tuning"
+0869:     benchmark_perf.to_csv(OUT / "13_traditional_indices_performance.csv", index=False)
+0870:     primary_b = benchmark_perf[benchmark_perf["analysis"] == "primary"].copy()
+0871:     best_trad = str(primary_b.sort_values("auc", ascending=False).iloc[0]["model"]).replace("Traditional_", "") if not primary_b.empty else "NLR"
+0872:     clinical_candidates = ["age", "male", "hypertension", "diabetes", "smoking"]
+0873:     clinical_features = [x for x in clinical_candidates if d.loc[d["primary_analysis"], x].notna().mean() >= .50]
+0874:     if not clinical_features:
+0875:         clinical_features = ["age"]
+0876:     model_sets = {
+0877:         "Model_0_Year_Only": ["cbc_year"],
+0878:         "Model_C_Core": CORE,
+0879:         "Model_E_Enhanced": ENHANCED,
+0880:         "Model_P_Core_PDW": CORE + ["pdw"],
+0881:         "Model_EP_Enhanced_PDW": ENHANCED + ["pdw"],
+0882:         "Clinical_only": clinical_features,
+0883:         "Clinical_plus_best_traditional": clinical_features + [best_trad],
+0884:         "Clinical_plus_Core": clinical_features + CORE,
+0885:         "Clinical_plus_Enhanced": clinical_features + ENHANCED,
+0886:     }
+0887:     for analysis, splits in [("primary", primary_splits), ("strict", strict_splits)]:
+0888:         for model_name, features in model_sets.items():
+0889:             clean_features = [f for f in features if f in d.columns and d.loc[d["primary_analysis"] if analysis == "primary" else d["strict_analysis"], f].notna().any()]
+0890:             pred = fit_nested_model(d, analysis, model_name, clean_features, splits)
+0891:             all_predictions.append(pred)
+0892:     perf = performance_table(all_predictions)
+0893:     perf["model_type"] = np.where(perf["model"].str.startswith("Traditional_"), "traditional_benchmark_formula", "elastic_net_nested_cv")
+0894:     perf["features"] = perf["model"].map({k: ";".join(v) for k, v in model_sets.items()})
+0895:     perf.to_csv(OUT / "14_nested_cv_model_performance.csv", index=False)
+0896:     pred_out = pd.concat(all_predictions, ignore_index=True, sort=False)
+0897:     pred_out.to_csv(OUT / "15_out_of_fold_predictions.csv", index=False)
+0898:     stable = selection_stability_output()
+0899:     return perf, pred_out, best_trad, {"clinical_features": clinical_features, "primary_splits": primary_splits, "strict_splits": strict_splits, "model_sets": model_sets, "stability": stable}
+0900:
+0901:
+0902: def domain_analysis(d: pd.DataFrame, split_info: dict) -> pd.DataFrame:
+0903:     domains = {
+0904:         "Immune": ["neut", "lymph", "mono"],
+0905:         "Platelet": ["plt", "mpv"],
+0906:         "Erythrocyte": ["rdw", "hb"],
+0907:         "Coagulation": ["fbg"],
+0908:         "Immune_plus_Platelet": ["neut", "lymph", "mono", "plt", "mpv"],
+0909:         "Immune_plus_Platelet_plus_Erythrocyte": ["neut", "lymph", "mono", "plt", "mpv", "rdw", "hb"],
+0910:         "Full_plus_Coagulation": ENHANCED,
+0911:     }
+0912:     preds = []
+0913:     for analysis, splits in [("primary", split_info["primary_splits"]), ("strict", split_info["strict_splits"])]:
+0914:         for name, features in domains.items():
+0915:             preds.append(fit_nested_model(d, analysis, f"Domain_{name}", features, splits))
+0916:     out = performance_table(preds)
+0917:     out["domain_features"] = out["model"].map({f"Domain_{k}": ";".join(v) for k, v in domains.items()})
+0918:     out["increment_vs_previous"] = np.nan
+0919:     for analysis in out["analysis"].unique():
+0920:         order = ["Domain_Immune", "Domain_Immune_plus_Platelet", "Domain_Immune_plus_Platelet_plus_Erythrocyte", "Domain_Full_plus_Coagulation"]
+0921:         prev = None
+0922:         for model in order:
+0923:             hit = out.index[(out["analysis"] == analysis) & (out["model"] == model)]
+0924:             if len(hit):
+0925:                 if prev is not None:
+0926:                     out.loc[hit[0], "increment_vs_previous"] = out.loc[hit[0], "auc"] - prev
+0927:                 prev = out.loc[hit[0], "auc"]
+0928:     out.to_csv(OUT / "17_domain_incremental_analysis.csv", index=False)
+0929:     return out
+0930:
+0931:
+0932: def delta_output(perf: pd.DataFrame, pred: pd.DataFrame, best_trad: str) -> pd.DataFrame:
+0933:     pairs = [
+0934:         ("Model_C_Core", f"Traditional_{best_trad}", "Core minus best traditional"),
+0935:         ("Model_E_Enhanced", "Model_C_Core", "Enhanced minus Core; fibrinogen increment"),
+0936:         ("Clinical_plus_Core", "Clinical_plus_best_traditional", "Clinical plus Core minus Clinical plus best traditional"),
+0937:         ("Clinical_plus_Enhanced", "Clinical_plus_Core", "Clinical plus Enhanced minus Clinical plus Core"),
+0938:     ]
+0939:     rows = []
+0940:     for a, b, label in pairs:
+0941:         for analysis in ["primary", "strict"]:
+0942:             pa = pred[(pred["analysis"] == analysis) & (pred["model"] == a)]
+0943:             pb = pred[(pred["analysis"] == analysis) & (pred["model"] == b)]
+0944:             if pa.empty or pb.empty:
+0945:                 continue
+0946:             result = oof_delta(pa, pb, label)
+0947:             result["model_a"] = a
+0948:             result["model_b"] = b
+0949:             rows.append(result)
+0950:     out = pd.DataFrame(rows)
+0951:     out.to_csv(OUT / "18_model_delta_auc.csv", index=False)
+0952:     return out
+0953:
+0954:
+0955: def calibration_output(perf: pd.DataFrame) -> None:
+0956:     cols = ["analysis", "model", "n", "auc", "auc_ci_lower", "auc_ci_upper", "brier", "calibration_intercept", "calibration_slope", "sensitivity_at_0_5", "specificity_at_0_5", "repeat_auc_median", "repeat_auc_p2_5", "repeat_auc_p97_5", "valid_repeats"]
+0957:     perf[cols].to_csv(OUT / "19_calibration_metrics.csv", index=False)
+0958:
+0959:
+0960: def chart_map_output() -> None:
+0961:     rows = [
+0962:         ("Figure_1_AMI_nonAMI_year_distribution.png", "grouped bar", "CBC calendar-year composition by definite AMI vs definite non-AMI CAD", "primary analysis cohort; year imbalance audit"),
+0963:         ("Figure_2_candidate_biomarker_distributions.png", "faceted boxplot", "raw candidate biomarker distributions by phenotype", "distribution and outlier inspection; no deletion"),
+0964:         ("Figure_3_traditional_vs_multidimensional_AUC.png", "horizontal bar with interval", "validated OOF discrimination of benchmark and multidimensional models", "primary analysis; patient-mean repeated OOF predictions"),
+0965:         ("Figure_4_domain_incremental_performance.png", "grouped bar", "nested-CV domain-level performance and staged additions", "primary and strict-control sensitivity"),
+0966:         ("Figure_5_calibration_core_enhanced.png", "calibration line", "OOF calibration of Core and Enhanced models", "primary analysis; 10 quantile bins"),
+0967:         ("Figure_6_selection_stability.png", "horizontal bar", "elastic-net variable selection frequency", "primary Core and Enhanced models"),
+0968:         ("Figure_7_PDW_batch_audit.png", "small multiples", "PDW annual medians, phenotype distributions, and unit composition", "PDW sensitivity audit; no core-score inclusion"),
+0969:     ]
+0970:     pd.DataFrame(rows, columns=["file", "chart_family", "question", "supported_takeaway"]).to_csv(OUT / "23_chart_map.csv", index=False)
+0971:
+0972:
+0973: def save_figure(fig, path: Path, bottom: float = .16) -> None:
+0974:     fig.subplots_adjust(bottom=bottom)
+0975:     fig.savefig(path, dpi=220, bbox_inches="tight")
+0976:     plt.close(fig)
+0977:
+0978:
+0979: def make_figures(d: pd.DataFrame, perf: pd.DataFrame, domain: pd.DataFrame, pred: pd.DataFrame, stability: pd.DataFrame) -> None:
+0980:     plt.rcParams.update({"font.family": "DejaVu Sans", "axes.titlesize": 12, "axes.labelsize": 10, "xtick.labelsize": 8, "ytick.labelsize": 8})
+0981:     blue, orange, teal, gray, ink = "#3B6EA8", "#D9822B", "#2F8F83", "#7B8794", "#27313B"
+0982:     primary = d.loc[d["primary_analysis"]].copy()
+0983:     year = primary.dropna(subset=["cbc_year"]).assign(year=lambda x: x["cbc_year"].astype(int)).groupby(["year", "phenotype_class"]).size().unstack(fill_value=0)
+0984:     fig, ax = plt.subplots(figsize=(10, 5.4))
+0985:     years = year.index.to_numpy(); x = np.arange(len(years)); width = .42
+0986:     ax.bar(x - width / 2, year.get("B_definite_nonAMI_CAD", pd.Series(0, index=year.index)), width, label="Definite non-AMI CAD", color=blue)
+0987:     ax.bar(x + width / 2, year.get("A_definite_AMI", pd.Series(0, index=year.index)), width, label="Definite AMI", color=orange)
+0988:     ax.set_xticks(x); ax.set_xticklabels(years, rotation=45, ha="right"); ax.set_ylabel("Patients"); ax.set_xlabel("CBC calendar year"); ax.set_title("AMI and non-AMI CAD distribution by CBC calendar year", color=ink); ax.legend(frameon=False); ax.grid(axis="y", color="#E6E9ED", linewidth=.8); ax.set_axisbelow(True)
+0989:     fig.text(.01, .01, f"Primary phenotype cohort; N={len(primary)}; bars are patient counts; year is descriptive, not an index-event date.", fontsize=8, color=gray)
+0990:     save_figure(fig, OUT / "Figure_1_AMI_nonAMI_year_distribution.png", .16)
+0991:
+0992:     fig, axes = plt.subplots(2, 4, figsize=(12, 7)); axes = axes.ravel()
+0993:     for i, var in enumerate(CORE):
+0994:         ax = axes[i]
+0995:         vals = [primary.loc[primary["y_primary"] == 0, var].dropna(), primary.loc[primary["y_primary"] == 1, var].dropna()]
+0996:         bp = ax.boxplot(vals, tick_labels=["non-AMI", "AMI"], patch_artist=True, showfliers=False)
+0997:         for patch, color in zip(bp["boxes"], [blue, orange]): patch.set_facecolor(color); patch.set_alpha(.65)
+0998:         ax.set_title(var); ax.grid(axis="y", color="#E6E9ED", linewidth=.7); ax.set_axisbelow(True)
+0999:     axes[-1].axis("off")
+1000:     fig.suptitle("Candidate biomarker distributions in the primary phenotype cohort", color=ink)
+1001:     fig.text(.01, .01, "Raw recorded values; boxes omit plotted fliers for readability, and no observations were deleted for this figure.", fontsize=8, color=gray)
+1002:     save_figure(fig, OUT / "Figure_2_candidate_biomarker_distributions.png", .14)
+1003:
+1004:     p3 = perf[(perf["analysis"] == "primary") & (~perf["model"].eq("Model_0_Year_Only"))].copy()
+1005:     p3["label"] = p3["model"].str.replace("Model_", "", regex=False).str.replace("Traditional_", "Trad ", regex=False).str.replace("_", " ", regex=False)
+1006:     p3 = p3.sort_values("auc")
+1007:     fig, ax = plt.subplots(figsize=(9, 6))
+1008:     y = np.arange(len(p3)); ax.barh(y, p3["auc"], color=[teal if "Model" in m else blue for m in p3["model"]], alpha=.85)
+1009:     ax.errorbar(p3["auc"], y, xerr=[p3["auc"] - p3["auc_ci_lower"], p3["auc_ci_upper"] - p3["auc"]], fmt="none", ecolor=ink, capsize=3, linewidth=1)
+1010:     ax.set_yticks(y); ax.set_yticklabels(p3["label"]); ax.set_xlim(.45, 1.0); ax.set_xlabel("Patient-mean repeated OOF AUC (95% bootstrap CI)"); ax.set_title("Traditional and multidimensional model discrimination", color=ink); ax.grid(axis="x", color="#E6E9ED", linewidth=.8); ax.set_axisbelow(True)
+1011:     fig.text(.01, .01, "Primary analysis; the benchmark formulas are validated OOF without tuning, while multidimensional models use nested elastic-net CV.", fontsize=8, color=gray)
+1012:     save_figure(fig, OUT / "Figure_3_traditional_vs_multidimensional_AUC.png", .16)
+1013:
+1014:     p4 = domain[domain["analysis"].isin(["primary", "strict"])].copy(); p4["label"] = p4["model"].str.replace("Domain_", "", regex=False).str.replace("_", " ", regex=False)
+1015:     order = ["Immune", "Immune plus Platelet", "Immune plus Platelet plus Erythrocyte", "Full plus Coagulation"]
+1016:     p4 = p4[p4["label"].isin(order)].copy(); p4["order"] = p4["label"].map({v: i for i, v in enumerate(order)}); p4 = p4.sort_values("order")
+1017:     fig, ax = plt.subplots(figsize=(10, 5.6)); xs = np.arange(len(order)); w=.36
+1018:     for j, analysis in enumerate(["primary", "strict"]):
+1019:         sub = p4[p4["analysis"] == analysis].set_index("label").reindex(order)
+1020:         ax.bar(xs + (j - .5) * w, sub["auc"], width=w, label=analysis, color=[blue, orange][j], alpha=.85)
+1021:     ax.set_xticks(xs); ax.set_xticklabels(order, rotation=20, ha="right"); ax.set_ylim(.45, 1); ax.set_ylabel("OOF AUC"); ax.set_title("Incremental biological-domain performance", color=ink); ax.legend(frameon=False); ax.grid(axis="y", color="#E6E9ED", linewidth=.8); ax.set_axisbelow(True)
+1022:     fig.text(.01, .01, "Nested elastic-net CV; the staged bars are exploratory domain summaries, not final score components.", fontsize=8, color=gray)
+1023:     save_figure(fig, OUT / "Figure_4_domain_incremental_performance.png", .25)
+1024:
+1025:     fig, ax = plt.subplots(figsize=(7, 5.2))
+1026:     for model, color in [("Model_C_Core", blue), ("Model_E_Enhanced", orange)]:
+1027:         sub = pred[(pred["analysis"] == "primary") & (pred["model"] == model)].groupby("research_patient_id", as_index=False).agg(y=("y", "first"), prediction=("prediction", "mean"))
+1028:         if sub.empty: continue
+1029:         sub["bin"] = pd.qcut(sub["prediction"], q=min(10, sub["prediction"].nunique()), duplicates="drop")
+1030:         cal = sub.groupby("bin", observed=True).agg(pred=("prediction", "mean"), observed=("y", "mean"))
+1031:         ax.plot(cal["pred"], cal["observed"], marker="o", linewidth=1.8, label=model.replace("Model_", ""), color=color)
+1032:     ax.plot([0, 1], [0, 1], linestyle="--", color=gray, label="ideal")
+1033:     ax.set_xlim(0, 1); ax.set_ylim(0, 1); ax.set_xlabel("Mean predicted probability"); ax.set_ylabel("Observed AMI proportion"); ax.set_title("OOF calibration of Core and Enhanced models", color=ink); ax.legend(frameon=False); ax.grid(color="#E6E9ED", linewidth=.8); ax.set_axisbelow(True)
+1034:     fig.text(.01, .01, "Primary analysis; quantile-binned patient-mean repeated OOF predictions; no cutoff optimization.", fontsize=8, color=gray)
+1035:     save_figure(fig, OUT / "Figure_5_calibration_core_enhanced.png", .16)
+1036:
+1037:     fig, ax = plt.subplots(figsize=(8, 5.5))
+1038:     if not stability.empty:
+1039:         s = stability[(stability["analysis"] == "primary") & stability["model"].isin(["Model_C_Core", "Model_E_Enhanced"])].copy()
+1040:         s["label"] = s["variable"] + " | " + s["model"].str.replace("Model_", "", regex=False)
+1041:         s = s.sort_values("selection_frequency")
+1042:         ax.barh(np.arange(len(s)), s["selection_frequency"], color=teal, alpha=.85); ax.set_yticks(np.arange(len(s))); ax.set_yticklabels(s["label"]); ax.set_xlim(0, 1.05)
+1043:     ax.set_xlabel("Selection frequency across outer fits"); ax.set_title("Elastic-net variable selection stability", color=ink); ax.grid(axis="x", color="#E6E9ED", linewidth=.8); ax.set_axisbelow(True)
+1044:     fig.text(.01, .01, "Primary analysis; non-zero coefficients are counted as selected; frequency is descriptive and does not define a final score.", fontsize=8, color=gray)
+1045:     save_figure(fig, OUT / "Figure_6_selection_stability.png", .16)
+1046:
+1047:     fig, axes = plt.subplots(1, 3, figsize=(13, 4.5))
+1048:     pw = primary.dropna(subset=["pdw", "cbc_year"]).assign(year=lambda x: x["cbc_year"].astype(int))
+1049:     annual = pw.groupby(["year", "phenotype_class"], as_index=False)["pdw"].median()
+1050:     for cls, color, label in [("A_definite_AMI", orange, "AMI"), ("B_definite_nonAMI_CAD", blue, "non-AMI CAD")]:
+1051:         sub = annual[annual["phenotype_class"] == cls]; axes[0].plot(sub["year"], sub["pdw"], marker="o", label=label, color=color)
+1052:     axes[0].set_title("Annual PDW median"); axes[0].set_xlabel("CBC year"); axes[0].set_ylabel("Recorded PDW"); axes[0].legend(frameon=False); axes[0].grid(color="#E6E9ED", linewidth=.7)
+1053:     vals = [primary.loc[primary["y_primary"] == 0, "pdw"].dropna(), primary.loc[primary["y_primary"] == 1, "pdw"].dropna()]
+1054:     bp = axes[1].boxplot(vals, tick_labels=["non-AMI", "AMI"], patch_artist=True, showfliers=False)
+1055:     for patch, color in zip(bp["boxes"], [blue, orange]): patch.set_facecolor(color); patch.set_alpha(.65)
+1056:     axes[1].set_title("PDW by phenotype"); axes[1].set_ylabel("Recorded PDW"); axes[1].grid(axis="y", color="#E6E9ED", linewidth=.7)
+1057:     units = primary["pdw_unit"].fillna("missing").value_counts(); axes[2].bar(units.index.astype(str), units.values, color=teal); axes[2].set_title("PDW unit composition"); axes[2].set_ylabel("Patients"); axes[2].tick_params(axis="x", rotation=35); axes[2].grid(axis="y", color="#E6E9ED", linewidth=.7)
+1058:     fig.suptitle("PDW batch and unit audit", color=ink); fig.text(.01, .01, "Raw PDW is shown without unit conversion; the one-record fL value and mixed/missing units are retained as audit evidence.", fontsize=8, color=gray)
+1059:     save_figure(fig, OUT / "Figure_7_PDW_batch_audit.png", .18)
+1060:
+1061:
+1062: def final_summary(d: pd.DataFrame, raw_n: int, perf: pd.DataFrame, deltas: pd.DataFrame, domain: pd.DataFrame, stability: pd.DataFrame, best_trad: str, pdw_info: dict, fbg_info: dict, split_info: dict) -> tuple[str, str, str]:
+1063:     p = perf[perf["analysis"] == "primary"].set_index("model")
+1064:     s = perf[perf["analysis"] == "strict"].set_index("model")
+1065:     def auc(model, table=p):
+1066:         return float(table.loc[model, "auc"]) if model in table.index else np.nan
+1067:     core_auc, enhanced_auc, year_auc = auc("Model_C_Core"), auc("Model_E_Enhanced"), auc("Model_0_Year_Only")
+1068:     trad_auc = auc(f"Traditional_{best_trad}")
+1069:     core_delta = deltas.loc[(deltas["analysis"] == "primary") & deltas["comparison"].eq("Core minus best traditional"), "delta_auc_a_minus_b"]
+1070:     enhanced_delta = deltas.loc[(deltas["analysis"] == "primary") & deltas["comparison"].eq("Enhanced minus Core; fibrinogen increment"), "delta_auc_a_minus_b"]
+1071:     core_delta_v = float(core_delta.iloc[0]) if len(core_delta) else np.nan
+1072:     enhanced_delta_v = float(enhanced_delta.iloc[0]) if len(enhanced_delta) else np.nan
+1073:     strict_core = float(s.loc["Model_C_Core", "auc"]) if "Model_C_Core" in s.index else np.nan
+1074:     strict_enh = float(s.loc["Model_E_Enhanced", "auc"]) if "Model_E_Enhanced" in s.index else np.nan
+1075:     stable_vars = stability[(stability["analysis"] == "primary") & (stability["model"] == "Model_C_Core")].sort_values("selection_frequency", ascending=False)["variable"].tolist()[:5] if not stability.empty else []
+1076:     domain_primary = domain[domain["analysis"] == "primary"].copy()
+1077:     stable_domain_n = int((domain_primary["auc"] >= .60).sum()) if not domain_primary.empty else 0
+1078:     mean_slope = float(p.loc["Model_C_Core", "calibration_slope"]) if "Model_C_Core" in p.index else np.nan
+1079:     year_red_flag = "severe" if year_auc > .80 else "marked" if year_auc > .70 else "attention" if year_auc > .60 else "low"
+1080:     pdw_decision = pdw_info["decision"]
+1081:     fbg_decision = "ENHANCED ONLY" if pd.notna(enhanced_delta_v) and enhanced_delta_v >= .005 and fbg_info["missing_pct"] <= 20 and fbg_info["unit_count"] <= 1 and fbg_info["within_24h_pct"] >= 80 else "DROP"
+1082:     strong = bool(year_auc < .65 and core_auc >= .72 and pd.notna(core_delta_v) and core_delta_v >= .02 and strict_core >= .68 and .8 <= mean_slope <= 1.2 and stable_domain_n >= 3)
+1083:     conditional = bool(not strong and year_auc <= .70 and core_auc >= .68 and pd.notna(core_delta_v) and core_delta_v >= .01 and strict_core >= .65)
+1084:     final_decision = "STRONG GO" if strong else "CONDITIONAL GO" if conditional else "NO-GO AS NEW SCORE"
+1085:     summary = f"""# HITS AMI 多维血液表型预开发执行摘要 V0.2
+1086:
+1087: ## 最终判断
+1088:
+1089: **{final_decision}。** 本轮研究对象是 CAD/AMI phenotype identification/discrimination，不是 future MACE prediction，也不是 pre-PCI prediction。当前分析没有使用上一阶段 1,274 例 MACE 文件标签。
+1090:
+1091: ## 队列与诊断表型
+1092:
+1093: - 来源：统一 `master_cohort_cleaned.csv`；原始行 {raw_n}，患者级选择后 N={d['research_patient_id'].nunique()}。
+1094: - 最终主分析 N={int(d['primary_analysis'].sum())}；Definite AMI phenotype 总 N={int((d['phenotype_class'].eq('A_definite_AMI')).sum())}，其中满足核心 CBC 要求并进入分析的 AMI N={int((d['primary_analysis'] & d['phenotype_class'].eq('A_definite_AMI')).sum())}（{100 * float((d['primary_analysis'] & d['phenotype_class'].eq('A_definite_AMI')).sum()) / max(1, int(d['primary_analysis'].sum())):.1f}%）；Definite non-AMI CAD phenotype 总 N={int((d['phenotype_class'].eq('B_definite_nonAMI_CAD')).sum())}，进入分析 N={int((d['primary_analysis'] & d['phenotype_class'].eq('B_definite_nonAMI_CAD')).sum())}。
+1095: - Ambiguous/review N={int((d['phenotype_class'] == 'C_ambiguous_or_review').sum())}；Strict-control 可分析 N={int(d['strict_analysis'].sum())}，其中 AMI N={int((d['strict_analysis'] & d['y_strict'].eq(1)).sum())}、严格 angina/CAD-only controls N={int((d['strict_analysis'] & d['y_strict'].eq(0)).sum())}。
+1096: - 诊断映射由 discharge diagnosis 独立重建；旧 MI 进入 primary non-AMI CAD，但在 strict-control 中排除。缺失诊断和未明确急/旧的 MI 均保留在 review 文件，不自动猜测。
+1097:
+1098: ## 年份与批次风险
+1099:
+1100: Year-only nested/OOF AUC={year_auc:.3f}（95% bootstrap CI {p.loc['Model_0_Year_Only','auc_ci_lower']:.3f}–{p.loc['Model_0_Year_Only','auc_ci_upper']:.3f}），属于 **{year_red_flag}时间/来源红旗**。这表示仅凭 CBC calendar year 已能区分 AMI 与 non-AMI，任何血液模型的表面优势都必须谨慎解释。
+1101:
+1102: ## 传统 benchmark 与多维模型
+1103:
+1104: - 最佳传统指标：**{best_trad}**；重复 OOF AUC={trad_auc:.3f}（95% CI {p.loc[f'Traditional_{best_trad}','auc_ci_lower']:.3f}–{p.loc[f'Traditional_{best_trad}','auc_ci_upper']:.3f}）。传统指标为预定义公式，无 cutoff 搜索。
+1105: - CBC Core（Neut/Lymph/Mono/PLT/MPV/RDW/Hb）nested OOF AUC={core_auc:.3f}（95% CI {p.loc['Model_C_Core','auc_ci_lower']:.3f}–{p.loc['Model_C_Core','auc_ci_upper']:.3f}）。
+1106: - Enhanced（Core+Fibrinogen）nested OOF AUC={enhanced_auc:.3f}（95% CI {p.loc['Model_E_Enhanced','auc_ci_lower']:.3f}–{p.loc['Model_E_Enhanced','auc_ci_upper']:.3f}）。
+1107: - Core 相对最佳传统指标 ΔAUC={core_delta_v:.3f}；Fibrinogen 增量（Enhanced−Core）ΔAUC={enhanced_delta_v:.3f}。
+1108: - Strict-control：Core AUC={strict_core:.3f}，Enhanced AUC={strict_enh:.3f}；该结果用于判断宽松对照下的信号是否保持。
+1109:
+1110: ## 稳定性、校准和生物学域
+1111:
+1112: - Core 中 selection frequency 最高的 5 个候选变量：{', '.join(stable_vars) if stable_vars else '无法估计'}。
+1113: - Clinical model 使用变量：{', '.join(split_info.get('clinical_features', [])) if split_info.get('clinical_features') else '无足够完整的临床变量'}；吸烟字段在本地 master 中不可用。
+1114: - Core calibration slope={mean_slope:.3f}；所有校准指标见 `19_calibration_metrics.csv`。灵敏度/特异度只报告 0.5 概率点，不寻找最佳 cutoff。
+1115: - 三个主要域及 staged 增量见 `17_domain_incremental_analysis.csv`。本轮没有把低频变量删除，也没有把域分析转化为最终积分。
+1116:
+1117: ## PDW 与 Fibrinogen 决策
+1118:
+1119: - PDW：**{pdw_decision}**。本轮保留 PDW 敏感性模型，但 PDW 单位、年份相关性和 common-year 表现必须共同决定其去留；不得因为加入 PDW 后 AUC 提高就纳入核心。
+1120: - Fibrinogen：**{fbg_decision}**。缺失率 {fbg_info['missing_pct']:.1f}%，单位种类 {fbg_info['unit_count']}，CBC 后 24 小时内测量比例 {fbg_info['within_24h_pct']:.1f}%。
+1121:
+1122: ## 三个最大方法学风险
+1123:
+1124: 1. AMI 与 non-AMI 的 CBC 年份/来源结构不平衡，year-only 模型已能提供显著区分度。
+1125: 2. discharge diagnosis 是表型代理，不等同于 Fourth Universal Definition 的完整临床 adjudication；肌钙蛋白仅作 supportive validation。
+1126: 3. patient-level master 虽能建立一次研究记录，但缺少可靠 index admission/事件时间链，因此本文结果只能称为 phenotype identification/discrimination，不能写成 future prediction。
+1127:
+1128: ## 禁止事项与下一步
+1129:
+1130: 本轮未创建评分名称、整数积分、Youden cutoff、风险分层或最终系数。只有当批次问题、诊断核验和 strict-control 结果支持时，下一阶段 V0.3 才可冻结候选变量并进行正式 score development。
+1131:
+1132: 详细证据见：`01_cohort_flow.csv`、`03_AMI_ambiguous_cases_for_review.csv`、`05_CBC_internal_consistency.csv`、`09_year_batch_audit.csv`、`10_PDW_specific_audit.csv`、`14_nested_cv_model_performance.csv`、`18_model_delta_auc.csv`。
+1133: """
+1134:     return summary, final_decision, f"best_traditional={best_trad}; year_auc={year_auc:.6f}; core_auc={core_auc:.6f}; enhanced_auc={enhanced_auc:.6f}; core_delta={core_delta_v:.6f}; fbg_delta={enhanced_delta_v:.6f}; pdw={pdw_decision}; fbg={fbg_decision}"
+1135:
+1136:
+1137: def write_session_and_manifest() -> None:
+1138:     session = {
+1139:         "python": sys.version,
+1140:         "platform": platform.platform(),
+1141:         "pandas": pd.__version__,
+1142:         "numpy": np.__version__,
+1143:         "scipy": scipy.__version__,
+1144:         "scikit_learn": sklearn.__version__,
+1145:         "statsmodels": sm.__version__ if hasattr(sm, "__version__") else "installed",
+1146:         "seed": SEED,
+1147:         "outer_cv": f"{OUTER_SPLITS}-fold x {OUTER_REPEATS} repeats",
+1148:         "inner_cv": f"{INNER_SPLITS}-fold",
+1149:         "alpha_grid": ALPHA_GRID,
+1150:         "C_grid": [float(x) for x in C_GRID],
+1151:         "source": str(SOURCE),
+1152:         "source_sha256": sha256(SOURCE),
+1153:     }
+1154:     (OUT / "24_session_info.json").write_text(json.dumps(session, ensure_ascii=False, indent=2), encoding="utf-8")
+1155:     manifest = []
+1156:     for path in sorted(OUT.iterdir()):
+1157:         if path.is_file() and path.name != "25_run_manifest.csv":
+1158:             manifest.append({"file": path.name, "bytes": path.stat().st_size, "sha256": sha256(path)})
+1159:     pd.DataFrame(manifest).to_csv(OUT / "25_run_manifest.csv", index=False)
+1160:     (OUT / "run_log.txt").write_text("\n".join(WARNINGS) if WARNINGS else "No warnings recorded by the analysis script.\n", encoding="utf-8")
+1161:
+1162:
+1163: def main() -> None:
+1164:     start = time.time()
+1165:     if not SOURCE.exists():
+1166:         raise FileNotFoundError(SOURCE)
+1167:     log(f"Reading {SOURCE}")
+1168:     raw = pd.read_csv(SOURCE, low_memory=False)
+1169:     selected, row_audit = select_one_row_per_patient(raw)
+1170:     d = build_patient_frame(selected)
+1171:     d = benchmark_indices(d)
+1172:     log(f"raw_rows={len(raw)} selected_patients={d['research_patient_id'].nunique()} primary={int(d['primary_analysis'].sum())} strict={int(d['strict_analysis'].sum())}")
+1173:     write_cohort_outputs(raw, selected, row_audit, d)
+1174:     missingness_output(d)
+1175:     unit_range_output(d)
+1176:     time_audit_output(d)
+1177:     internal_consistency_output(d)
+1178:     index_summary_output(d)
+1179:     support_marker_audit(raw, d)
+1180:     transformation_output(d)
+1181:     # The following table is created after model performance because it includes the year-only result.
+1182:     pdw_info = pdw_audit(d)
+1183:     fbg_info = fibrinogen_audit(d)
+1184:     perf, pred, best_trad, split_info = run_analysis_models(d)
+1185:     year_audit(d, perf)
+1186:     domain = domain_analysis(d, split_info)
+1187:     deltas = delta_output(perf, pred, best_trad)
+1188:     calibration_output(perf)
+1189:     stability = pd.DataFrame(COEF_RECORDS)
+1190:     stability = selection_stability_output()
+1191:     chart_map_output()
+1192:     make_figures(d, perf, domain, pred, stability)
+1193:     summary, decision, receipt = final_summary(d, len(raw), perf, deltas, domain, stability, best_trad, pdw_info, fbg_info, split_info)
+1194:     (OUT / "00_EXECUTIVE_SUMMARY.md").write_text(summary, encoding="utf-8")
+1195:     (OUT / "analysis_receipt.txt").write_text(receipt + f"\ndecision={decision}\nelapsed_seconds={time.time() - start:.1f}\n", encoding="utf-8")
+1196:     write_session_and_manifest()
+1197:     log("AMI predevelopment V0.2 completed")
+1198:     log(receipt)
+1199:     log(f"decision={decision}")
+1200:     log(f"elapsed_seconds={time.time() - start:.1f}")
+1201:
+1202:
+1203: if __name__ == "__main__":
+1204:     main()

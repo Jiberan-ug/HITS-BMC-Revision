@@ -1,0 +1,8 @@
+# Recruitment and date-lineage hard gap
+CONSECUTIVE = NOT_ESTABLISHED. No complete eligible angiography screening register, query/SQL inclusion criteria, extraction date/filters or exclusion ledger recovered. The analysis is a diagnosis-and-CBC-availability subset of a master export. It cannot be called a consecutive angiography cohort on this evidence alone.
+
+The current downloaded manuscript states 2020-01-01 to 2026-01-01 and patient-level randomized institutional shifts within +/-182 days. In the actual frozen source, selected CBC years span 2009-2026, with 1802/1820 before 2019. Thus small bounded shifts cannot explain the discrepancy if CBC is intended to represent the stated index period. Historical tests outside that period are another possibility, but that would also undermine index-measurement interpretation and needs evidence.
+
+The recovered date-shift R script reads an input master and writes a DISTINCT structure-preserved deidentified master. V05 instead reads the input master whose SHA256 is f87691f5876ece3e70b2835284bf2412ed57edaf83ee7e198df6caa89669a660. Its proof checks script text and an audit table, not actual linkage of the modeled rows/dates to that shifted output. Therefore institutional date transformation and application to the modeling input are NOT_VERIFIED. This is not evidence that the source dates are necessarily true calendar dates either.
+
+Required: institutional export provenance, actual recruitment/index rule, dated screening denominator, deidentification specification and linkage of the exact hashed model input to it. Do not change dates, shift point, study period or frozen estimates to make them agree. WP1_HOLD_DUE_TO_SOURCE_DATA_GAP.

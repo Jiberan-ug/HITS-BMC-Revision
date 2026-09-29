@@ -1,0 +1,67 @@
+Source: RECOVERED_FROM_DOWNLOADS_20260831/03_SUBMISSION_PACKS/HITS_BMC_Cardiovascular_Disorders_Submission_Pack_v1.0/04_SOURCE_TRACEABILITY/Figure_Source_Data_and_R_Scripts/plot_hits_clinical_figures.R
+Original SHA256: d3291586de10aeaa696735ff7f1975e12a9736af6ad3c852cff3af92e029e689
+READ ONLY; NOT EXECUTABLE. Home path redacted; trailing whitespace normalized.
+
+0001: #!/usr/bin/env Rscript
+0002: suppressPackageStartupMessages({library(ggplot2); library(patchwork)})
+0003: # Figure 4 source values (frozen)
+0004: d <- data.frame(
+0005:  analysis=rep(c('Temporal sensitivity (±6-month buffer)','High-specificity AMI cohort','Conservative temporal sensitivity (±12-month buffer)'), each=3),
+0006:  model=rep(c('Core-7','Enhanced','PIV'),3),
+0007:  auc=c(0.701320983905254,0.719283328272092,0.699058609170969,
+0008:        0.770179146537842,0.786860909822866,0.749370974235105,
+0009:        0.683737776168055,0.69934806229627,0.698044186888808),
+0010:  lo=c(0.650080019451177,0.673123318912843,0.650921674353409,
+0011:       0.717625941774559,0.736219137109494,0.69615521037182,
+0012:       0.621764864864865,0.639396813267357,0.638394129354164),
+0013:  hi=c(0.748251735919546,0.764397320695994,0.745437524599867,
+0014:       0.820297985016248,0.831315509823214,0.799719177742511,
+0015:       0.743850411320879,0.756260885819845,0.753711901719186)
+0016: )
+0017: d$analysis <- factor(d$analysis, levels=rev(unique(d$analysis)))
+0018: d$model <- factor(d$model, levels=c('PIV','Core-7','Enhanced'))
+0019: cols <- c('PIV'='#B04A4A','Core-7'='#1F6F8B','Enhanced'='#2E7D5B')
+0020: forest <- ggplot(d,aes(x=auc,y=analysis,colour=model))+
+0021:  geom_errorbar(aes(xmin=lo,xmax=hi),position=position_dodge(width=.46),width=.22,linewidth=.55)+
+0022:  geom_point(position=position_dodge(width=.46),size=2)+
+0023:  scale_colour_manual(values=cols)+scale_x_continuous(limits=c(.55,.86),breaks=seq(.55,.85,.05),expand=c(.01,.01))+
+0024:  labs(x='AUC (95% CI)',y=NULL,colour=NULL)+theme_classic(base_size=9.5)+
+0025:  theme(legend.position='bottom',plot.margin=margin(5,6,5,6),axis.text=element_text(colour='#263238'))+
+0026:  annotate('text',x=.55,y=Inf,label='B',hjust=0,vjust=1.8,fontface='bold',size=4.2,colour='#263238')
+0027:
+0028: nodes <- data.frame(x=c(.5,.5,.5),y=c(2.7,1.65,.6),label=c('Earlier-period\ncohort','Excluded ±6-month buffer\naround temporal split','Later-period\ncohort'))
+0029: edges <- data.frame(x=c(.5,.5),y=c(2.35,1.30),xend=c(.5,.5),yend=c(2.00,.95))
+0030: scheme <- ggplot()+
+0031:  geom_segment(data=edges,aes(x=x,y=y,xend=xend,yend=yend),linewidth=.55,colour='#65727E',arrow=grid::arrow(length=grid::unit(2.2,'mm'),type='closed'))+
+0032:  geom_label(data=nodes,aes(x=x,y=y,label=label),fill=c('#E7F0EA','#F3F4F6','#F8EFE5'),colour='#263238',linewidth=.3,size=3,lineheight=.95,label.padding=grid::unit(.30,'lines'),label.r=grid::unit(.08,'lines'))+
+0033:  annotate('text',x=.05,y=3.35,label='A',fontface='bold',hjust=0,size=4.2,colour='#263238')+
+0034:  coord_cartesian(xlim=c(0,1),ylim=c(-.1,3.6),expand=FALSE,clip='off')+theme_void()+theme(plot.margin=margin(5,5,5,5))
+0035: p4 <- scheme+forest+plot_layout(widths=c(.40,1.60),guides='collect') & theme(legend.position='bottom')
+0036: ggsave('/mnt/data/HITS_Figure4_TemporalSensitivity_Clinical.png',p4,width=210,height=120,units='mm',dpi=600)
+0037: ggsave('/mnt/data/HITS_Figure4_TemporalSensitivity_Clinical.pdf',p4,width=210,height=120,units='mm',device=pdf,useDingbats=FALSE)
+0038:
+0039: # Figure 5 includes alternative shift sensitivity without CIs
+0040: s4 <- data.frame(
+0041:  analysis=rep(c('Temporal sensitivity (±6 months)','High-specificity AMI cohort','Conservative temporal sensitivity (±12 months)','Alternative date-shift sensitivity'), each=3),
+0042:  model=rep(c('Core-7','Enhanced','PIV'),4),
+0043:  auc=c(0.701320983905254,0.719283328272092,0.699058609170969,
+0044:        0.770179146537842,0.786860909822866,0.749370974235105,
+0045:        0.683737776168055,0.69934806229627,0.698044186888808,
+0046:        0.706958195819582,0.724647464746475,0.704495449544955),
+0047:  lo=c(0.650080019451177,0.673123318912843,0.650921674353409,
+0048:       0.717625941774559,0.736219137109494,0.69615521037182,
+0049:       0.621764864864865,0.639396813267357,0.638394129354164,NA,NA,NA),
+0050:  hi=c(0.748251735919546,0.764397320695994,0.745437524599867,
+0051:       0.820297985016248,0.831315509823214,0.799719177742511,
+0052:       0.743850411320879,0.756260885819845,0.753711901719186,NA,NA,NA)
+0053: )
+0054: s4$analysis <- factor(s4$analysis,levels=rev(unique(s4$analysis)))
+0055: s4$model <- factor(s4$model,levels=c('PIV','Core-7','Enhanced'))
+0056: p5 <- ggplot(s4,aes(x=auc,y=analysis,colour=model))+
+0057:  geom_errorbar(aes(xmin=lo,xmax=hi),position=position_dodge(width=.46),width=.22,linewidth=.55,na.rm=TRUE)+
+0058:  geom_point(position=position_dodge(width=.46),size=2)+scale_colour_manual(values=cols)+
+0059:  scale_x_continuous(limits=c(.55,.86),breaks=seq(.55,.85,.05),expand=c(.01,.01))+
+0060:  labs(x='AUC (95% CI)',y=NULL,colour=NULL)+theme_classic(base_size=10)+
+0061:  theme(legend.position='bottom',plot.margin=margin(6,8,6,8),axis.text=element_text(colour='#263238'))
+0062: ggsave('/mnt/data/HITS_Figure5_Robustness_Clinical.png',p5,width=175,height=130,units='mm',dpi=600)
+0063: ggsave('/mnt/data/HITS_Figure5_Robustness_Clinical.pdf',p5,width=175,height=130,units='mm',device=pdf,useDingbats=FALSE)

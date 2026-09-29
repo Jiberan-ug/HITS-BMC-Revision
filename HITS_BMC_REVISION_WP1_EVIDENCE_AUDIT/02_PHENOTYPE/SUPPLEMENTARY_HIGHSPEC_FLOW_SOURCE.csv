@@ -1,0 +1,4 @@
+stage,primary_n,primary_ami_n,highspecific_ami_n,strict_control_n,highspecific_total_n
+development_guaranteed_early,1001,196,162,634,796
+guard_band_excluded,271,79,62,142,204
+validation_guaranteed_late,548,178,138,288,426

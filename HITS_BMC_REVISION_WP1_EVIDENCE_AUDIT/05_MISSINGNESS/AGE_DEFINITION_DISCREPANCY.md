@@ -1,0 +1,6 @@
+# Age discrepancy: do not overwrite the corrected manuscript definition
+Required priority: main birth_date first, baseline birth date fallback only. The current Python build_patient_frame follows that priority, uses admission date or CBC date if admission is missing, divides by365.2425 and accepts18-120 years. Its descriptive parse yields1820 available (453 AMI,1367 controls), matching historical canonical missingness output age missing0.
+
+Current downloaded manuscript explicitly says1818 available (452/1366). That two-patient exclusion/derivation has NOT been reproduced from a recovered executable correction. Old R Table1 builders instead prioritized baseline birth date and used admission-only age, a different faulty branch. Do not restore that branch and do not silently change1818 to1820.
+
+The CSV reports current-source parsed availability AND manuscript-reported availability separately. The final corrected age vector/reference-date rule and hash need recovery. Clinical model performance numbers exist, but whether they correspond to the manuscript-corrected age definition is UNRESOLVED. No new clinical model fitted. A correction may require explicit WP2 rerun authorization once derivation is locked.

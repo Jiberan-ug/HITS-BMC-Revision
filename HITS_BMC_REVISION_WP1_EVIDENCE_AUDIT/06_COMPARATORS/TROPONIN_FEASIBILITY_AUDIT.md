@@ -1,0 +1,7 @@
+# Troponin feasibility
+Decision: NOT_VALID_FOR_UNIFIED_MODEL with current recovered data.
+Fields found: cTnI, cTnT, hs_cTnT, each with result/unit/test_time and duplicate-named companion fields. No dedicated hs_cTnI column recovered. Nonmissing raw results:173,88,390 respectively of1820; timestamps173,90,402. Counts are not additive unique-patient coverage and duplicate-named columns must not be counted as additional assays. CK-MB appears in only1 record. See inventory for exact field names and units.
+
+Units include ng/ml/ng/mL and ug/L. These concentration units are dimensionally compatible; their notation alone is NOT the primary problem. Assay platform/manufacturer/generation,99th-percentile ULN and sex-specific reference limits were not recovered from headers/dictionary; no validated assay-specific sampling window, serial rise/fall or index diagnosis relation exists. Calendar distribution differs across assays. Test result nonmissing is not the same as usable quantitative result (censoring/non-numeric reporting can occur).
+
+Do not pool assays into an incremental model or silently treat absent tests as negative. A restricted assay-specific descriptive comparison could only be considered after platform/ULN/time retrieval and new authorization. Current reviewer strategy: explain limitations and phenotype-discrimination positioning, not replacement for troponin. No troponin model run.

@@ -1,0 +1,16 @@
+group,variable,n,available_n,missing_n,missing_pct,provenance,definition_status
+overall,age,1820,1820,0,0.0,Current descriptive parse; NOT a model rerun,CURRENT_CODE_DESCRIPTIVE; not accepted as corrected-age lock
+overall,male,1820,1820,0,0.0,Current descriptive parse; NOT a model rerun,CURRENT_CODE_DESCRIPTIVE; not accepted as corrected-age lock
+overall,hypertension,1820,1741,79,4.34065934065934,Current descriptive parse; NOT a model rerun,CURRENT_CODE_DESCRIPTIVE; not accepted as corrected-age lock
+overall,diabetes,1820,1772,48,2.6373626373626373,Current descriptive parse; NOT a model rerun,CURRENT_CODE_DESCRIPTIVE; not accepted as corrected-age lock
+AMI,age,453,453,0,0.0,Current descriptive parse; NOT a model rerun,CURRENT_CODE_DESCRIPTIVE; not accepted as corrected-age lock
+AMI,male,453,453,0,0.0,Current descriptive parse; NOT a model rerun,CURRENT_CODE_DESCRIPTIVE; not accepted as corrected-age lock
+AMI,hypertension,453,435,18,3.9735099337748343,Current descriptive parse; NOT a model rerun,CURRENT_CODE_DESCRIPTIVE; not accepted as corrected-age lock
+AMI,diabetes,453,442,11,2.428256070640177,Current descriptive parse; NOT a model rerun,CURRENT_CODE_DESCRIPTIVE; not accepted as corrected-age lock
+non_AMI,age,1367,1367,0,0.0,Current descriptive parse; NOT a model rerun,CURRENT_CODE_DESCRIPTIVE; not accepted as corrected-age lock
+non_AMI,male,1367,1367,0,0.0,Current descriptive parse; NOT a model rerun,CURRENT_CODE_DESCRIPTIVE; not accepted as corrected-age lock
+non_AMI,hypertension,1367,1306,61,4.462326261887345,Current descriptive parse; NOT a model rerun,CURRENT_CODE_DESCRIPTIVE; not accepted as corrected-age lock
+non_AMI,diabetes,1367,1330,37,2.7066569129480613,Current descriptive parse; NOT a model rerun,CURRENT_CODE_DESCRIPTIVE; not accepted as corrected-age lock
+overall,age,1820,1818,2,0.10989010989010989,Manuscript Table1 reported; derivation not reproduced,AUTHOR_CORRECTED_DEFINITION_REQUIRED
+AMI,age,453,452,1,0.22075055187637968,Manuscript Table1 reported; derivation not reproduced,AUTHOR_CORRECTED_DEFINITION_REQUIRED
+non_AMI,age,1367,1366,1,0.07315288953913679,Manuscript Table1 reported; derivation not reproduced,AUTHOR_CORRECTED_DEFINITION_REQUIRED

@@ -1,0 +1,6 @@
+# PIV comparator
+PIV=PLT*absolute Neut*absolute Mono/absolute Lymph. Internal canonical code `HITS_V0.3.1_verified_completion_20260825/scripts/01_run_hits_v0_3_1_verified_completion.py` applies fixed log1p(max(PIV,0)), training-fold centering/scaling, then unpenalized univariable logistic regression with fitted intercept/slope. Same1820 patients and same outer5x10 partitions as Core; aggregation is the same patient arithmetic mean. No PIV hyperparameter search is needed. This supports procedural fairness for internal discrimination comparison, not clinical superiority.
+
+Clinical+PIV instead uses the clinical covariates and PIV together in tuned elastic-net; clinical+Core/+Enhanced internally enter the raw component features jointly, not a separately fitted scalar blood score. Temporal clinical combinations use frozen blood-score features and a different520-patient analysis: do not conflate these architectures.
+
+Temporal standalone PIV is the raw ordinal ratio on validation patients, AUC only, unlike internally calibrated logistic PIV. Monotonic transformation does not by itself change ordinal AUC, but it does not produce a probability. Do not calculate PIV temporal Brier/calibration/DCA using raw values.
