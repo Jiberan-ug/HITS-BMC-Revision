@@ -1,0 +1,8 @@
+file_role,official_filename,copy_location,exists,sha256,bytes,rows,columns,unique_patient_sn,three_header_rows,status,sheet
+primary_mother,冠心病+造影手术+20-26（减少附属）.csv,Downloads,YES,1725a9e4c9b963d2e4737188ed1b8915454792cdbb3d8e2034a7243bedddd239,6860920,2548,431,2279,YES,FOUND_COPY,
+primary_mother,冠心病+造影手术+20-26（减少附属）.csv,Documents/source_raw,YES,1725a9e4c9b963d2e4737188ed1b8915454792cdbb3d8e2034a7243bedddd239,6860920,2548,431,2279,YES,FOUND_COPY,
+adverse_plus,冠心病+造影手术+20-26+不良（减少附属）.csv,Downloads,YES,7d1ae7340d1b755653ce74136028184dec13098efef0ebf1c78ea808b6648798,2330988,699,431,684,YES,FOUND_COPY,
+adverse_plus,冠心病+造影手术+20-26+不良（减少附属）.csv,Documents/source_raw,YES,7d1ae7340d1b755653ce74136028184dec13098efef0ebf1c78ea808b6648798,2330988,699,431,684,YES,FOUND_COPY,
+adverse_dash,冠心病+造影手术+20-26-不良（减少附属）.csv,NOT_FOUND,NO,,,,,,UNVERIFIED,MISSING,
+adverse_xlsx,冠心病+造影手术+20-26年+不良.xlsx,Downloads,YES,8991485275e66463b1ce1d364ef2612505600a4b534c08e52da3f35d7f33057c,1773341,699,630,,YES,FOUND_COPY,基线
+adverse_xlsx,冠心病+造影手术+20-26年+不良.xlsx,Documents/source_raw,YES,8991485275e66463b1ce1d364ef2612505600a4b534c08e52da3f35d7f33057c,1773341,699,630,,YES,FOUND_COPY,基线

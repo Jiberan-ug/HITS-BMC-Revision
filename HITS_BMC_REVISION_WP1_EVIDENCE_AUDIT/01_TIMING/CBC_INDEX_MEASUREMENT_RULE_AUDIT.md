@@ -10,4 +10,4 @@ Admission dates are present in 130/1820. Arithmetic CBC-minus-admission median i
 
 Fibrinogen timestamps: 1707; numeric fibrinogen: 1705. Fbg-CBC same calendar day: 1553/1707 (90.978%). Median difference is about 0.000440 days. Laboratory proximity does not repair encounter linkage. See descriptive timing CSVs; do not delete negative-time cases or rebuild the cohort in WP1.
 
-Honest reporting rule for future WP3: a laboratory panel carried by the selected completeness-ranked patient record. Do not call it admission-first or pre-angiography. Exact recruitment period and hospital encounter require author/source verification.
+WP1R-A subsequently recovered the original primary mother file and received explicit author confirmation that cohort eligibility was 2020–2026 coronary angiography. This period/eligibility is author-confirmed but not machine-verified from a query or date field. The source still does not link the selected completeness-ranked laboratory panel to that index encounter. For future WP3, do not call the panel admission-first or pre-angiography; see `../10_ORIGINAL_SOURCE_RECOVERY/` for the updated source and date semantics.

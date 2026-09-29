@@ -6,3 +6,9 @@ The source_excerpts directory is redacted, numbered READ-ONLY code evidence, NOT
 The age-discrepancy CSV deliberately distinguishes CURRENT_CODE_DESCRIPTIVE from AUTHOR_CORRECTED_DEFINITION_REQUIRED. Do not collapse them. Figure-source filenames changed across manuscript stages; follow content ancestry, not the figure number alone.
 
 No credentials, patient identifiers, admission tokens, individual diagnoses, patient predictions, full manuscripts or ethics documents belong in this public package. Source owner must independently retain protected records. No third-party worker received patient data.
+
+## WP1R-A source recovery
+
+`audit_original_source_files.py` is a read-only audit of the four named original source files and their patient-level field lineage to the analysis master. It writes only aggregate counts, field names, hashes, and row-match totals under `10_ORIGINAL_SOURCE_RECOVERY/`. It does not export patient keys or source records and does not run any model. The recursive file search is restricted to the user's Downloads directory and the historical `Dual_Score_V0.3/source_raw` directory by default.
+
+For a local rerun, set `HITS_DOWNLOADS_DIR`, `HITS_SOURCE_RAW_DIR`, `HITS_MASTER_CSV`, and `HITS_PROJECT_ROOT` to the authorized local folders (the last variable is the audit package root), then run `python3 09_CODE/audit_original_source_files.py`. Do not place original source files or patient-level derivatives in Git or a public ZIP. The output's patient-set and field matches do not establish encounter-level linkage.

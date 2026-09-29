@@ -20,7 +20,8 @@ required={
 '05_MISSINGNESS':['FIBRINOGEN_MISSINGNESS_BY_OUTCOME.csv','FIBRINOGEN_FAIR_COMPARISON_AUDIT.md','CLINICAL_VARIABLE_MISSINGNESS.csv'],
 '06_COMPARATORS':['TRADITIONAL_INDEX_PERFORMANCE_INVENTORY.csv','PIV_COMPARATOR_METHOD_AUDIT.md','CLINICAL_INCREMENTAL_PERFORMANCE_EXISTING_RESULTS.csv','COLLINEARITY_EXISTING_EVIDENCE_AUDIT.md','TROPONIN_FEASIBILITY_AUDIT.md'],
 '07_ETHICS':['ETHICS_CONSENT_HARD_GATE.md','HUMAN_RESEARCH_GUIDELINES_REQUIREMENT.md'],
-'08_REVISION_PLANNING':['WP2_ANALYSIS_AUTHORIZATION_PLAN.md','RESPONSE_TO_REVIEWERS_SKELETON.md','CONCLUSION_CLAIM_AUDIT.md']}
+'08_REVISION_PLANNING':['WP2_ANALYSIS_AUTHORIZATION_PLAN.md','RESPONSE_TO_REVIEWERS_SKELETON.md','CONCLUSION_CLAIM_AUDIT.md'],
+'10_ORIGINAL_SOURCE_RECOVERY':['WP1R_DECISION.md','CBC_DATE_SEMANTICS_AUDIT.md','SOURCE_ROW_SEMANTICS_FINAL.md','INDEX_CBC_RECONSTRUCTION_FEASIBILITY.md','DIAGNOSIS_ENCOUNTER_LINKAGE_FINAL.md','WP1R_RUN_LOG.md','ORIGINAL_FOUR_FILE_INVENTORY.csv','RAW_TO_ANALYSIS_SOURCE_CROSSWALK.csv','REPEATED_PATIENT_TOKEN_AUDIT.csv','ORIGINAL_MOTHER_FIELD_INVENTORY.csv','ORIGINAL_MOTHER_DATE_FIELD_SUMMARY.csv','ORIGINAL_DATE_RELATIONSHIPS.csv','SOURCE_AUDIT_METRICS.json']}
 
 
 def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
@@ -66,7 +67,22 @@ def main():
     for p in OUT.rglob('*.csv'):
         frame=pd.read_csv(p)
         check('Aggregate CSV: '+str(p.relative_to(OUT)),not {'patient_sn','research_patient_id','inpatient_no_id','diagnosis_text'}.intersection(frame.columns))
-    result={'technical_package_qa':'PASS','scientific_gate':'WP1_HOLD_DUE_TO_SOURCE_DATA_GAP','checks':checks,'privacy_scope':'Exact source identifier values >=6 chars; pseudonym/credential scans; schema/allowlist checks. Does not claim universal deidentification proof. Manual review also required.','models_run':0,'new_figures':0,'manuscript_modified':False}
+    metrics=json.loads((OUT/'10_ORIGINAL_SOURCE_RECOVERY/SOURCE_AUDIT_METRICS.json').read_text())
+    inv=pd.read_csv(OUT/'10_ORIGINAL_SOURCE_RECOVERY/ORIGINAL_FOUR_FILE_INVENTORY.csv')
+    check('Primary mother dimensions and IDs',metrics['primary_raw_rows']==2548 and metrics['columns']==431 and metrics['unique_patient_sn']==2279 and metrics['patient_set_exact_match_clean_master'])
+    check('Three of four unique source file roles found',inv.groupby('file_role')['exists'].first().eq('YES').sum()==3 and inv.file_role.nunique()==4)
+    check('Index-CBC and repeated-row findings preserved',metrics['repeated_patients']==269 and metrics['repeated_groups_same_baseline_admission_token']==269 and metrics['repeated_groups_multiple_current_admission_numbers']==0 and not metrics['discharge_date_field_present'] and not metrics['cag_pci_procedure_date_field_present'])
+    ethics=(OUT/'07_ETHICS/ETHICS_CONSENT_HARD_GATE.md').read_text()
+    decision=(OUT/'10_ORIGINAL_SOURCE_RECOVERY/WP1R_DECISION.md').read_text()
+    check('Author-confirmed ethics gate and conflict flagged','ETHICS_CONSENT_GATE = PASS' in ethics and 'waived' in ethics.lower() and 'must be corrected' in ethics)
+    check('WP1R partial-pass gate locked','WP1R_SOURCE_RECOVERY_PARTIAL_PASS_INDEX_CBC_RECONSTRUCTION_REQUIRED' in decision)
+    raw_path=os.environ.get('HITS_RAW_MOTHER_CSV')
+    if raw_path:
+        source=pd.read_csv(raw_path,header=2,dtype=str,keep_default_na=False,low_memory=False,usecols=lambda c: bool(re.fullmatch(r'(patient_sn|.*inpatient_no_id)',str(c),re.I)))
+        for c in source:
+            tokens.update(v for v in source[c].unique() if len(v)>=6 and v.lower() not in {'unknown','missing','not available'})
+        check('No protected identifier values from original mother file',not any(v in hay for v in tokens))
+    result={'technical_package_qa':'PASS','scientific_gate':'WP1R_SOURCE_RECOVERY_PARTIAL_PASS_INDEX_CBC_RECONSTRUCTION_REQUIRED','ethics_consent_gate':'PASS_AUTHOR_CONFIRMED_DOCUMENT_NOT_INDEPENDENTLY_INSPECTED','checks':checks,'privacy_scope':'Exact source identifier values >=6 chars, including original mother identifiers when HITS_RAW_MOTHER_CSV is set; pseudonym/credential scans; schema/allowlist checks. Does not claim universal deidentification proof. Manual review also required.','models_run':0,'new_figures':0,'manuscript_modified':False,'wp2_entered':False}
     (OUT/'09_CODE/QA_REPORT.json').write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n')
     files=[p for p in OUT.rglob('*') if p.is_file() and p.name!='PACKAGE_SHA256.csv']
     pd.DataFrame([dict(path=str(p.relative_to(OUT)),sha256=sha(p),bytes=p.stat().st_size) for p in sorted(files)]).to_csv(OUT/'09_CODE/PACKAGE_SHA256.csv',index=False,lineterminator='\n')

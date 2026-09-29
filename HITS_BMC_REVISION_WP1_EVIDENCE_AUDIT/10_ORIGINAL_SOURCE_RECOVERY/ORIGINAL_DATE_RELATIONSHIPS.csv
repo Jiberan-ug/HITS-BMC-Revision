@@ -1,0 +1,3 @@
+comparison,available_n,median_days,before_event_n,after_event_n,same_calendar_day_n,semantic
+WBC_time_minus_admission,146,-1771.477528935185,111,35,21,Descriptive dates only; same-encounter relationship is not evidenced
+Fbg_time_minus_admission,140,-1632.652326388889,105,35,20,Descriptive dates only; same-encounter relationship is not evidenced

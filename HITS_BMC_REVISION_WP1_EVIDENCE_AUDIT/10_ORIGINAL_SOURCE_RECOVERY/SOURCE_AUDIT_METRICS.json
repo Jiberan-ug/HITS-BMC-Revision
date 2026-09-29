@@ -1,0 +1,22 @@
+{
+  "primary_raw_rows": 2548,
+  "columns": 431,
+  "unique_patient_sn": 2279,
+  "patient_set_exact_match_clean_master": true,
+  "clean_master_rows": 2548,
+  "clean_master_unique_patients": 2279,
+  "repeated_patients": 269,
+  "surplus_rows": 269,
+  "one_row_patients": 2010,
+  "two_row_patients": 269,
+  "patients_ge3": 0,
+  "repeated_groups_same_baseline_admission_token": 269,
+  "repeated_groups_multiple_current_admission_numbers": 0,
+  "wbc_test_time_n": 2268,
+  "wbc_before_2019_n": 2249,
+  "fbg_test_time_n": 2128,
+  "fbg_before_2019_n": 2109,
+  "discharge_date_field_present": false,
+  "cag_pci_procedure_date_field_present": false,
+  "models_run": false
+}

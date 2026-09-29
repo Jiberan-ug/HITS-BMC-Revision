@@ -1,6 +1,7 @@
 {
   "technical_package_qa": "PASS",
-  "scientific_gate": "WP1_HOLD_DUE_TO_SOURCE_DATA_GAP",
+  "scientific_gate": "WP1R_SOURCE_RECOVERY_PARTIAL_PASS_INDEX_CBC_RECONSTRUCTION_REQUIRED",
+  "ethics_consent_gate": "PASS_AUTHOR_CONFIRMED_DOCUMENT_NOT_INDEPENDENTLY_INSPECTED",
   "checks": [
     {
       "check": "Required files present",
@@ -259,6 +260,30 @@
       "passed": true
     },
     {
+      "check": "Aggregate CSV: 10_ORIGINAL_SOURCE_RECOVERY/ORIGINAL_MOTHER_DATE_FIELD_SUMMARY.csv",
+      "passed": true
+    },
+    {
+      "check": "Aggregate CSV: 10_ORIGINAL_SOURCE_RECOVERY/ORIGINAL_FOUR_FILE_INVENTORY.csv",
+      "passed": true
+    },
+    {
+      "check": "Aggregate CSV: 10_ORIGINAL_SOURCE_RECOVERY/RAW_TO_ANALYSIS_SOURCE_CROSSWALK.csv",
+      "passed": true
+    },
+    {
+      "check": "Aggregate CSV: 10_ORIGINAL_SOURCE_RECOVERY/REPEATED_PATIENT_TOKEN_AUDIT.csv",
+      "passed": true
+    },
+    {
+      "check": "Aggregate CSV: 10_ORIGINAL_SOURCE_RECOVERY/ORIGINAL_DATE_RELATIONSHIPS.csv",
+      "passed": true
+    },
+    {
+      "check": "Aggregate CSV: 10_ORIGINAL_SOURCE_RECOVERY/ORIGINAL_MOTHER_FIELD_INVENTORY.csv",
+      "passed": true
+    },
+    {
       "check": "Aggregate CSV: 02_PHENOTYPE/SUPPLEMENTARY_HIGHSPEC_FLOW_SOURCE.csv",
       "passed": true
     },
@@ -273,10 +298,35 @@
     {
       "check": "Aggregate CSV: 03_COHORT_FLOW/RECORD_MULTIPLICITY.csv",
       "passed": true
+    },
+    {
+      "check": "Primary mother dimensions and IDs",
+      "passed": true
+    },
+    {
+      "check": "Three of four unique source file roles found",
+      "passed": true
+    },
+    {
+      "check": "Index-CBC and repeated-row findings preserved",
+      "passed": true
+    },
+    {
+      "check": "Author-confirmed ethics gate and conflict flagged",
+      "passed": true
+    },
+    {
+      "check": "WP1R partial-pass gate locked",
+      "passed": true
+    },
+    {
+      "check": "No protected identifier values from original mother file",
+      "passed": true
     }
   ],
-  "privacy_scope": "Exact source identifier values >=6 chars; pseudonym/credential scans; schema/allowlist checks. Does not claim universal deidentification proof. Manual review also required.",
+  "privacy_scope": "Exact source identifier values >=6 chars, including original mother identifiers when HITS_RAW_MOTHER_CSV is set; pseudonym/credential scans; schema/allowlist checks. Does not claim universal deidentification proof. Manual review also required.",
   "models_run": 0,
   "new_figures": 0,
-  "manuscript_modified": false
+  "manuscript_modified": false,
+  "wp2_entered": false
 }

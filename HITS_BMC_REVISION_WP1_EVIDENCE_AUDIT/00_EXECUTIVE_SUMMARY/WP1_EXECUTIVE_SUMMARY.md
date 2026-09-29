@@ -1,5 +1,7 @@
 # HITS BMC Revision WP1
 
+> Historical pre-WP1R status. WP1R-A later recovered the primary mother file and author confirmation of the 2020–2026 angiography eligibility rule, but did not establish encounter-level/index-CBC linkage. See `10_ORIGINAL_SOURCE_RECOVERY/WP1R_DECISION.md` for the superseding source-recovery and ethics determinations; this earlier 34-item audit is retained as its original record.
+
 Date:2026-09-29. User-reported revision requested; submission ID fa1e4873-011b-4f15-8b0d-29f6df21fabe. Internal deadline2026-10-10; journal deadline2026-10-12 (user instruction, not portal-verified).
 
 ## Gate

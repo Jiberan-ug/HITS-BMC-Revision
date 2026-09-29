@@ -4,8 +4,8 @@ R02,AMI label validity,HIGH,Discharge text only; no independent review,OPEN,See 
 R03,Record selection,HIGH,Diagnosis availability ranked; qc score definition unknown,OPEN,See corresponding audit; WP2 not authorized
 R04,Validation leakage,MODERATE,Canonical fitted preprocessing fold-local; prior variable selection/lineage not eliminated,OPEN,See corresponding audit; WP2 not authorized
 R05,Bootstrap CI provenance,MODERATE,"Fixed prediction bootstrap, not full pipeline uncertainty",OPEN,See corresponding audit; WP2 not authorized
-R06,Temporal source/period mismatch,CRITICAL,1802 CBC before2019; stated2020-2026; shift input/output not linked,OPEN,See corresponding audit; WP2 not authorized
-R07,Consent consistency,CRITICAL,Author documents required,OPEN,See corresponding audit; WP2 not authorized
+R06,Temporal source/period mismatch,CRITICAL,2020-2026 CAG eligibility author-confirmed but not source-field verified; CBC test-time encounter semantics and date-shift input/output linkage unresolved,OPEN,See WP1R source recovery and temporal audit; WP2 not authorized
+R07,Consent consistency,HIGH,Author confirms ethics approval K202602-10 and waiver; manuscript's all-participants-consented statement conflicts and requires WP3 correction,OPEN_REQUIRES_WP3_CORRECTION,See ethics gate; no ethics documents uploaded
 R08,Troponin feasibility,HIGH,Assay/ULN/index time unresolved,OPEN,See corresponding audit; WP2 not authorized
 R09,Missing fibrinogen,MODERATE,"115 missing, timing not anchored",OPEN,See corresponding audit; WP2 not authorized
 R10,Clinical covariate missingness,HIGH,Corrected age denominator1818 not reproduced,OPEN,See corresponding audit; WP2 not authorized

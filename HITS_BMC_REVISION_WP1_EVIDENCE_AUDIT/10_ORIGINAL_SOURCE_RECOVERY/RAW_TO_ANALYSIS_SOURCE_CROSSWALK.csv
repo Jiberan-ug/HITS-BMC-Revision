@@ -1,0 +1,8 @@
+field_set,patients_with_exact_source_row_match,patients_total,comparison
+diagnosis,2265,2279,"Any source row for same patient; literal values, no patient key exported"
+admission_date,2279,2279,"Any source row for same patient; literal values, no patient key exported"
+core_CBC,2276,2279,"Any source row for same patient; literal values, no patient key exported"
+CBC_plus_WBC,2276,2279,"Any source row for same patient; literal values, no patient key exported"
+CBC_timestamp_set,2279,2279,"Any source row for same patient; literal values, no patient key exported"
+fibrinogen_value_time,2276,2279,"Any source row for same patient; literal values, no patient key exported"
+all_mapped_fields,2259,2279,"Any source row for same patient; literal values, no patient key exported"
