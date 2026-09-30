@@ -1,0 +1,49 @@
+analysis_group,metric,status,numerator_n,denominator_n,percent,numerator_denominator_display,interpretation
+Total,Fibrinogen test timestamp available,FIELD_AVAILABLE,1707,1820,93.79,1707/1820 (93.79%),Timestamp field available in the selected flat row
+Total,Fibrinogen value available,FIELD_AVAILABLE,1705,1820,93.68,1705/1820 (93.68%),Value availability is not encounter linkage
+Total,Fibrinogen and CBC timestamps paired,LAB_TO_LAB_ONLY,1707,1820,93.79,1707/1820 (93.79%),Both test timestamps appear in one selected patient-level row; encounter identity is unknown
+Total,Fibrinogen calendar date before CBC calendar date,DATE_LEVEL_RELATION,41,1707,2.40,41/1707 (2.40%),Calendar-date ordering among patients with both timestamps
+Total,Fibrinogen on same calendar date as CBC,DATE_LEVEL_RELATION,1553,1707,90.98,1553/1707 (90.98%),Calendar-date equality; exact time ordering may still differ
+Total,Fibrinogen calendar date after CBC calendar date,DATE_LEVEL_RELATION,113,1707,6.62,113/1707 (6.62%),Calendar-date ordering among patients with both timestamps
+Total,Fibrinogen exact timestamp before CBC,TIMESTAMP_RELATION,727,1707,42.59,727/1707 (42.59%),Exact recorded timestamp ordering; does not establish same specimen or hospitalization
+Total,Fibrinogen exact timestamp equal to CBC,TIMESTAMP_RELATION,1,1707,0.06,1/1707 (0.06%),Exact timestamp equality in the flat record only
+Total,Fibrinogen exact timestamp after CBC,TIMESTAMP_RELATION,979,1707,57.35,979/1707 (57.35%),Exact recorded timestamp ordering; does not establish same specimen or hospitalization
+Total,Fibrinogen and listed admission date paired,FIELD_PAIRED_NOT_ENCOUNTER_LINKED,124,1820,6.81,124/1820 (6.81%),Arithmetic comparison only; no index-stay linkage
+Total,Fibrinogen calendar date before listed admission date,DATE_LEVEL_ONLY,93,124,75.00,93/124 (75.00%),Date-level arithmetic only; admission date is not linked to the index CAG stay
+Total,Fibrinogen on same calendar date as listed admission date,DATE_LEVEL_ONLY,17,124,13.71,17/124 (13.71%),Same calendar date does not prove same hospitalization
+Total,Fibrinogen calendar date after listed admission date,DATE_LEVEL_ONLY,14,124,11.29,14/124 (11.29%),Date-level arithmetic only; admission date is not linked to the index CAG stay
+Total,Fibrinogen same index hospitalization confirmed,UNKNOWN_NOT_NO,0,0,NA,0/0 (not estimable),No index episode can be reconstructed; UNKNOWN among all 1707 with a fibrinogen timestamp
+Total,Fibrinogen before angiography confirmed,NOT_ESTIMABLE,0,0,NA,0/0 (not estimable),No angiography/CAG/PCI timestamp is available
+Total,Fibrinogen before initial AMI diagnosis confirmed,NOT_ESTIMABLE,0,0,NA,0/0 (not estimable),No initial AMI diagnosis timestamp is available
+AMI,Fibrinogen test timestamp available,FIELD_AVAILABLE,427,453,94.26,427/453 (94.26%),Timestamp field available in the selected flat row
+AMI,Fibrinogen value available,FIELD_AVAILABLE,426,453,94.04,426/453 (94.04%),Value availability is not encounter linkage
+AMI,Fibrinogen and CBC timestamps paired,LAB_TO_LAB_ONLY,427,453,94.26,427/453 (94.26%),Both test timestamps appear in one selected patient-level row; encounter identity is unknown
+AMI,Fibrinogen calendar date before CBC calendar date,DATE_LEVEL_RELATION,7,427,1.64,7/427 (1.64%),Calendar-date ordering among patients with both timestamps
+AMI,Fibrinogen on same calendar date as CBC,DATE_LEVEL_RELATION,397,427,92.97,397/427 (92.97%),Calendar-date equality; exact time ordering may still differ
+AMI,Fibrinogen calendar date after CBC calendar date,DATE_LEVEL_RELATION,23,427,5.39,23/427 (5.39%),Calendar-date ordering among patients with both timestamps
+AMI,Fibrinogen exact timestamp before CBC,TIMESTAMP_RELATION,150,427,35.13,150/427 (35.13%),Exact recorded timestamp ordering; does not establish same specimen or hospitalization
+AMI,Fibrinogen exact timestamp equal to CBC,TIMESTAMP_RELATION,1,427,0.23,1/427 (0.23%),Exact timestamp equality in the flat record only
+AMI,Fibrinogen exact timestamp after CBC,TIMESTAMP_RELATION,276,427,64.64,276/427 (64.64%),Exact recorded timestamp ordering; does not establish same specimen or hospitalization
+AMI,Fibrinogen and listed admission date paired,FIELD_PAIRED_NOT_ENCOUNTER_LINKED,33,453,7.28,33/453 (7.28%),Arithmetic comparison only; no index-stay linkage
+AMI,Fibrinogen calendar date before listed admission date,DATE_LEVEL_ONLY,20,33,60.61,20/33 (60.61%),Date-level arithmetic only; admission date is not linked to the index CAG stay
+AMI,Fibrinogen on same calendar date as listed admission date,DATE_LEVEL_ONLY,10,33,30.30,10/33 (30.30%),Same calendar date does not prove same hospitalization
+AMI,Fibrinogen calendar date after listed admission date,DATE_LEVEL_ONLY,3,33,9.09,3/33 (9.09%),Date-level arithmetic only; admission date is not linked to the index CAG stay
+AMI,Fibrinogen same index hospitalization confirmed,UNKNOWN_NOT_NO,0,0,NA,0/0 (not estimable),No index episode can be reconstructed; UNKNOWN among all 427 with a fibrinogen timestamp
+AMI,Fibrinogen before angiography confirmed,NOT_ESTIMABLE,0,0,NA,0/0 (not estimable),No angiography/CAG/PCI timestamp is available
+AMI,Fibrinogen before initial AMI diagnosis confirmed,NOT_ESTIMABLE,0,0,NA,0/0 (not estimable),No initial AMI diagnosis timestamp is available
+non-AMI CAD,Fibrinogen test timestamp available,FIELD_AVAILABLE,1280,1367,93.64,1280/1367 (93.64%),Timestamp field available in the selected flat row
+non-AMI CAD,Fibrinogen value available,FIELD_AVAILABLE,1279,1367,93.56,1279/1367 (93.56%),Value availability is not encounter linkage
+non-AMI CAD,Fibrinogen and CBC timestamps paired,LAB_TO_LAB_ONLY,1280,1367,93.64,1280/1367 (93.64%),Both test timestamps appear in one selected patient-level row; encounter identity is unknown
+non-AMI CAD,Fibrinogen calendar date before CBC calendar date,DATE_LEVEL_RELATION,34,1280,2.66,34/1280 (2.66%),Calendar-date ordering among patients with both timestamps
+non-AMI CAD,Fibrinogen on same calendar date as CBC,DATE_LEVEL_RELATION,1156,1280,90.31,1156/1280 (90.31%),Calendar-date equality; exact time ordering may still differ
+non-AMI CAD,Fibrinogen calendar date after CBC calendar date,DATE_LEVEL_RELATION,90,1280,7.03,90/1280 (7.03%),Calendar-date ordering among patients with both timestamps
+non-AMI CAD,Fibrinogen exact timestamp before CBC,TIMESTAMP_RELATION,577,1280,45.08,577/1280 (45.08%),Exact recorded timestamp ordering; does not establish same specimen or hospitalization
+non-AMI CAD,Fibrinogen exact timestamp equal to CBC,TIMESTAMP_RELATION,0,1280,0.00,0/1280 (0.00%),Exact timestamp equality in the flat record only
+non-AMI CAD,Fibrinogen exact timestamp after CBC,TIMESTAMP_RELATION,703,1280,54.92,703/1280 (54.92%),Exact recorded timestamp ordering; does not establish same specimen or hospitalization
+non-AMI CAD,Fibrinogen and listed admission date paired,FIELD_PAIRED_NOT_ENCOUNTER_LINKED,91,1367,6.66,91/1367 (6.66%),Arithmetic comparison only; no index-stay linkage
+non-AMI CAD,Fibrinogen calendar date before listed admission date,DATE_LEVEL_ONLY,73,91,80.22,73/91 (80.22%),Date-level arithmetic only; admission date is not linked to the index CAG stay
+non-AMI CAD,Fibrinogen on same calendar date as listed admission date,DATE_LEVEL_ONLY,7,91,7.69,7/91 (7.69%),Same calendar date does not prove same hospitalization
+non-AMI CAD,Fibrinogen calendar date after listed admission date,DATE_LEVEL_ONLY,11,91,12.09,11/91 (12.09%),Date-level arithmetic only; admission date is not linked to the index CAG stay
+non-AMI CAD,Fibrinogen same index hospitalization confirmed,UNKNOWN_NOT_NO,0,0,NA,0/0 (not estimable),No index episode can be reconstructed; UNKNOWN among all 1280 with a fibrinogen timestamp
+non-AMI CAD,Fibrinogen before angiography confirmed,NOT_ESTIMABLE,0,0,NA,0/0 (not estimable),No angiography/CAG/PCI timestamp is available
+non-AMI CAD,Fibrinogen before initial AMI diagnosis confirmed,NOT_APPLICABLE,0,0,NA,0/0 (not estimable),No initial AMI diagnosis timestamp is available

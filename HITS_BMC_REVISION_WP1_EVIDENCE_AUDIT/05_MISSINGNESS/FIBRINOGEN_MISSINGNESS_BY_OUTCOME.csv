@@ -1,0 +1,4 @@
+group,variable,n,available_n,missing_n,missing_pct,provenance
+overall,fbg,1820,1705,115,6.318681318681318,Current descriptive parse; NOT a model rerun
+AMI,fbg,453,426,27,5.960264900662252,Current descriptive parse; NOT a model rerun
+non_AMI,fbg,1367,1279,88,6.437454279444038,Current descriptive parse; NOT a model rerun

@@ -1,0 +1,161 @@
+module,chinese_label,raw_variable,clean_variable,recommended_status,reason
+固定列信息,基线_出生日期,基线_birth_date,基线_birth_date,Retain: derivation/QC only,出生日期可用于计算年龄，但原始日期不直接进入模型。
+基线,出生日期,birth_date,birth_date,Retain: derivation/QC only,出生日期可用于计算年龄，但原始日期不直接进入模型。
+基线,vsn_生命体征,vsn_vital_sign,vsn_vital_sign,Exclude: system record field,系统记录号/表单号字段，不具备临床预测意义。
+基线,vsn_心血管院内不良事件,vsn_cadio_ae_in_hospital,vsn_cadio_ae_in_hospital,Exclude: leakage/outcome-related,疑似不良事件/死亡/院内结局字段，存在结局泄露风险。
+基线,入院时间,admission_date,admission_date,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,事件时间,ae_date,ae_date,Exclude: leakage/outcome-related,疑似不良事件/死亡/院内结局字段，存在结局泄露风险。
+基线,死亡时间,death_time,death_time,Exclude: leakage/outcome-related,疑似不良事件/死亡/院内结局字段，存在结局泄露风险。
+基线,vsn_出院记录,vsn_discharge_record,vsn_discharge_record,Exclude: system record field,系统记录号/表单号字段，不具备临床预测意义。
+基线,出院诊断,discharge_diagnosis,discharge_diagnosis,Review manually,字段含义或时间属性需人工确认后决定是否保留。
+基线,vsn_入院记录,vsn_admission_record,vsn_admission_record,Exclude: system record field,系统记录号/表单号字段，不具备临床预测意义。
+基线,家族史,family_history,family_history,Review manually,字段含义或时间属性需人工确认后决定是否保留。
+基线,个人史,personal_history,personal_history,Review manually,字段含义或时间属性需人工确认后决定是否保留。
+基线,vsn_血常规,vsn_lab_blood_routine_examination,vsn_lab_blood_routine_examination,Exclude: system record field,系统记录号/表单号字段，不具备临床预测意义。
+基线,血常规_白细胞计数(WBC#)-静脉血_检验日期,lab_blood_routine_examination_WBC#_test_time,lab_blood_routine_examination_WBC_test_time,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,血常规_红细胞计数(RBC#)-静脉血_检验日期,lab_blood_routine_examination_RBC#_test_time,lab_blood_routine_examination_RBC_test_time,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,血常规_平均红细胞体积(MCV)-静脉血_检验日期,lab_blood_routine_examination_MCV_test_time,lab_blood_routine_examination_MCV_test_time,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,血常规_平均红细胞血红蛋白浓度(MCHC)-静脉血_检验日期,lab_blood_routine_examination_MCHC_test_time,lab_blood_routine_examination_MCHC_test_time,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,血常规_平均红细胞血红蛋白含量(MCH)-静脉血_检验日期,lab_blood_routine_examination_MCH_test_time,lab_blood_routine_examination_MCH_test_time,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,血常规_红细胞体积分布宽度CV(RDW-CV)-静脉血_检验日期,lab_blood_routine_examination_RDW-CV_test_time,lab_blood_routine_examination_RDW_CV_test_time,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,血常规_淋巴细胞百分比(Lymph%)-静脉血_检验日期,lab_blood_routine_examination_Lymph%_test_time,lab_blood_routine_examination_Lymph_test_time,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,血常规_淋巴细胞计数(Lymph#)-静脉血_检验日期,lab_blood_routine_examination_Lymph#_test_time,lab_blood_routine_examination_Lymph_test_time__dup02,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,血常规_单核细胞百分比(Mono%)-静脉血_检验日期,lab_blood_routine_examination_Mono%_test_time,lab_blood_routine_examination_Mono_test_time,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,血常规_单核细胞计数(Mono#)-静脉血_检验日期,lab_blood_routine_examination_Mono#_test_time,lab_blood_routine_examination_Mono_test_time__dup02,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,血常规_中性粒细胞百分比(Neut%)-静脉血_检验日期,lab_blood_routine_examination_Neut%_test_time,lab_blood_routine_examination_Neut_test_time,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,血常规_中性粒细胞计数(Neut#)-静脉血_检验日期,lab_blood_routine_examination_Neut#_test_time,lab_blood_routine_examination_Neut_test_time__dup02,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,血常规_红细胞比容(Hct)-静脉血_检验日期,lab_blood_routine_examination_Hct_test_time,lab_blood_routine_examination_Hct_test_time,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,血常规_嗜酸性粒细胞百分比(Eos%)-静脉血_检验日期,lab_blood_routine_examination_Eos%_test_time,lab_blood_routine_examination_Eos_test_time,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,血常规_嗜碱性粒细胞百分比(Baso%)-静脉血_检验日期,lab_blood_routine_examination_Baso%_test_time,lab_blood_routine_examination_Baso_test_time,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,血常规_嗜酸性粒细胞计数(Eos#)-静脉血_检验日期,lab_blood_routine_examination_Eos#_test_time,lab_blood_routine_examination_Eos_test_time__dup02,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,血常规_嗜碱性粒细胞计数(Baso#)-静脉血_检验日期,lab_blood_routine_examination_Baso#_test_time,lab_blood_routine_examination_Baso_test_time__dup02,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,血常规_血红蛋白(Hb)-静脉血_检验日期,lab_blood_routine_examination_Hb_test_time,lab_blood_routine_examination_Hb_test_time,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,血常规_血小板计数(PLT#)-静脉血_检验日期,lab_blood_routine_examination_PLT#_test_time,lab_blood_routine_examination_PLT_test_time,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,血常规_平均血小板体积(MPV)-静脉血_检验日期,lab_blood_routine_examination_MPV_test_time,lab_blood_routine_examination_MPV_test_time,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,血常规_血小板分布宽度(PDW)-静脉血_检验日期,lab_blood_routine_examination_PDW_test_time,lab_blood_routine_examination_PDW_test_time,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,血常规_血小板比容-静脉血_检验日期,lab_blood_routine_examination__test_time,lab_blood_routine_examination_test_time,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,血常规_有核红细胞计数(NRBC#)-静脉血_检验日期,lab_blood_routine_examination_NRBC#_test_time,lab_blood_routine_examination_NRBC_test_time,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,血常规_有核红细胞百分比(NRBC%)-静脉血_检验日期,lab_blood_routine_examination_NRBC%_test_time,lab_blood_routine_examination_NRBC_test_time__dup02,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,vsn_凝血检查,vsn_lab_cruor_testing,vsn_lab_cruor_testing,Exclude: system record field,系统记录号/表单号字段，不具备临床预测意义。
+基线,凝血检查_凝血酶时间(TT)-静脉血_检验日期,lab_cruor_testing_TT_test_time,lab_cruor_testing_TT_test_time,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,凝血检查_凝血酶时间(TT)-静脉血-定性_检验日期,lab_cruor_testing_TT_test_time,lab_cruor_testing_TT_test_time__dup02,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,凝血检查_凝血酶原时间(PT)-静脉血_检验日期,lab_cruor_testing_PT_test_time,lab_cruor_testing_PT_test_time,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,凝血检查_活化部分凝血活酶时间(APTT)-静脉血_检验日期,lab_cruor_testing_APTT_test_time,lab_cruor_testing_APTT_test_time,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,凝血检查_活化部分凝血活酶时间比值(APTTR)-静脉血_检验日期,lab_cruor_testing_APTTR_test_time,lab_cruor_testing_APTTR_test_time,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,凝血检查_凝血酶原国际标准化比值(PT-INR)-静脉血_检验日期,lab_cruor_testing_PT-INR_test_time,lab_cruor_testing_PT_INR_test_time,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,凝血检查_抗凝血酶III活性(ATIII:A)-静脉血_检验日期,lab_cruor_testing_ATIII:A_test_time,lab_cruor_testing_ATIII_A_test_time,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,凝血检查_抗凝血酶III活性(ATIII:A)-静脉血-定性_检验日期,lab_cruor_testing_ATIII:A_test_time,lab_cruor_testing_ATIII_A_test_time__dup02,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,凝血检查_D-二聚体(D-Dimer)-静脉血_检验日期,lab_cruor_testing_D-Dimer_test_time,lab_cruor_testing_D_Dimer_test_time,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,凝血检查_纤维蛋白原降解产物(FDP)-静脉血_检验日期,lab_cruor_testing_FDP_test_time,lab_cruor_testing_FDP_test_time,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,凝血检查_纤维蛋白原(Fbg)-静脉血_检验日期,lab_cruor_testing_Fbg_test_time,lab_cruor_testing_Fbg_test_time,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,凝血检查_凝血酶原时间活动度(PTA)-静脉血_检验日期,lab_cruor_testing_PTA_test_time,lab_cruor_testing_PTA_test_time,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,vsn_生化检查,vsn_lab_biochemical_tests,vsn_lab_biochemical_tests,Exclude: system record field,系统记录号/表单号字段，不具备临床预测意义。
+基线,生化检查_丙氨酸氨基转移酶(ALT)-静脉血_检验日期,lab_biochemical_tests_ALT_test_time,lab_biochemical_tests_ALT_test_time,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,生化检查_天门冬氨酸氨基转移酶(AST)-静脉血_检验日期,lab_biochemical_tests_AST_test_time,lab_biochemical_tests_AST_test_time,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,生化检查_γ-谷氨酰基转移酶(GGT)-静脉血_检验日期,lab_biochemical_tests_GGT_test_time,lab_biochemical_tests_GGT_test_time,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,生化检查_总胆红素(TBIL)-静脉血_检验日期,lab_biochemical_tests_TBIL_test_time,lab_biochemical_tests_TBIL_test_time,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,生化检查_直接胆红素(DBIL)-静脉血_检验日期,lab_biochemical_tests_DBIL_test_time,lab_biochemical_tests_DBIL_test_time,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,生化检查_间接胆红素(IBIL)-静脉血_检验日期,lab_biochemical_tests_IBIL_test_time,lab_biochemical_tests_IBIL_test_time,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,生化检查_白蛋白(ALB)-静脉血_检验日期,lab_biochemical_tests_ALB_test_time,lab_biochemical_tests_ALB_test_time,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,生化检查_球蛋白(GLO)-静脉血_检验日期,lab_biochemical_tests_GLO_test_time,lab_biochemical_tests_GLO_test_time,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,生化检查_总蛋白(TP)-静脉血_检验日期,lab_biochemical_tests_TP_test_time,lab_biochemical_tests_TP_test_time,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,生化检查_白蛋白/球蛋白比值(ALB/GLO)-静脉血_检验日期,lab_biochemical_tests_ALB/GLO_test_time,lab_biochemical_tests_ALB_GLO_test_time,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,生化检查_前白蛋白(PA)-静脉血_检验日期,lab_biochemical_tests_PA_test_time,lab_biochemical_tests_PA_test_time,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,生化检查_总胆汁酸(TBA)-静脉血_检验日期,lab_biochemical_tests_TBA_test_time,lab_biochemical_tests_TBA_test_time,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,生化检查_肌酐(Crea)-静脉血_检验日期,lab_biochemical_tests_Crea_test_time,lab_biochemical_tests_Crea_test_time,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,生化检查_尿素(Urea)-静脉血_检验日期,lab_biochemical_tests_Urea_test_time,lab_biochemical_tests_Urea_test_time,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,生化检查_尿酸(UA)-静脉血_检验日期,lab_biochemical_tests_UA_test_time,lab_biochemical_tests_UA_test_time,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,生化检查_总胆固醇(TC)-静脉血_检验日期,lab_biochemical_tests_TC_test_time,lab_biochemical_tests_TC_test_time,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,生化检查_甘油三酯(TG)-静脉血_检验日期,lab_biochemical_tests_TG_test_time,lab_biochemical_tests_TG_test_time,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,生化检查_高密度脂蛋白胆固醇(HDL-C)-静脉血_检验日期,lab_biochemical_tests_HDL-C_test_time,lab_biochemical_tests_HDL_C_test_time,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,生化检查_低密度脂蛋白胆固醇(LDL-C)-静脉血_检验日期,lab_biochemical_tests_LDL-C_test_time,lab_biochemical_tests_LDL_C_test_time,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,生化检查_脂蛋白a(LPa)-静脉血_检验日期,lab_biochemical_tests_LPa_test_time,lab_biochemical_tests_LPa_test_time,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,生化检查_载脂蛋白AI(apoAI)-静脉血_检验日期,lab_biochemical_tests_apoAI_test_time,lab_biochemical_tests_apoAI_test_time,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,生化检查_载脂蛋白B(apoB)-静脉血_检验日期,lab_biochemical_tests_apoB_test_time,lab_biochemical_tests_apoB_test_time,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,生化检查_钾离子(K+)-静脉血_检验日期,lab_biochemical_tests_K+_test_time,lab_biochemical_tests_K_test_time,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,生化检查_钠离子(Na+)-静脉血_检验日期,lab_biochemical_tests_Na+_test_time,lab_biochemical_tests_Na_test_time,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,生化检查_氯离子(Cl-)-静脉血_检验日期,lab_biochemical_tests_Cl-_test_time,lab_biochemical_tests_Cl_test_time,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,生化检查_总钙(Ca)-静脉血_检验日期,lab_biochemical_tests_Ca_test_time,lab_biochemical_tests_Ca_test_time,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,生化检查_钙离子(Ca2+)-静脉血_检验日期,lab_biochemical_tests_Ca2+_test_time,lab_biochemical_tests_Ca2_test_time,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,生化检查_磷(P)-静脉血_检验日期,lab_biochemical_tests_P_test_time,lab_biochemical_tests_P_test_time,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,生化检查_镁离子(Mg2+)-静脉血_检验日期,lab_biochemical_tests_Mg2+_test_time,lab_biochemical_tests_Mg2_test_time,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,生化检查_葡萄糖(Glu)-静脉血_检验日期,lab_biochemical_tests_Glu_test_time,lab_biochemical_tests_Glu_test_time,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,生化检查_乳酸脱氢酶(LDH)-静脉血_检验日期,lab_biochemical_tests_LDH_test_time,lab_biochemical_tests_LDH_test_time,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,生化检查_碱性磷酸酶(ALP)-静脉血_检验日期,lab_biochemical_tests_ALP_test_time,lab_biochemical_tests_ALP_test_time,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,生化检查_腺苷脱氨酶(ADA)-静脉血_检验日期,lab_biochemical_tests_ADA_test_time,lab_biochemical_tests_ADA_test_time,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,生化检查_胆碱酯酶(ChE)-静脉血_检验日期,lab_biochemical_tests_ChE_test_time,lab_biochemical_tests_ChE_test_time,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,生化检查_同型半胱氨酸(HCY)-静脉血_检验日期,lab_biochemical_tests_HCY_test_time,lab_biochemical_tests_HCY_test_time,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,生化检查_α1抗胰蛋白酶(α1-AT)-静脉血_检验日期,lab_biochemical_tests_α1-AT_test_time,lab_biochemical_tests_1_AT_test_time,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,生化检查_α-L-岩藻糖苷酶(AFU)-静脉血_检验日期,lab_biochemical_tests_AFU_test_time,lab_biochemical_tests_AFU_test_time,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,生化检查_α1球蛋白(α1-GLO)-静脉血_检验日期,lab_biochemical_tests_α1-GLO_test_time,lab_biochemical_tests_1_GLO_test_time,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,生化检查_α2球蛋白(α2-GLO)-静脉血_检验日期,lab_biochemical_tests_α2-GLO_test_time,lab_biochemical_tests_2_GLO_test_time,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,生化检查_β1球蛋白(β1-GLO)-静脉血_检验日期,lab_biochemical_tests_β1-GLO_test_time,lab_biochemical_tests_1_GLO_test_time__dup02,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,生化检查_β2球蛋白(β2-GLO)-静脉血_检验日期,lab_biochemical_tests_β2-GLO_test_time,lab_biochemical_tests_2_GLO_test_time__dup02,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,生化检查_β球蛋白(β-GLO)-静脉血_检验日期,lab_biochemical_tests_β-GLO_test_time,lab_biochemical_tests_GLO_test_time__dup02,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,生化检查_γ球蛋白(γ-GLO)-静脉血_检验日期,lab_biochemical_tests_γ-GLO_test_time,lab_biochemical_tests_GLO_test_time__dup03,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,生化检查_脂肪酶(LPS)-静脉血_检验日期,lab_biochemical_tests_LPS_test_time,lab_biochemical_tests_LPS_test_time,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,生化检查_游离脂肪酸(FFA)-静脉血_检验日期,lab_biochemical_tests_FFA_test_time,lab_biochemical_tests_FFA_test_time,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,生化检查_视黄醇结合蛋白(RBP)-静脉血_检验日期,lab_biochemical_tests_RBP_test_time,lab_biochemical_tests_RBP_test_time,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,生化检查_胱抑素(Cys-C)-静脉血_检验日期,lab_biochemical_tests_Cys-C_test_time,lab_biochemical_tests_Cys_C_test_time,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,生化检查_淀粉酶(Amy)-静脉血_检验日期,lab_biochemical_tests_Amy_test_time,lab_biochemical_tests_Amy_test_time,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,生化检查_阴离子间隙(AG)-静脉血_检验日期,lab_biochemical_tests_AG_test_time,lab_biochemical_tests_AG_test_time,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,生化检查_阴离子间隙(AG)-静脉血-定性_检验日期,lab_biochemical_tests_AG_test_time,lab_biochemical_tests_AG_test_time__dup02,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,生化检查_载脂蛋白A(apoA)-静脉血_检验日期,lab_biochemical_tests_apoA_test_time,lab_biochemical_tests_apoA_test_time,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,生化检查_载脂蛋白E(apoE)-静脉血_检验日期,lab_biochemical_tests_apoE_test_time,lab_biochemical_tests_apoE_test_time,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,生化检查_内生肌酐清除率(CCR)-静脉血_检验日期,lab_biochemical_tests_CCR_test_time,lab_biochemical_tests_CCR_test_time,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,生化检查_α-羟丁酸脱氢酶(α-HBDH)-静脉血_检验日期,lab_biochemical_tests_α-HBDH_test_time,lab_biochemical_tests_HBDH_test_time,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,生化检查_胆红素(BIL)-静脉血_检验日期,lab_biochemical_tests_BIL_test_time,lab_biochemical_tests_BIL_test_time,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,生化检查_胆红素(BIL)-静脉血-定性_检验日期,lab_biochemical_tests_BIL_test_time,lab_biochemical_tests_BIL_test_time__dup02,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,生化检查_葡萄糖(Glu)-静脉血(空腹)_检验日期,lab_biochemical_tests_Glu_test_time,lab_biochemical_tests_Glu_test_time__dup02,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,vsn_C反应蛋白检测,vsn_lab_crp_tests,vsn_lab_crp_tests,Exclude: system record field,系统记录号/表单号字段，不具备临床预测意义。
+基线,C反应蛋白检测_C-反应蛋白(CRP)-静脉血_检验日期,lab_crp_tests_CRP_test_time,lab_crp_tests_CRP_test_time,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,C反应蛋白检测_C-反应蛋白(CRP)-静脉血-定性_检验日期,lab_crp_tests_CRP_test_time,lab_crp_tests_CRP_test_time__dup02,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,C反应蛋白检测_超敏C反应蛋白(hs-CRP)-静脉血_检验日期,lab_crp_tests_hs-CRP_test_time,lab_crp_tests_hs_CRP_test_time,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,vsn_心衰和心肌损伤标志物,vsn_lab_myocardial_injury_markers,vsn_lab_myocardial_injury_markers,Exclude: system record field,系统记录号/表单号字段，不具备临床预测意义。
+基线,心衰和心肌损伤标志物_N端脑钠肽前体(NT-ProBNP)-静脉血_检验日期,lab_myocardial_injury_markers_NT-ProBNP_test_time,lab_myocardial_injury_markers_NT_ProBNP_test_time,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,心衰和心肌损伤标志物_N端脑钠肽前体(NT-ProBNP)-静脉血-定性_检验日期,lab_myocardial_injury_markers_NT-ProBNP_test_time,lab_myocardial_injury_markers_NT_ProBNP_test_time__dup02,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,心衰和心肌损伤标志物_肌红蛋白(Mb)-静脉血_检验日期,lab_myocardial_injury_markers_Mb_test_time,lab_myocardial_injury_markers_Mb_test_time,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,心衰和心肌损伤标志物_肌红蛋白(Mb)-静脉血-定性_检验日期,lab_myocardial_injury_markers_Mb_test_time,lab_myocardial_injury_markers_Mb_test_time__dup02,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,心衰和心肌损伤标志物_心肌肌钙蛋白T(cTnT)-静脉血_检验日期,lab_myocardial_injury_markers_cTnT_test_time,lab_myocardial_injury_markers_cTnT_test_time,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,心衰和心肌损伤标志物_心肌肌钙蛋白T(cTnT)-静脉血_检验定量结果,lab_myocardial_injury_markers_cTnT_test_result,lab_myocardial_injury_markers_cTnT_test_result,Exclude: severe missingness,阳性/阴性建模来源平均缺失率约 98.3%，优先剔除。
+基线,心衰和心肌损伤标志物_心肌肌钙蛋白T(cTnT)-静脉血_检验定量结果单位,lab_myocardial_injury_markers_cTnT_unit,lab_myocardial_injury_markers_cTnT_unit,Retain: unit/QC only,检验单位字段，用于核对单位一致性，不作为预测变量。
+基线,心衰和心肌损伤标志物_心肌肌钙蛋白T(cTnT)-静脉血-定性_检验日期,lab_myocardial_injury_markers_cTnT_test_time,lab_myocardial_injury_markers_cTnT_test_time__dup02,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,心衰和心肌损伤标志物_心肌肌钙蛋白T(cTnT)-静脉血-定性_检验定量结果,lab_myocardial_injury_markers_cTnT_test_result,lab_myocardial_injury_markers_cTnT_test_result__dup02,Exclude: severe missingness,阳性/阴性建模来源平均缺失率约 98.3%，优先剔除。
+基线,心衰和心肌损伤标志物_心肌肌钙蛋白T(cTnT)-静脉血-定性_检验定量结果单位,lab_myocardial_injury_markers_cTnT_unit,lab_myocardial_injury_markers_cTnT_unit__dup02,Retain: unit/QC only,检验单位字段，用于核对单位一致性，不作为预测变量。
+基线,心衰和心肌损伤标志物_肌酸激酶(CK)-静脉血_检验日期,lab_myocardial_injury_markers_CK_test_time,lab_myocardial_injury_markers_CK_test_time,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,心衰和心肌损伤标志物_肌酸激酶同工酶MB(CK-MB)-静脉血_检验日期,lab_myocardial_injury_markers_CK-MB_test_time,lab_myocardial_injury_markers_CK_MB_test_time,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,心衰和心肌损伤标志物_肌酸激酶同工酶MB(CK-MB)-静脉血-定性_检验日期,lab_myocardial_injury_markers_CK-MB_test_time,lab_myocardial_injury_markers_CK_MB_test_time__dup02,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,心衰和心肌损伤标志物_心肌肌钙蛋白I(cTnI)-静脉血_检验日期,lab_myocardial_injury_markers_cTnI_test_time,lab_myocardial_injury_markers_cTnI_test_time,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,心衰和心肌损伤标志物_心肌肌钙蛋白I(cTnI)-静脉血_检验定量结果,lab_myocardial_injury_markers_cTnI_test_result,lab_myocardial_injury_markers_cTnI_test_result,Exclude: severe missingness,阳性/阴性建模来源平均缺失率约 90.6%，优先剔除。
+基线,心衰和心肌损伤标志物_心肌肌钙蛋白I(cTnI)-静脉血_检验定量结果单位,lab_myocardial_injury_markers_cTnI_unit,lab_myocardial_injury_markers_cTnI_unit,Retain: unit/QC only,检验单位字段，用于核对单位一致性，不作为预测变量。
+基线,心衰和心肌损伤标志物_心肌肌钙蛋白I(cTnI)-静脉血-定性_检验日期,lab_myocardial_injury_markers_cTnI_test_time,lab_myocardial_injury_markers_cTnI_test_time__dup02,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,心衰和心肌损伤标志物_心肌肌钙蛋白I(cTnI)-静脉血-定性_检验定量结果,lab_myocardial_injury_markers_cTnI_test_result,lab_myocardial_injury_markers_cTnI_test_result__dup02,Exclude: severe missingness,阳性/阴性建模来源平均缺失率约 90.6%，优先剔除。
+基线,心衰和心肌损伤标志物_心肌肌钙蛋白I(cTnI)-静脉血-定性_检验定量结果单位,lab_myocardial_injury_markers_cTnI_unit,lab_myocardial_injury_markers_cTnI_unit__dup02,Retain: unit/QC only,检验单位字段，用于核对单位一致性，不作为预测变量。
+基线,心衰和心肌损伤标志物_脑钠肽(BNP)-静脉血_检验日期,lab_myocardial_injury_markers_BNP_test_time,lab_myocardial_injury_markers_BNP_test_time,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,心衰和心肌损伤标志物_脑钠肽(BNP)-静脉血-定性_检验日期,lab_myocardial_injury_markers_BNP_test_time,lab_myocardial_injury_markers_BNP_test_time__dup02,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,心衰和心肌损伤标志物_超敏心肌肌钙蛋白T(hs-cTnT)-静脉血_检验日期,lab_myocardial_injury_markers_hs-cTnT_test_time,lab_myocardial_injury_markers_hs_cTnT_test_time,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,心衰和心肌损伤标志物_超敏心肌肌钙蛋白T(hs-cTnT)-静脉血_检验定量结果,lab_myocardial_injury_markers_hs-cTnT_test_result,lab_myocardial_injury_markers_hs_cTnT_test_result,Exclude: severe missingness,阳性/阴性建模来源平均缺失率约 91.6%，优先剔除。
+基线,心衰和心肌损伤标志物_超敏心肌肌钙蛋白T(hs-cTnT)-静脉血_检验定量结果单位,lab_myocardial_injury_markers_hs-cTnT_unit,lab_myocardial_injury_markers_hs_cTnT_unit,Retain: unit/QC only,检验单位字段，用于核对单位一致性，不作为预测变量。
+基线,心衰和心肌损伤标志物_超敏心肌肌钙蛋白T(hs-cTnT)-静脉血-定性_检验日期,lab_myocardial_injury_markers_hs-cTnT_test_time,lab_myocardial_injury_markers_hs_cTnT_test_time__dup02,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,心衰和心肌损伤标志物_超敏心肌肌钙蛋白T(hs-cTnT)-静脉血-定性_检验定量结果,lab_myocardial_injury_markers_hs-cTnT_test_result,lab_myocardial_injury_markers_hs_cTnT_test_result__dup02,Exclude: severe missingness,阳性/阴性建模来源平均缺失率约 91.6%，优先剔除。
+基线,心衰和心肌损伤标志物_超敏心肌肌钙蛋白T(hs-cTnT)-静脉血-定性_检验定量结果单位,lab_myocardial_injury_markers_hs-cTnT_unit,lab_myocardial_injury_markers_hs_cTnT_unit__dup02,Retain: unit/QC only,检验单位字段，用于核对单位一致性，不作为预测变量。
+基线,心衰和心肌损伤标志物_α-羟丁酸脱氢酶(α-HBDH)-静脉血_检验日期,lab_myocardial_injury_markers_α-HBDH_test_time,lab_myocardial_injury_markers_HBDH_test_time,Retain: time-order QC only,时间字段用于判断术前/术后或信息泄露，不直接作为预测变量。
+基线,vsn_颈部血管超声,vsn_cvus,vsn_cvus,Exclude: system record field,系统记录号/表单号字段，不具备临床预测意义。
+基线,心衰和心肌损伤标志物_心肌肌钙蛋白T(cTnT)-静脉血_检验项目名称(原值),lab_myocardial_injury_markers_cTnT_pure_item_name,lab_myocardial_injury_markers_cTnT_pure_item_name,Retain: lab metadata/QC only,检验项目名称/归一名称，用于核对字段含义，不作为预测变量。
+基线,心衰和心肌损伤标志物_心肌肌钙蛋白T(cTnT)-静脉血_检验项目名称(归一),lab_myocardial_injury_markers_cTnT_item_name,lab_myocardial_injury_markers_cTnT_item_name,Retain: lab metadata/QC only,检验项目名称/归一名称，用于核对字段含义，不作为预测变量。
+基线,心衰和心肌损伤标志物_心肌肌钙蛋白T(cTnT)-静脉血_检验定性结果,lab_myocardial_injury_markers_cTnT_qualitative_result,lab_myocardial_injury_markers_cTnT_qualitative_result,Review manually,字段含义或时间属性需人工确认后决定是否保留。
+基线,心衰和心肌损伤标志物_心肌肌钙蛋白T(cTnT)-静脉血-定性_检验项目名称(原值),lab_myocardial_injury_markers_cTnT_pure_item_name,lab_myocardial_injury_markers_cTnT_pure_item_name__dup02,Retain: lab metadata/QC only,检验项目名称/归一名称，用于核对字段含义，不作为预测变量。
+基线,心衰和心肌损伤标志物_心肌肌钙蛋白T(cTnT)-静脉血-定性_检验项目名称(归一),lab_myocardial_injury_markers_cTnT_item_name,lab_myocardial_injury_markers_cTnT_item_name__dup02,Retain: lab metadata/QC only,检验项目名称/归一名称，用于核对字段含义，不作为预测变量。
+基线,心衰和心肌损伤标志物_心肌肌钙蛋白T(cTnT)-静脉血-定性_检验定性结果,lab_myocardial_injury_markers_cTnT_qualitative_result,lab_myocardial_injury_markers_cTnT_qualitative_result__dup02,Review manually,字段含义或时间属性需人工确认后决定是否保留。
+基线,心衰和心肌损伤标志物_心肌肌钙蛋白I(cTnI)-静脉血_检验项目名称(原值),lab_myocardial_injury_markers_cTnI_pure_item_name,lab_myocardial_injury_markers_cTnI_pure_item_name,Retain: lab metadata/QC only,检验项目名称/归一名称，用于核对字段含义，不作为预测变量。
+基线,心衰和心肌损伤标志物_心肌肌钙蛋白I(cTnI)-静脉血_检验项目名称(归一),lab_myocardial_injury_markers_cTnI_item_name,lab_myocardial_injury_markers_cTnI_item_name,Retain: lab metadata/QC only,检验项目名称/归一名称，用于核对字段含义，不作为预测变量。
+基线,心衰和心肌损伤标志物_心肌肌钙蛋白I(cTnI)-静脉血_检验定性结果,lab_myocardial_injury_markers_cTnI_qualitative_result,lab_myocardial_injury_markers_cTnI_qualitative_result,Review manually,字段含义或时间属性需人工确认后决定是否保留。
+基线,心衰和心肌损伤标志物_心肌肌钙蛋白I(cTnI)-静脉血-定性_检验项目名称(原值),lab_myocardial_injury_markers_cTnI_pure_item_name,lab_myocardial_injury_markers_cTnI_pure_item_name__dup02,Retain: lab metadata/QC only,检验项目名称/归一名称，用于核对字段含义，不作为预测变量。
+基线,心衰和心肌损伤标志物_心肌肌钙蛋白I(cTnI)-静脉血-定性_检验项目名称(归一),lab_myocardial_injury_markers_cTnI_item_name,lab_myocardial_injury_markers_cTnI_item_name__dup02,Retain: lab metadata/QC only,检验项目名称/归一名称，用于核对字段含义，不作为预测变量。
+基线,心衰和心肌损伤标志物_心肌肌钙蛋白I(cTnI)-静脉血-定性_检验定性结果,lab_myocardial_injury_markers_cTnI_qualitative_result,lab_myocardial_injury_markers_cTnI_qualitative_result__dup02,Review manually,字段含义或时间属性需人工确认后决定是否保留。
+基线,心衰和心肌损伤标志物_超敏心肌肌钙蛋白T(hs-cTnT)-静脉血_检验项目名称(原值),lab_myocardial_injury_markers_hs-cTnT_pure_item_name,lab_myocardial_injury_markers_hs_cTnT_pure_item_name,Retain: lab metadata/QC only,检验项目名称/归一名称，用于核对字段含义，不作为预测变量。
+基线,心衰和心肌损伤标志物_超敏心肌肌钙蛋白T(hs-cTnT)-静脉血_检验项目名称(归一),lab_myocardial_injury_markers_hs-cTnT_item_name,lab_myocardial_injury_markers_hs_cTnT_item_name,Retain: lab metadata/QC only,检验项目名称/归一名称，用于核对字段含义，不作为预测变量。
+基线,心衰和心肌损伤标志物_超敏心肌肌钙蛋白T(hs-cTnT)-静脉血_检验定性结果,lab_myocardial_injury_markers_hs-cTnT_qualitative_result,lab_myocardial_injury_markers_hs_cTnT_qualitative_result,Review manually,字段含义或时间属性需人工确认后决定是否保留。
+基线,心衰和心肌损伤标志物_超敏心肌肌钙蛋白T(hs-cTnT)-静脉血-定性_检验项目名称(原值),lab_myocardial_injury_markers_hs-cTnT_pure_item_name,lab_myocardial_injury_markers_hs_cTnT_pure_item_name__dup02,Retain: lab metadata/QC only,检验项目名称/归一名称，用于核对字段含义，不作为预测变量。
+基线,心衰和心肌损伤标志物_超敏心肌肌钙蛋白T(hs-cTnT)-静脉血-定性_检验项目名称(归一),lab_myocardial_injury_markers_hs-cTnT_item_name,lab_myocardial_injury_markers_hs_cTnT_item_name__dup02,Retain: lab metadata/QC only,检验项目名称/归一名称，用于核对字段含义，不作为预测变量。
+基线,心衰和心肌损伤标志物_超敏心肌肌钙蛋白T(hs-cTnT)-静脉血-定性_检验定性结果,lab_myocardial_injury_markers_hs-cTnT_qualitative_result,lab_myocardial_injury_markers_hs_cTnT_qualitative_result__dup02,Review manually,字段含义或时间属性需人工确认后决定是否保留。

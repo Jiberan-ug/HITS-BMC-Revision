@@ -1,0 +1,13 @@
+{
+  "status": "PASS",
+  "required_files_n": 21,
+  "cohort_n": 1820,
+  "ami_n": 453,
+  "non_ami_cad_n": 1367,
+  "timing_unverified_n": 1820,
+  "fibrinogen_cbc_pairs_n": 1707,
+  "privacy_hits_n": 0,
+  "failures": [],
+  "models_refit": false,
+  "manuscript_edited": false
+}

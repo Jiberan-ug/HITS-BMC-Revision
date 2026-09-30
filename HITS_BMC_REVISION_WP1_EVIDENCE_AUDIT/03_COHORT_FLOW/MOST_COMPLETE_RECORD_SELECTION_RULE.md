@@ -1,0 +1,10 @@
+# Selection rule and reconciled rows
+`scripts/06_hits_ami_predevelopment_v0_2.py` select_one_row_per_patient is the authoritative executable selector inspected. Exact lexicographic fields: `_has_diagnosis`, `_core_required_count` (Neut absolute, Lymph absolute, Mono absolute, PLT), `_has_cbc_time`, `qc_nonmissing_count`, `_source_row`; descending except final ascending source row. No chronology rule beyond timestamp availability.
+
+Raw 2548 rows; unique patient keys 2279. 2010 patients have one row; 269 have two; no patient has >=3. Exactly 269 surplus rows are excluded by grouping. Zero completely identical rows. No other pre-selection exclusion, no missing patient key. Therefore FLOW_COUNTS_RECONCILE = YES at ROW level; 2548 distinct hospital encounters is NOT established.
+
+For all 269 multiple-row patients, at most one row has a nonmissing diagnosis and at most one has CBC time. Seventeen have one distinct nonmissing admission date; 252 have none; none has two distinct admission dates. Neither main nor baseline admission token has multiple distinct nonmissing values within those groups. This pattern is compatible with partially populated linked/export rows; upstream extraction logic is needed to explain its origin. Repeated hospitalization count = UNKNOWN, not 269 and not proven zero.
+
+After selection: A456 + B1372 + C340 + out-of-scope111 =2279. CBC requirement removes 3 A and 5 B; final 453+1367=1820. Post-selection exclusions:340+111+8=459. Missing diagnosis is included in C; do not count twice.
+
+Outcome-informed selection risk: diagnosis availability explicitly affects ranking, so selection is not outcome-blind in availability. No AMI status or prediction performance appears in the rank key. No two competing nonempty diagnoses are observed among the 269 pairs. The component definition of pre-existing qc_nonmissing_count is NOT recovered; do not assert it uses only predictors or excludes diagnosis/procedure/outcome fields. Further HIS/ETL review required; no reselection in WP1.

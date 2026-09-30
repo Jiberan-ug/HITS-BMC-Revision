@@ -1,0 +1,48 @@
+{
+  "workbookPath": "$WP3_ROOT/HITS_BMC_MINOR_REVISION_WP3_FINAL/03_SUPPLEMENT/Additional_file_2_Revised_Supplementary_Tables.xlsx",
+  "worksheets": [
+    "S1_Variables",
+    "S2_Phenotype",
+    "S3_Missingness",
+    "S4_Indices",
+    "S5_Preprocess",
+    "S6_Resampling",
+    "S7_Stability",
+    "S8_Clinical",
+    "S9_Fibrinogen",
+    "S10_HighSpecificity",
+    "S11_Temporal",
+    "S12_Simplified",
+    "S13_ModelSpec"
+  ],
+  "checks": {
+    "S3_missingness_rows": 39,
+    "S4_traditional_indices": 7,
+    "S6_calibration_groups": 20,
+    "S8_same_sample_models": 4,
+    "S8_paired_deltas": 6,
+    "S9_complete_case": [
+      1705,
+      426,
+      1279
+    ],
+    "S10_high_specificity_rows": 3,
+    "S11_sensitivity_rows": 9,
+    "canonical_value_checks": [
+      "S4 all 7 index AUCs/CIs/Briers",
+      "S6 all 20 calibration groups",
+      "S8 four clinical models and six paired deltas",
+      "S9 complete-case AUCs and delta",
+      "S11 all nine sensitivity AUCs/CIs"
+    ]
+  },
+  "previews": [
+    "S3_Missingness",
+    "S4_Indices",
+    "S6_Resampling",
+    "S8_Clinical",
+    "S9_Fibrinogen",
+    "S10_HighSpecificity",
+    "S11_Temporal"
+  ]
+}

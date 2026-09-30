@@ -1,0 +1,9 @@
+domain,content,group,x
+Immune-inflammatory,Neutrophils + lymphocytes + monocytes,core,1
+Platelet-related,Platelet count + MPV,core,1
+Erythrocyte-related,RDW + hemoglobin,core,1
+Coagulation,Not included,core,1
+Immune-inflammatory,Neutrophils + lymphocytes + monocytes,enhanced,2
+Platelet-related,Platelet count + MPV,enhanced,2
+Erythrocyte-related,RDW + hemoglobin,enhanced,2
+Coagulation,Fibrinogen added,enhanced,2

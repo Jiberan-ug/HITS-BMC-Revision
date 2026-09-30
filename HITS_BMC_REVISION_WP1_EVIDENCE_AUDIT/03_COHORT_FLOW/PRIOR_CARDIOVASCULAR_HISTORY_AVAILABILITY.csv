@@ -1,0 +1,7 @@
+field,field_exists,coding,available_n,missing_n,reliability,usable
+vsn_cadio_ae_in_hospital,YES,Raw source field; index-relative prior status not validated,130.0,1690.0,Temporal semantics unverified,NO_AS_VERIFIED_PRIOR_HISTORY
+family_history,YES,Raw source field; index-relative prior status not validated,1820.0,0.0,Temporal semantics unverified,NO_AS_VERIFIED_PRIOR_HISTORY
+personal_history,YES,Raw source field; index-relative prior status not validated,1820.0,0.0,Temporal semantics unverified,NO_AS_VERIFIED_PRIOR_HISTORY
+prior_CAD,NO_VALIDATED_DEDICATED_FIELD_RECOVERED,Diagnosis mentions are not verified prior-history fields,,,UNKNOWN,NO
+previous_MI,NO_VALIDATED_DEDICATED_FIELD_RECOVERED,Diagnosis mentions are not verified prior-history fields,,,UNKNOWN,NO
+prior_PCI_or_CABG,NO_VALIDATED_DEDICATED_FIELD_RECOVERED,Diagnosis mentions are not verified prior-history fields,,,UNKNOWN,NO

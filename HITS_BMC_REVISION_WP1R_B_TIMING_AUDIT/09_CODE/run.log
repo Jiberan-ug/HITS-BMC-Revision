@@ -1,0 +1,11 @@
+WP1R-B aggregate-only timing audit run
+Audit date: 2026-09-29
+Runtime: Python 3.9.6, pandas 2.3.3, NumPy 2.0.2
+Frozen cohort guard: total=1820; AMI=453; non-AMI CAD=1367
+Historical selector and phenotype-builder function bodies loaded from the source AST; only those functions and constants were compiled.
+No model fitting, refitting, ROC, calibration, DCA, or manuscript operation performed.
+No patient identifier, pseudonym, row-level timestamp, or row-level classification written.
+Defensible index-episode timing: 0/1820; all remain UNKNOWN/unverified.
+Explicit encounter-ID fields=0; discharge date/time fields=0; CAG/angiography fields=0; PCI date/time fields=0; procedure date/time fields=0; initial diagnosis date/time fields=0.
+Inpatient number/token columns present but not lab/episode-linked=2.
+Result files contain aggregate counts, source hashes, and schema-level metadata only.

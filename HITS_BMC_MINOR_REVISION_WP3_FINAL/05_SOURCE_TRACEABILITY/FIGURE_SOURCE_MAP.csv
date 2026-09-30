@@ -1,0 +1,10 @@
+figure_stem,source_data_csv,R_script,result_source,exports
+Figure1_Revised,Figure1_flow_nodes.csv; Figure1_flow_edges.csv,plot_Figure1_Flow.R,cohort and multiplicity aggregates,PDF; TIFF 600 dpi; PNG 600 dpi
+Figure2_Revised,Figure2_roc_source.csv,plot_Figure2_ROC.R,canonical OOF ROC and AUC,PDF; TIFF 600 dpi; PNG 600 dpi
+Figure3_Revised,Figure3_calibration_source.csv,plot_Figure3_Calibration.R,canonical mean 5x10 OOF calibration,PDF; TIFF 600 dpi; PNG 600 dpi
+Figure4_Revised,Figure4_date_axis_flow_source.csv,plot_Figure4_DateAxis.R,approved date-axis group counts,PDF; TIFF 600 dpi; PNG 600 dpi
+Figure5_Revised,Figure5_robustness_source.csv,plot_Figure5_Robustness.R,approved AUC/CI rows,PDF; TIFF 600 dpi; PNG 600 dpi
+FigureS1_DCA,FigureS1_dca_source.csv,plot_FigureS1_DCA.R,exploratory DCA aggregate,PDF; TIFF 600 dpi; PNG 600 dpi
+FigureS2_HighSpecificityFlow,FigureS2_high_specificity_flow_nodes.csv; FigureS2_high_specificity_flow_edges.csv,plot_FigureS2_HighSpecificityFlow.R,approved diagnosis-text flow counts,PDF; TIFF 600 dpi; PNG 600 dpi
+FigureS3_Core7Correlation,FigureS3_correlation_source.csv,plot_FigureS3_Correlation.R,approved Spearman matrix,PDF; TIFF 600 dpi; PNG 600 dpi
+FigureS4_Domains,FigureS4_domain_schema.csv,plot_FigureS4_Domains.R,analytic domain schema; no outcome result,PDF; TIFF 600 dpi; PNG 600 dpi

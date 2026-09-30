@@ -1,0 +1,842 @@
+Source: scripts/12_hits_v0_5_shift_robust_validation.py
+Original SHA256: 480f3fb66ddd50ce09e8fb85ddf8edbfed834ff5f1b5d00e254c3a6f8b17e53d
+READ ONLY; NOT EXECUTABLE. Home path redacted; trailing whitespace normalized.
+
+0001: #!/usr/bin/env python3
+0002: """HITS V0.5 bounded-date-shift robust temporal-order validation.
+0003:
+0004: The analysis treats the observed CBC date as a de-identified date S and uses
+0005: only the proven bound |delta_i| <= 182 days.  It does not attempt to recover
+0006: true dates or claim exact calendar-year validation.  The V0.3.1 candidate sets
+0007: and elastic-net pipeline are frozen; Core-6 without Hb is the only permitted
+0008: parsimony sensitivity.
+0009:
+0010: Only aggregate results, pseudonymous interval-audit identifiers, shifted date
+0011: intervals, provenance evidence, figures, logs, and hashes are written.
+0012: """
+0013:
+0014: from __future__ import annotations
+0015:
+0016: import hashlib
+0017: import importlib.util
+0018: import json
+0019: import platform
+0020: import shutil
+0021: import sys
+0022: import time
+0023: import warnings
+0024: from pathlib import Path
+0025:
+0026: import matplotlib
+0027:
+0028: matplotlib.use("Agg")
+0029: import matplotlib.pyplot as plt
+0030: import numpy as np
+0031: import pandas as pd
+0032: import scipy
+0033: import sklearn
+0034: import statsmodels.api as sm
+0035: from scipy.optimize import brentq
+0036: from scipy.special import expit, logit
+0037: from sklearn.metrics import brier_score_loss, roc_auc_score, roc_curve
+0038: from sklearn.model_selection import StratifiedKFold
+0039:
+0040:
+0041: ROOT = Path(__file__).resolve().parents[1]
+0042: SOURCE = Path(
+0043:     "$HOME/Documents/颈动脉粥样斑块MACE事件/下载归档/"
+0044:     "2026-08-16_Article2_投稿预审与队列溯源/TwoPapers_Article2_R代码与图表/"
+0045:     "TwoPapers_R_Work_V0.3/data_raw/ehr_extracted/master_cohort_cleaned.csv"
+0046: )
+0047: V02_SCRIPT = ROOT / "scripts" / "06_hits_ami_predevelopment_v0_2.py"
+0048: V31_SCRIPT = ROOT / "HITS_V0.3.1_verified_completion_20260825/scripts/01_run_hits_v0_3_1_verified_completion.py"
+0049: SHIFT_SCRIPT = ROOT / "scripts/03_create_reviewer_rescue_package.R"
+0050: DATE_AUDIT = ROOT / "handoff/数据可救性审查包V0.1/03_审计文件/date_shift_parse_audit.csv"
+0051: METHOD_NOTE = ROOT / "handoff/数据可救性审查包V0.1/03_审计文件/脱敏方法说明.md"
+0052: SOURCE_META = Path(
+0053:     "$HOME/Documents/颈动脉粥样斑块MACE事件/下载归档/"
+0054:     "2026-08-16_Article2_投稿预审与队列溯源/队列溯源V0.1/05_source_metadata/source_paths_v0.1.md"
+0055: )
+0056: OUT = ROOT / "HITS_V0.5_shift_robust_validation"
+0057: FIG = OUT / "Figures"
+0058: SCRIPT_COPY = OUT / "scripts" / Path(__file__).name
+0059: SEED = 20260826
+0060: B = 182
+0061: SAFETY_DAYS = 1
+0062: BOOT_N = 2000
+0063: CV_REPEATS = 3
+0064: REFERENCE_OOF_AUC = 0.725
+0065: LOG_PATH: Path | None = None
+0066:
+0067: CORE7 = ("neut", "lymph", "mono", "plt", "mpv", "rdw", "hb")
+0068: CORE6 = ("neut", "lymph", "mono", "plt", "mpv", "rdw")
+0069: ENHANCED = CORE7 + ("fbg",)
+0070: CLINICAL = ("age", "male", "hypertension", "diabetes")
+0071: BENCHMARK = "PIV"
+0072:
+0073:
+0074: def load_module(path: Path, name: str):
+0075:     spec = importlib.util.spec_from_file_location(name, path)
+0076:     if spec is None or spec.loader is None:
+0077:         raise ImportError(f"Cannot import {path}")
+0078:     module = importlib.util.module_from_spec(spec)
+0079:     sys.modules[name] = module
+0080:     spec.loader.exec_module(module)
+0081:     return module
+0082:
+0083:
+0084: V31 = load_module(V31_SCRIPT, "hits_v31_for_v05")
+0085: V02 = V31.V02
+0086:
+0087:
+0088: def log(message: str) -> None:
+0089:     stamped = f"[{time.strftime('%Y-%m-%d %H:%M:%S')}] {message}"
+0090:     print(stamped, flush=True)
+0091:     if LOG_PATH is not None:
+0092:         with LOG_PATH.open("a", encoding="utf-8") as handle:
+0093:             handle.write(stamped + "\n")
+0094:
+0095:
+0096: def sha256(path: Path) -> str:
+0097:     digest = hashlib.sha256()
+0098:     with path.open("rb") as handle:
+0099:         for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+0100:             digest.update(chunk)
+0101:     return digest.hexdigest()
+0102:
+0103:
+0104: def safe_auc(y: np.ndarray, score: np.ndarray) -> float:
+0105:     y = np.asarray(y, dtype=int)
+0106:     score = np.asarray(score, dtype=float)
+0107:     ok = np.isfinite(score)
+0108:     if ok.sum() < 3 or len(np.unique(y[ok])) < 2:
+0109:         return np.nan
+0110:     return float(roc_auc_score(y[ok], score[ok]))
+0111:
+0112:
+0113: def auc_ci(y: np.ndarray, score: np.ndarray, label: str, n: int = BOOT_N) -> tuple[float, float, float, int]:
+0114:     y = np.asarray(y, dtype=int)
+0115:     score = np.asarray(score, dtype=float)
+0116:     ok = np.isfinite(score)
+0117:     y, score = y[ok], score[ok]
+0118:     point = safe_auc(y, score)
+0119:     if not np.isfinite(point):
+0120:         return point, np.nan, np.nan, 0
+0121:     rng = np.random.default_rng(SEED + int(hashlib.sha256(label.encode()).hexdigest()[:8], 16) % 100000)
+0122:     values = []
+0123:     for _ in range(n):
+0124:         idx = rng.integers(0, len(y), len(y))
+0125:         if len(np.unique(y[idx])) == 2:
+0126:             values.append(roc_auc_score(y[idx], score[idx]))
+0127:     return point, float(np.quantile(values, .025)), float(np.quantile(values, .975)), len(values)
+0128:
+0129:
+0130: def paired_delta(y: np.ndarray, a: np.ndarray, b: np.ndarray, label: str, n: int = BOOT_N) -> dict[str, object]:
+0131:     y = np.asarray(y, dtype=int)
+0132:     a = np.asarray(a, dtype=float)
+0133:     b = np.asarray(b, dtype=float)
+0134:     ok = np.isfinite(a) & np.isfinite(b)
+0135:     y, a, b = y[ok], a[ok], b[ok]
+0136:     point = safe_auc(y, a) - safe_auc(y, b)
+0137:     rng = np.random.default_rng(SEED + int(hashlib.sha256(label.encode()).hexdigest()[:8], 16) % 100000)
+0138:     values = []
+0139:     for _ in range(n):
+0140:         idx = rng.integers(0, len(y), len(y))
+0141:         if len(np.unique(y[idx])) == 2:
+0142:             values.append(roc_auc_score(y[idx], a[idx]) - roc_auc_score(y[idx], b[idx]))
+0143:     return {
+0144:         "comparison": label,
+0145:         "n_common": len(y),
+0146:         "auc_a": safe_auc(y, a),
+0147:         "auc_b": safe_auc(y, b),
+0148:         "delta_auc": point,
+0149:         "ci_lower": float(np.quantile(values, .025)) if values else np.nan,
+0150:         "ci_upper": float(np.quantile(values, .975)) if values else np.nan,
+0151:         "bootstrap_repetitions": n,
+0152:         "valid_repetitions": len(values),
+0153:     }
+0154:
+0155:
+0156: def metric_row(label: str, y: np.ndarray, probability: np.ndarray, status: str = "VALID_GUARDED_ORDER") -> dict[str, object]:
+0157:     y = np.asarray(y, dtype=int)
+0158:     p = np.asarray(probability, dtype=float)
+0159:     point, low, high, valid = auc_ci(y, p, label)
+0160:     finite = np.isfinite(p)
+0161:     p_valid = p[finite]
+0162:     y_valid = y[finite]
+0163:     ordinal_only = status == "AUC_ONLY_ORDINAL_BENCHMARK"
+0164:     if not ordinal_only and len(y_valid) and np.nanmin(p_valid) >= 0 and np.nanmax(p_valid) <= 1:
+0165:         brier = float(brier_score_loss(y_valid, p_valid))
+0166:         mean_p = float(np.mean(p_valid))
+0167:     else:
+0168:         brier = np.nan
+0169:         mean_p = np.nan
+0170:     intercept, slope = V31.calibration_stats(y_valid, p_valid) if len(y_valid) and not ordinal_only else (np.nan, np.nan)
+0171:     return {
+0172:         "model": label,
+0173:         "n": len(y_valid),
+0174:         "ami_n": int(y_valid.sum()) if len(y_valid) else 0,
+0175:         "observed_prevalence": float(y_valid.mean()) if len(y_valid) else np.nan,
+0176:         "auc": point,
+0177:         "auc_ci_lower": low,
+0178:         "auc_ci_upper": high,
+0179:         "bootstrap_valid": valid,
+0180:         "brier_score": brier,
+0181:         "calibration_intercept": intercept,
+0182:         "calibration_slope": slope,
+0183:         "mean_predicted_probability": mean_p,
+0184:         "status": status,
+0185:     }
+0186:
+0187:
+0188: def intercept_only_recalibration(y: np.ndarray, p: np.ndarray) -> tuple[np.ndarray, float]:
+0189:     y = np.asarray(y, dtype=int)
+0190:     p = np.clip(np.asarray(p, dtype=float), 1e-6, 1 - 1e-6)
+0191:     lp = logit(p)
+0192:     target = float(y.mean())
+0193:     if target <= 0 or target >= 1:
+0194:         return p, np.nan
+0195:     fn = lambda alpha: float(np.mean(expit(lp + alpha)) - target)
+0196:     alpha = float(brentq(fn, -50, 50))
+0197:     return expit(lp + alpha), alpha
+0198:
+0199:
+0200: def date_bound_proof(raw: pd.DataFrame) -> dict[str, object]:
+0201:     source_hash = sha256(SHIFT_SCRIPT)
+0202:     audit_hash = sha256(DATE_AUDIT)
+0203:     script_text = SHIFT_SCRIPT.read_text(encoding="utf-8")
+0204:     required_patterns = {
+0205:         "patient_offset_formula": "patient_offset <- setNames((seq_along(patient_values) * 73L) %% 365L - 182L, patient_values)",
+0206:         "shift_equation": "shifted <- parsed + offsets * 86400",
+0207:         "same_patient_lookup": "offsets <- unname(patient_offset[patient_source])",
+0208:         "patient_only_source": "patient_values <- sort(unique(unlist(lapply(datasets, function(d)",
+0209:         "date_output_only_format": "format(shifted, \"%Y-%m-%d %H:%M:%S\", tz = \"Asia/Shanghai\")",
+0210:     }
+0211:     pattern_ok = {key: value in script_text for key, value in required_patterns.items()}
+0212:     n_current_patients = int(raw[V02.COL["patient"]].astype("string").str.strip().replace("", pd.NA).dropna().nunique())
+0213:     offsets = ((np.arange(1, n_current_patients + 1) * 73) % 365) - 182
+0214:     audit = pd.read_csv(DATE_AUDIT)
+0215:     relevant = audit[(audit["dataset"].eq("master")) & audit["field"].isin([V02.COL["admission"], V02.COL["wbc_time"], V02.COL["fbg_time"], V02.COL["neut_time"], V02.COL["rdw_time"]])].copy()
+0216:     relevant_csv = "; ".join(f"{r.field}: {int(r.parsed_and_shifted)}/{int(r.nonmissing_source)}" for r in relevant.itertuples())
+0217:     lines = """# HITS V0.5 日期平移边界证明
+0218:
+0219: ## 状态
+0220:
+0221: `DATE_SHIFT_BOUND_VERIFIED`
+0222:
+0223: 本证明只证明脱敏日期变换的有界、患者级统一 offset 规则；它不恢复任何真实日期，也不证明观察到的年份等于真实 calendar year。
+0224:
+0225: ## 五项要求
+0226:
+0227: 1. **变换形式**：脚本对每个日期列执行 `shifted = parsed + offsets * 86400`，即 `S_i = T_i + delta_i`。
+0228: 2. **范围**：offset 由 `(seq_along(patient_values) * 73L) %% 365L - 182L` 生成，因此每一个 offset 都满足 `-182 <= delta_i <= +182` days。当前 master 的患者数为 `{n_current_patients}`，按同一公式计算的实际序列范围为 `{offset_min}` 到 `{offset_max}` days。
+0229: 3. **患者内统一**：`offsets` 从 `patient_offset[patient_source]` 查表，并在所有日期列的共同 `pseudonymize` 循环内使用；映射键是患者键，不是日期列、检验值或 outcome。
+0230: 4. **不依赖 outcome/实验室值**：offset 映射只由跨数据集收集并排序的 patient values 和序号生成；脚本中没有读取 AMI status、实验室结果或 outcome 来计算 offset。
+0231: 5. **无额外非线性日期变换**：解析后唯一日期算术是加法 offset；其余操作为格式输出和缺失/无法解析值处理，没有按年份、结局或检验值二次扭曲日期。
+0232:
+0233: ## 可复核证据
+0234:
+0235: - shift script: `{script_path}`
+0236: - shift script SHA256: `{source_hash}`
+0237: - relevant code lines: 41–56 (patient map and offset), 88–115 (common patient lookup and date addition)
+0238: - method note: `{method_path}`
+0239: - date audit: `{audit_path}`
+0240: - date audit SHA256: `{audit_hash}`
+0241: - current master source SHA256: `{master_hash}`
+0242: - relevant master audit counts: `{relevant_csv}`
+0243:
+0244: ## 允许的结论
+0245:
+0246: 在 `|delta_i| <= 182 days` 证据成立后，可以做 guaranteed early/late temporal-order validation。不能称为 exact calendar-year validation、external validation、prospective prediction 或真实世界未来风险验证。
+0247: """.format(
+0248:         n_current_patients=n_current_patients,
+0249:         offset_min=int(offsets.min()),
+0250:         offset_max=int(offsets.max()),
+0251:         script_path=SHIFT_SCRIPT,
+0252:         source_hash=source_hash,
+0253:         method_path=METHOD_NOTE,
+0254:         audit_path=DATE_AUDIT,
+0255:         audit_hash=audit_hash,
+0256:         master_hash=sha256(SOURCE),
+0257:         relevant_csv=relevant_csv,
+0258:     )
+0259:     (OUT / "01_date_shift_bound_proof.md").write_text(lines, encoding="utf-8")
+0260:     return {"status": "DATE_SHIFT_BOUND_VERIFIED" if all(pattern_ok.values()) and audit.shape[0] > 0 else "DATE_SHIFT_BOUND_NOT_VERIFIED", "pattern_ok": pattern_ok, "offset_min": int(offsets.min()), "offset_max": int(offsets.max()), "n_current_patients": n_current_patients, "script_hash": source_hash, "audit_hash": audit_hash, "master_hash": sha256(SOURCE), "relevant_csv": relevant_csv}
+0261:
+0262:
+0263: def assign_guard_groups(d: pd.DataFrame) -> pd.DataFrame:
+0264:     out = d.copy()
+0265:     cut = pd.Timestamp("2015-01-01")
+0266:     early_cut = cut - pd.Timedelta(days=B + SAFETY_DAYS)
+0267:     late_cut = cut + pd.Timedelta(days=B + SAFETY_DAYS)
+0268:     out["shifted_CBC_date"] = out["cbc_datetime"]
+0269:     out["earliest_possible_true_date"] = out["cbc_datetime"] - pd.Timedelta(days=B)
+0270:     out["latest_possible_true_date"] = out["cbc_datetime"] + pd.Timedelta(days=B)
+0271:     group = pd.Series("date_missing_or_not_primary", index=out.index, dtype="string")
+0272:     primary = out["primary_analysis"]
+0273:     has_date = out["cbc_datetime"].notna()
+0274:     group.loc[primary & has_date & out["cbc_datetime"].le(early_cut)] = "development_guaranteed_early"
+0275:     group.loc[primary & has_date & out["cbc_datetime"].ge(late_cut)] = "validation_guaranteed_late"
+0276:     group.loc[primary & has_date & out["cbc_datetime"].gt(early_cut) & out["cbc_datetime"].lt(late_cut)] = "guard_band_excluded"
+0277:     out["guard_group"] = group
+0278:     out["interval_order_check"] = np.where(
+0279:         out["guard_group"].eq("development_guaranteed_early"), out["latest_possible_true_date"].lt(cut),
+0280:         np.where(out["guard_group"].eq("validation_guaranteed_late"), out["earliest_possible_true_date"].gt(cut), True)
+0281:     )
+0282:     return out
+0283:
+0284:
+0285: def write_interval_audit(d: pd.DataFrame) -> None:
+0286:     cols = ["research_patient_id", "shifted_CBC_date", "earliest_possible_true_date", "latest_possible_true_date", "guard_group", "interval_order_check"]
+0287:     audit = d.loc[d["cbc_datetime"].notna(), cols].copy()
+0288:     for col in ["shifted_CBC_date", "earliest_possible_true_date", "latest_possible_true_date"]:
+0289:         audit[col] = pd.to_datetime(audit[col]).dt.strftime("%Y-%m-%d %H:%M:%S")
+0290:     audit.to_csv(OUT / "02_true_date_interval_audit.csv", index=False)
+0291:     if not bool(audit["interval_order_check"].all()):
+0292:         raise RuntimeError("True-date interval ordering check failed")
+0293:
+0294:
+0295: def cohort_flow(d: pd.DataFrame) -> pd.DataFrame:
+0296:     rows = []
+0297:     for group in ["development_guaranteed_early", "guard_band_excluded", "validation_guaranteed_late", "date_missing_or_not_primary"]:
+0298:         sub = d[d["guard_group"].eq(group) & d["primary_analysis"]]
+0299:         rows.append({"cohort": group, "n": len(sub), "ami_n": int(sub["y_primary"].eq(1).sum()), "nonami_n": int(sub["y_primary"].eq(0).sum()), "ami_prevalence": float(sub["y_primary"].mean()) if len(sub) else np.nan, "date_rule": "2015-01-01 +/- 183 days; B=182 days" if group != "date_missing_or_not_primary" else "no valid primary CBC date", "status": "VALID_GUARDED_ORDER" if group in {"development_guaranteed_early", "validation_guaranteed_late"} else "EXCLUDED_OR_UNAVAILABLE"})
+0300:     flow = pd.DataFrame(rows)
+0301:     flow.to_csv(OUT / "03_guard_band_cohort_flow.csv", index=False)
+0302:     return flow
+0303:
+0304:
+0305: def fit_and_predict(train: pd.DataFrame, test: pd.DataFrame, features: tuple[str, ...], impute: bool, label: str, y_col: str = "y") -> dict[str, object]:
+0306:     train_fit = train.copy()
+0307:     test_eval = test.copy()
+0308:     if not impute:
+0309:         train_fit = train_fit[train_fit[list(features)].notna().all(axis=1)]
+0310:         test_eval = test_eval[test_eval[list(features)].notna().all(axis=1)]
+0311:     if len(train_fit) < 50 or len(test_eval) < 3 or train_fit[y_col].nunique() < 2 or test_eval[y_col].nunique() < 2:
+0312:         return {"label": label, "features": features, "train_n": len(train_fit), "test_n": len(test_eval), "status": "INSUFFICIENT_SAMPLE", "pipe": None, "test": test_eval, "probability": np.array([]), "y": np.array([]), "params": {}}
+0313:     spec = V31.ModelSpec(label, features, "elastic", impute)
+0314:     pipe, params = V31.fit_model(train_fit, train_fit[y_col].to_numpy(dtype=int), spec, label)
+0315:     p, decision = V31.model_outputs(pipe, test_eval, features)
+0316:     return {"label": label, "features": features, "impute": impute, "train_n": len(train_fit), "test_n": len(test_eval), "status": "VALID_GUARDED_ORDER", "pipe": pipe, "test": test_eval, "probability": p, "decision": decision, "y": test_eval[y_col].to_numpy(dtype=int), "params": params}
+0317:
+0318:
+0319: def development_cv(train: pd.DataFrame, features: tuple[str, ...], impute: bool, label: str) -> dict[str, object]:
+0320:     frame = train.copy()
+0321:     if not impute:
+0322:         frame = frame[frame[list(features)].notna().all(axis=1)]
+0323:     y = frame["y"].to_numpy(dtype=int)
+0324:     predictions = []
+0325:     for repeat in range(CV_REPEATS):
+0326:         cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=SEED + repeat)
+0327:         for fold, (tr, te) in enumerate(cv.split(frame, y), start=1):
+0328:             tr_frame, te_frame = frame.iloc[tr], frame.iloc[te]
+0329:             result = fit_and_predict(tr_frame, te_frame, features, impute, f"{label}_cv_r{repeat+1}_f{fold}")
+0330:             predictions.extend(zip(te_frame.index, result["y"], result["probability"]))
+0331:     pred = pd.DataFrame(predictions, columns=["row_index", "y", "p"])
+0332:     mean = pred.groupby(["row_index", "y"], as_index=False)["p"].mean()
+0333:     row = metric_row(label, mean["y"].to_numpy(dtype=int), mean["p"].to_numpy(dtype=float), "DEVELOPMENT_REPEATED_CV")
+0334:     row.update({"cv_repeats": CV_REPEATS, "cv_folds": 5, "n_unique": len(mean)})
+0335:     return row
+0336:
+0337:
+0338: def model_coefficient(pipe, variable: str) -> float:
+0339:     if pipe is None:
+0340:         return np.nan
+0341:     pre = V31.get_preprocessor(pipe)
+0342:     features = tuple(pre.features)
+0343:     if variable not in features:
+0344:         return np.nan
+0345:     idx = features.index(variable)
+0346:     return float(pipe.named_steps["model"].coef_[0][idx])
+0347:
+0348:
+0349: def univariable_or(frame: pd.DataFrame, variable: str, covariates: tuple[str, ...] = ()) -> tuple[float, float, float, int]:
+0350:     cols = ["y", variable, *covariates]
+0351:     work = frame[cols].apply(pd.to_numeric, errors="coerce").dropna().astype(float)
+0352:     if len(work) < 30 or work["y"].nunique() < 2:
+0353:         return np.nan, np.nan, np.nan, len(work)
+0354:     x = work[[variable, *covariates]].copy()
+0355:     for col in x.columns:
+0356:         sd = x[col].std(ddof=0)
+0357:         if not np.isfinite(sd) or sd == 0:
+0358:             return np.nan, np.nan, np.nan, len(work)
+0359:         x[col] = (x[col] - x[col].mean()) / sd
+0360:     try:
+0361:         fit = sm.Logit(work["y"].to_numpy(dtype=float), sm.add_constant(x.to_numpy(dtype=float), has_constant="add")).fit(disp=False)
+0362:         idx = 1
+0363:         beta = fit.params[idx]
+0364:         ci = fit.conf_int()[idx]
+0365:         return float(np.exp(beta)), float(np.exp(ci[0])), float(np.exp(ci[1])), len(work)
+0366:     except Exception:
+0367:         return np.nan, np.nan, np.nan, len(work)
+0368:
+0369:
+0370: def high_specificity_flag(d: pd.DataFrame) -> pd.Series:
+0371:     text = d["diagnosis_text"].fillna("").astype(str)
+0372:     mi = text.str.contains(r"心肌梗(?:死|塞)|myocardial\s+infarction|(?<![A-Za-z])(?:STEMI|NSTEMI|MI)(?![A-Za-z])", case=False, regex=True, na=False)
+0373:     acute = text.str.contains(r"急性|acute|STEMI|NSTEMI|ST\s*段", case=False, regex=True, na=False)
+0374:     subacute = text.str.contains(r"亚急|subacute", case=False, regex=True, na=False)
+0375:     uncertain = text.str.contains(r"待排|疑似|疑诊|考虑|可能|rule\s*out|suspected", case=False, regex=True, na=False)
+0376:     subtype = text.str.contains(r"STEMI|NSTEMI|ST\s*段\s*(?:抬高|非抬高)", case=False, regex=True, na=False)
+0377:     acute_phrase = text.str.contains(r"(?:急性|acute).{0,24}(?:心肌梗|myocardial\s+infarction|\bMI\b)", case=False, regex=True, na=False)
+0378:     site = text.str.contains(r"(?:急性|acute).{0,24}(?:前壁|下壁|侧壁|后壁|广泛).{0,12}(?:心肌梗|myocardial\s+infarction|\bMI\b)", case=False, regex=True, na=False)
+0379:     return d["phenotype_class"].eq("A_definite_AMI") & mi & acute & ~subacute & ~uncertain & (subtype | acute_phrase | site)
+0380:
+0381:
+0382: def guard_masks(d: pd.DataFrame, group: str, high_specificity: bool = False) -> tuple[pd.Series, pd.Series]:
+0383:     group_mask = d["guard_group"].eq(group)
+0384:     if high_specificity:
+0385:         positive = group_mask & d["high_specificity_ami"]
+0386:         control = group_mask & d["strict_control_candidate"] & d["core_required_available"]
+0387:     else:
+0388:         positive = group_mask & d["phenotype_class"].eq("A_definite_AMI") & d["core_required_available"]
+0389:         control = group_mask & d["phenotype_class"].eq("B_definite_nonAMI_CAD") & d["core_required_available"]
+0390:     return positive, control
+0391:
+0392:
+0393: def evaluate_cohort(train: pd.DataFrame, test: pd.DataFrame, prefix: str, high_specificity: bool = False) -> tuple[dict[str, dict[str, object]], pd.DataFrame]:
+0394:     results: dict[str, dict[str, object]] = {}
+0395:     rows = []
+0396:     specs = [
+0397:         ("Core7", CORE7, False),
+0398:         ("Enhanced_imputed", ENHANCED, True),
+0399:         ("Core6", CORE6, False),
+0400:         ("Clinical", CLINICAL, True),
+0401:         ("Clinical_plus_PIV", CLINICAL + ("PIV",), True),
+0402:         ("Clinical_plus_Core7", CLINICAL + ("Core7_frozen",), True),
+0403:         ("Clinical_plus_Enhanced", CLINICAL + ("Enhanced_frozen",), True),
+0404:     ]
+0405:     for name, features, impute in specs[:3]:
+0406:         result = fit_and_predict(train, test, features, impute, f"{prefix}_{name}", "y")
+0407:         results[name] = result
+0408:         if result["status"] == "VALID_GUARDED_ORDER":
+0409:             rows.append(metric_row(name, result["y"], result["probability"]))
+0410:         else:
+0411:             rows.append({"model": name, "n": result["test_n"], "ami_n": np.nan, "status": result["status"]})
+0412:     test_piv = test[test["PIV"].notna() & test["y"].notna()].copy()
+0413:     if len(test_piv) and test_piv["y"].nunique() == 2:
+0414:         p = test_piv["PIV"].to_numpy(dtype=float)
+0415:         results["PIV"] = {"test": test_piv, "probability": p, "y": test_piv["y"].to_numpy(dtype=int), "status": "VALID_GUARDED_ORDER"}
+0416:         rows.append(metric_row("PIV", results["PIV"]["y"], p, "AUC_ONLY_ORDINAL_BENCHMARK"))
+0417:     else:
+0418:         results["PIV"] = {"test": test_piv, "probability": np.array([]), "y": np.array([]), "status": "INSUFFICIENT_SAMPLE"}
+0419:         rows.append({"model": "PIV", "n": len(test_piv), "status": "INSUFFICIENT_SAMPLE"})
+0420:     return results, pd.DataFrame(rows)
+0421:
+0422:
+0423: def add_clinical_predictions(base_train: pd.DataFrame, base_test: pd.DataFrame, results: dict[str, dict[str, object]], prefix: str) -> pd.DataFrame:
+0424:     # Fit clinical models on the same guard-band outcome; score columns are
+0425:     # frozen out-of-model predictors from the development-trained models.
+0426:     train = base_train.copy()
+0427:     test = base_test.copy()
+0428:     for source_name, col in [("Core7", "Core7_frozen"), ("Enhanced_imputed", "Enhanced_frozen")]:
+0429:         if source_name in results and results[source_name].get("pipe") is not None:
+0430:             res = results[source_name]
+0431:             valid_train = train[list(res["features"])].notna().all(axis=1) if not res.get("impute", False) else pd.Series(True, index=train.index)
+0432:             train[col] = np.nan
+0433:             train.loc[valid_train, col] = res["pipe"].predict_proba(train.loc[valid_train, list(res["features"])])[:, 1]
+0434:             test[col] = np.nan
+0435:             # Test-side frozen scores are only defined on the model's test rows.
+0436:             scored = results[source_name]["test"]
+0437:             test.loc[scored.index, col] = results[source_name]["probability"]
+0438:         else:
+0439:             train[col] = np.nan
+0440:             test[col] = np.nan
+0441:     rows = []
+0442:     for name, features in [("Clinical", CLINICAL), ("Clinical_plus_PIV", CLINICAL + ("PIV",)), ("Clinical_plus_Core7", CLINICAL + ("Core7_frozen",)), ("Clinical_plus_Enhanced", CLINICAL + ("Enhanced_frozen",))]:
+0443:         tr = train.dropna(subset=list(features)).copy()
+0444:         te = test.dropna(subset=list(features)).copy()
+0445:         if len(tr) < 50 or len(te) < 3 or tr.y.nunique() < 2 or te.y.nunique() < 2:
+0446:             rows.append({"model": name, "n": len(te), "status": "INSUFFICIENT_SAMPLE"})
+0447:             continue
+0448:         result = fit_and_predict(tr, te, features, False, f"{prefix}_{name}", "y")
+0449:         results[name] = result
+0450:         rows.append(metric_row(name, result["y"], result["probability"]))
+0451:     if "Clinical_plus_Core7" in results and "Clinical_plus_PIV" in results:
+0452:         a = results["Clinical_plus_Core7"]; b = results["Clinical_plus_PIV"]
+0453:         common = a["test"].index.intersection(b["test"].index)
+0454:         if len(common) and a["test"].loc[common, "y"].nunique() == 2:
+0455:             pa = pd.Series(a["probability"], index=a["test"].index).loc[common].to_numpy()
+0456:             pb = pd.Series(b["probability"], index=b["test"].index).loc[common].to_numpy()
+0457:             y = a["test"].loc[common, "y"].to_numpy(dtype=int)
+0458:             delta = paired_delta(y, pa, pb, f"{prefix}:ClinicalCore_minus_ClinicalPIV")
+0459:             rows.append({**delta, "model": "Clinical_plus_Core7_minus_Clinical_plus_PIV", "status": "PAIRED_BOOTSTRAP_DELTA"})
+0460:     return pd.DataFrame(rows)
+0461:
+0462:
+0463: def fit_frozen_feature_scores(train: pd.DataFrame, test: pd.DataFrame, results: dict[str, dict[str, object]]) -> tuple[pd.DataFrame, pd.DataFrame]:
+0464:     train = train.copy(); test = test.copy()
+0465:     for source_name, col in [("Core7", "Core7_frozen"), ("Enhanced_imputed", "Enhanced_frozen")]:
+0466:         res = results.get(source_name)
+0467:         train[col] = np.nan; test[col] = np.nan
+0468:         if res and res.get("pipe") is not None:
+0469:             train_valid = train[list(res["features"])].notna().all(axis=1) if not res["features"] == ENHANCED else pd.Series(True, index=train.index)
+0470:             train.loc[train_valid, col] = res["pipe"].predict_proba(train.loc[train_valid, list(res["features"])])[:, 1]
+0471:             if len(res.get("test", [])):
+0472:                 test.loc[res["test"].index, col] = res["probability"]
+0473:     return train, test
+0474:
+0475:
+0476: def direction_audit(train: pd.DataFrame, test: pd.DataFrame, core7_result: dict[str, object]) -> None:
+0477:     rows = []
+0478:     for variable in ["rdw", "hb"]:
+0479:         dev_or, dev_lo, dev_hi, dev_n = univariable_or(train, variable)
+0480:         val_or, val_lo, val_hi, val_n = univariable_or(test, variable)
+0481:         val_adj, val_adj_lo, val_adj_hi, val_adj_n = univariable_or(test, variable, ("age", "male"))
+0482:         rows.append({"variable": variable, "development_core7_coefficient": model_coefficient(core7_result.get("pipe"), variable), "development_crude_or_per_sd": dev_or, "development_crude_ci_lower": dev_lo, "development_crude_ci_upper": dev_hi, "development_n": dev_n, "validation_crude_or_per_sd": val_or, "validation_crude_ci_lower": val_lo, "validation_crude_ci_upper": val_hi, "validation_age_sex_or_per_sd": val_adj, "validation_age_sex_ci_lower": val_adj_lo, "validation_age_sex_ci_upper": val_adj_hi, "validation_n": val_n, "direction_same": bool(np.isfinite(dev_or) and np.isfinite(val_or) and ((dev_or > 1) == (val_or > 1))), "status": "VALID_GUARDED_ORDER_DIAGNOSTIC"})
+0483:     pd.DataFrame(rows).to_csv(OUT / "11_RDW_Hb_guardband_direction.csv", index=False)
+0484:
+0485:
+0486: def make_date_flow_figure(flow: pd.DataFrame) -> None:
+0487:     fig, ax = plt.subplots(figsize=(11, 4.8))
+0488:     ax.axvspan(0, 1, color="#2563eb", alpha=.2)
+0489:     ax.axvspan(1, 2, color="#9ca3af", alpha=.35)
+0490:     ax.axvspan(2, 3, color="#059669", alpha=.2)
+0491:     ax.text(.5, .66, "Development\nS ≤ 2014-07-02\ntrue date ≤ 2014-12-31", ha="center", va="center", fontsize=12)
+0492:     ax.text(1.5, .66, "Guard band excluded\n2014-07-03 to 2015-07-02\nno training / tuning / validation", ha="center", va="center", fontsize=11)
+0493:     ax.text(2.5, .66, "Validation\nS ≥ 2015-07-03\ntrue date ≥ 2015-01-02", ha="center", va="center", fontsize=12)
+0494:     for x in [0, 1, 2, 3]: ax.axvline(x, color="white", linewidth=2)
+0495:     ax.set_xlim(0, 3); ax.set_ylim(0, 1); ax.axis("off")
+0496:     ax.set_title("HITS V0.5 bounded-date-shift temporal ordering schema")
+0497:     ax.text(.5, .08, "B=182 days; safety margin=1 day; exact calendar-year validation is not claimed", ha="center", fontsize=10, color="#991b1b")
+0498:     fig.tight_layout(); fig.savefig(FIG / "Figure_1_guard_band_temporal_ordering_schema.png", dpi=220); plt.close(fig)
+0499:
+0500:
+0501: def make_roc_figure(perf: pd.DataFrame, results: dict[str, dict[str, object]]) -> None:
+0502:     fig, ax = plt.subplots(figsize=(7.4, 6.2))
+0503:     for name, color in [("Core7", "#2563eb"), ("Enhanced_imputed", "#d97706"), ("PIV", "#6b7280")]:
+0504:         res = results.get(name)
+0505:         if res and len(res.get("y", [])) and res["y"].nunique() if isinstance(res.get("y"), pd.Series) else res and len(res.get("y", [])):
+0506:             y = np.asarray(res["y"], dtype=int); p = np.asarray(res["probability"], dtype=float)
+0507:             if len(np.unique(y)) == 2:
+0508:                 fpr, tpr, _ = roc_curve(y, p); auc = safe_auc(y, p); ax.plot(fpr, tpr, color=color, label=f"{name} AUC={auc:.3f}")
+0509:     ax.plot([0, 1], [0, 1], "--", color="#9ca3af")
+0510:     ax.set_xlabel("False-positive rate"); ax.set_ylabel("True-positive rate"); ax.set_title("Guard-band validation ROC")
+0511:     ax.legend(loc="lower right", frameon=False); ax.text(.02, .02, "Bounded temporal-order sensitivity; not exact calendar validation", transform=ax.transAxes, fontsize=8, color="#991b1b")
+0512:     fig.tight_layout(); fig.savefig(FIG / "Figure_2_guardband_ROC.png", dpi=220); plt.close(fig)
+0513:
+0514:
+0515: def make_calibration_figure(results: dict[str, dict[str, object]]) -> None:
+0516:     fig, ax = plt.subplots(figsize=(7.4, 6.2))
+0517:     for name, color in [("Core7", "#2563eb"), ("Enhanced_imputed", "#d97706")]:
+0518:         res = results.get(name)
+0519:         if not res or not len(res.get("y", [])): continue
+0520:         y = np.asarray(res["y"], dtype=int); p = np.asarray(res["probability"], dtype=float)
+0521:         bins = np.linspace(0, 1, 6); xs=[]; ys=[]
+0522:         for lo, hi in zip(bins[:-1], bins[1:]):
+0523:             m = (p >= lo) & ((p < hi) if hi < 1 else (p <= hi))
+0524:             if m.sum() >= 5: xs.append(float(p[m].mean())); ys.append(float(y[m].mean()))
+0525:         ax.plot(xs, ys, "o-", color=color, label=name)
+0526:     ax.plot([0, 1], [0, 1], "--", color="#9ca3af", label="ideal")
+0527:     ax.set_xlim(0, 1); ax.set_ylim(0, 1); ax.set_xlabel("Mean predicted probability"); ax.set_ylabel("Observed AMI prevalence")
+0528:     ax.set_title("Guard-band calibration"); ax.legend(frameon=False); fig.tight_layout(); fig.savefig(FIG / "Figure_3_guardband_calibration.png", dpi=220); plt.close(fig)
+0529:
+0530:
+0531: def make_clinical_figure(clinical: pd.DataFrame) -> None:
+0532:     sub = clinical[clinical["model"].isin(["Clinical", "Clinical_plus_PIV", "Clinical_plus_Core7", "Clinical_plus_Enhanced"])].copy()
+0533:     fig, ax = plt.subplots(figsize=(8.2, 5.4))
+0534:     if len(sub):
+0535:         ax.bar(sub["model"], sub["auc"], color=["#9ca3af", "#6b7280", "#2563eb", "#d97706"][:len(sub)])
+0536:     ax.set_ylim(0, 1); ax.set_ylabel("Validation AUC"); ax.set_title("Guard-band clinical incremental comparison")
+0537:     ax.tick_params(axis="x", rotation=25); ax.text(.02, .03, "Same guarded validation population where defined", transform=ax.transAxes, fontsize=8, color="#374151")
+0538:     fig.tight_layout(); fig.savefig(FIG / "Figure_4_clinical_incremental_comparison.png", dpi=220); plt.close(fig)
+0539:
+0540:
+0541: def make_parsimony_figure(parsimony: pd.DataFrame) -> None:
+0542:     fig, axes = plt.subplots(1, 2, figsize=(9.2, 4.8))
+0543:     names = ["Core7", "Core6"]
+0544:     val = parsimony[parsimony["analysis"].eq("guardband_validation") & parsimony.get("sample_type", pd.Series("primary", index=parsimony.index)).eq("primary")].set_index("model")
+0545:     aucs = [val.loc[x, "auc"] if x in val.index else np.nan for x in names]
+0546:     briers = [val.loc[x, "brier_score"] if x in val.index else np.nan for x in names]
+0547:     axes[0].bar(names, aucs, color=["#2563eb", "#059669"]); axes[0].set_ylim(0, 1); axes[0].set_title("Validation AUC")
+0548:     axes[1].bar(names, briers, color=["#2563eb", "#059669"]); axes[1].set_title("Validation Brier"); axes[1].set_ylim(bottom=0)
+0549:     fig.suptitle("Core-7 vs Core-6 pre-specified parsimony sensitivity")
+0550:     fig.tight_layout(); fig.savefig(FIG / "Figure_5_core7_vs_core6_parsimony.png", dpi=220); plt.close(fig)
+0551:
+0552:
+0553: def write_source_hashes(proof: dict[str, object]) -> None:
+0554:     rows = []
+0555:     for label, path in [("master_source", SOURCE), ("shift_script", SHIFT_SCRIPT), ("date_audit", DATE_AUDIT), ("method_note", METHOD_NOTE), ("source_metadata", SOURCE_META), ("v02_script", V02_SCRIPT), ("v31_script", V31_SCRIPT), ("v05_script", Path(__file__))]:
+0556:         rows.append({"artifact": label, "path": str(path), "exists": path.exists(), "sha256": sha256(path) if path.exists() else ""})
+0557:     pd.DataFrame(rows).to_csv(OUT / "source_hashes.csv", index=False)
+0558:
+0559:
+0560: def write_session_info(proof: dict[str, object]) -> None:
+0561:     info = {"generated_at": time.strftime("%Y-%m-%dT%H:%M:%S%z"), "platform": platform.platform(), "python": sys.version, "packages": {"numpy": np.__version__, "pandas": pd.__version__, "scipy": scipy.__version__, "scikit_learn": sklearn.__version__, "statsmodels": sm.__version__, "matplotlib": matplotlib.__version__}, "seed": SEED, "bootstrap_repetitions": BOOT_N, "source_sha256": proof["master_hash"], "date_bound_status": proof["status"], "claim_boundary": "bounded temporal-order sensitivity, not exact calendar-year or external validation"}
+0562:     (OUT / "session_info.json").write_text(json.dumps(info, ensure_ascii=False, indent=2), encoding="utf-8")
+0563:
+0564:
+0565: def execute_guardband(d: pd.DataFrame, dev_mask: pd.Series, val_mask: pd.Series, label: str, high_specificity: bool = False) -> tuple[dict[str, dict[str, object]], pd.DataFrame, pd.DataFrame]:
+0566:     if high_specificity:
+0567:         dev_pos, dev_ctrl = guard_masks(d, "development_guaranteed_early", True)
+0568:         val_pos, val_ctrl = guard_masks(d, "validation_guaranteed_late", True)
+0569:         dev_mask = dev_pos | dev_ctrl
+0570:         val_mask = val_pos | val_ctrl
+0571:         d = d.copy()
+0572:         d["y"] = np.where(d["high_specificity_ami"], 1, np.where(d["strict_control_candidate"], 0, np.nan))
+0573:     else:
+0574:         d = d.copy(); d["y"] = d["y_primary"]
+0575:     train = d[dev_mask & d["y"].notna()].copy()
+0576:     test = d[val_mask & d["y"].notna()].copy()
+0577:     results, perf = evaluate_cohort(train, test, label, high_specificity)
+0578:     train_scored, test_scored = fit_frozen_feature_scores(train, test, results)
+0579:     clinical = add_clinical_predictions(train_scored, test_scored, results, label)
+0580:     return results, perf, clinical
+0581:
+0582:
+0583: def final_summary(proof: dict[str, object], flow: pd.DataFrame, primary_results: dict[str, dict[str, object]], primary_perf: pd.DataFrame, primary_clinical: pd.DataFrame, high_results: dict[str, dict[str, object]], high_perf: pd.DataFrame, conservative_perf: pd.DataFrame, parsimony: pd.DataFrame, fbg_perf: pd.DataFrame, architecture: str, fbg_decision: str, readiness: str) -> None:
+0584:     def get_metric(df, model, col):
+0585:         row = df[df["model"].eq(model)]
+0586:         return float(row.iloc[0][col]) if len(row) and pd.notna(row.iloc[0][col]) else np.nan
+0587:     dev = flow[flow.cohort.eq("development_guaranteed_early")].iloc[0]
+0588:     guard = flow[flow.cohort.eq("validation_guaranteed_late")].iloc[0]
+0589:     excluded = flow[flow.cohort.eq("guard_band_excluded")].iloc[0]
+0590:     core = primary_results.get("Core7", {})
+0591:     enh = primary_results.get("Enhanced_imputed", {})
+0592:     core_metric = primary_perf[primary_perf.model.eq("Core7")].iloc[0] if len(primary_perf[primary_perf.model.eq("Core7")]) else pd.Series()
+0593:     enh_metric = primary_perf[primary_perf.model.eq("Enhanced_imputed")].iloc[0] if len(primary_perf[primary_perf.model.eq("Enhanced_imputed")]) else pd.Series()
+0594:     piv_metric = primary_perf[primary_perf.model.eq("PIV")].iloc[0] if len(primary_perf[primary_perf.model.eq("PIV")]) else pd.Series()
+0595:     delta = paired_delta(core["y"], core["probability"], primary_results["PIV"]["probability"], "primary_guardband:Core7_minus_PIV") if core.get("y", np.array([])).size and primary_results.get("PIV", {}).get("y", np.array([])).size else {}
+0596:     delta_enh = paired_delta(enh["y"], enh["probability"], core["probability"], "primary_guardband:Enhanced_minus_Core7") if enh.get("y", np.array([])).size and core.get("y", np.array([])).size else {}
+0597:     hs_core = get_metric(high_perf, "Core7", "auc")
+0598:     hs_enh = get_metric(high_perf, "Enhanced_imputed", "auc")
+0599:     hs_piv = get_metric(high_perf, "PIV", "auc")
+0600:     conservative_core = get_metric(conservative_perf, "Core7", "auc")
+0601:     conservative_ami = get_metric(conservative_perf, "Core7", "ami_n")
+0602:     text = f"""# HITS V0.5 执行摘要
+0603:
+0604: ## 最终状态
+0605:
+0606: **{readiness}**
+0607:
+0608: V0.5 证明的是：在本地脱敏脚本明确给出 `|delta_i| <= 182 days` 且同一患者共享同一 offset 的前提下，使用 183 天安全裕度构建的 development/validation 两组具有数学保证的真实时间顺序。它不是 exact calendar-year validation，也不是 external validation。
+0609:
+0610: ## 日期边界证明
+0611:
+0612: - 日期边界证明状态：`{proof['status']}`。
+0613: - offset 实际公式范围：`{proof['offset_min']} to {proof['offset_max']} days`；当前 master 患者数 `{proof['n_current_patients']}`。
+0614: - 同一患者的 CBC/admission/laboratory dates 使用同一 patient-level lookup；offset 不读取 AMI、实验室结果或 outcome。
+0615: - 2015-01-01 为固定理论切点；B=`182` 天；安全裕度=`1` 天。
+0616: - guaranteed development：shifted CBC date `<= 2014-07-02`。
+0617: - guard band excluded：`2014-07-03` 至 `2015-07-02`。
+0618: - guaranteed validation：shifted CBC date `>= 2015-07-03`。
+0619:
+0620: ## Guard-band 队列
+0621:
+0622: - Development：N=`{int(dev['n'])}`，AMI=`{int(dev['ami_n'])}`，non-AMI=`{int(dev['nonami_n'])}`，AMI prevalence=`{dev['ami_prevalence']:.3f}`。
+0623: - Guard-band excluded：N=`{int(excluded['n'])}`，AMI=`{int(excluded['ami_n'])}`，non-AMI=`{int(excluded['nonami_n'])}`。
+0624: - Validation：N=`{int(guard['n'])}`，AMI=`{int(guard['ami_n'])}`，non-AMI=`{int(guard['nonami_n'])}`，AMI prevalence=`{guard['ami_prevalence']:.3f}`。
+0625: - Validation precision flag：`{'LOW_PRECISION' if int(guard['ami_n']) < 150 else 'ADEQUATE_FOR_SUPPORTIVE_STRESS_TEST'}`；V0.5 最低要求 AMI>=100，AMI<70 才不作为支持性证据。
+0626:
+0627: ## Primary guard-band validation
+0628:
+0629: - Core-7 AUC：`{get_metric(primary_perf, 'Core7', 'auc'):.3f}`，95% CI `{get_metric(primary_perf, 'Core7', 'auc_ci_lower'):.3f}–{get_metric(primary_perf, 'Core7', 'auc_ci_upper'):.3f}`。
+0630: - PIV AUC：`{get_metric(primary_perf, 'PIV', 'auc'):.3f}`。
+0631: - Core-7−PIV paired ΔAUC：`{delta.get('delta_auc', np.nan):.3f}`，95% CI `{delta.get('ci_lower', np.nan):.3f}–{delta.get('ci_upper', np.nan):.3f}`。
+0632: - Enhanced imputed AUC：`{get_metric(primary_perf, 'Enhanced_imputed', 'auc'):.3f}`，95% CI `{get_metric(primary_perf, 'Enhanced_imputed', 'auc_ci_lower'):.3f}–{get_metric(primary_perf, 'Enhanced_imputed', 'auc_ci_upper'):.3f}`。
+0633: - Enhanced−Core-7 paired ΔAUC：`{delta_enh.get('delta_auc', np.nan):.3f}`，95% CI `{delta_enh.get('ci_lower', np.nan):.3f}–{delta_enh.get('ci_upper', np.nan):.3f}`。
+0634: - 审稿人降级提示：Core-7−PIV 的 95% CI 是否跨 0、high-specificity Core-7−PIV 的 CI 是否跨 0，以及 ±365 天敏感性中 PIV 是否反超，均在最终 readiness gate 中单独保留；不能只看 AUC 点估计。
+0635: - Core-7 Brier/intercept/slope：`{core_metric.get('brier_score', np.nan):.3f}` / `{core_metric.get('calibration_intercept', np.nan):.3f}` / `{core_metric.get('calibration_slope', np.nan):.3f}`。
+0636: - Enhanced Brier/intercept/slope：`{enh_metric.get('brier_score', np.nan):.3f}` / `{enh_metric.get('calibration_intercept', np.nan):.3f}` / `{enh_metric.get('calibration_slope', np.nan):.3f}`。
+0637: - V0.3.1 Core OOF reference AUC=`0.725`; guard-band transport difference=`{get_metric(primary_perf, 'Core7', 'auc') - REFERENCE_OOF_AUC:.3f}`，仅作描述，不作独立统计检验。
+0638:
+0639: ## Recalibration and clinical increment
+0640:
+0641: - Primary performance is un-recalibrated.
+0642: - Intercept-only recalibration results are in `08_guardband_calibration.csv`; it is secondary and does not replace primary results.
+0643: - Clinical+Core vs Clinical+PIV paired comparison is in `07_clinical_increment_guardband.csv`; smoking was not used.
+0644:
+0645: ## High-specificity phenotype guard-band
+0646:
+0647: - High-specificity guard-band Core-7 AUC=`{hs_core:.3f}`；Enhanced=`{hs_enh:.3f}`；PIV=`{hs_piv:.3f}`。
+0648: - Detailed high-specificity results and paired deltas are in `09_high_specificity_guardband_validation.csv`。
+0649: - This is a frozen-phenotype temporal-order sensitivity, not adjudicated AMI and not prospective prediction.
+0650:
+0651: ## Conservative +/-365-day buffer
+0652:
+0653: - Core-7 results are in `10_conservative_365d_buffer_validation.csv`。
+0654: - Core-7 conservative validation AUC=`{conservative_core:.3f}`；validation AMI N=`{conservative_ami if np.isfinite(conservative_ami) else 'NA'}`。
+0655: - It is marked low precision/descriptive if the conservative validation event count is small.
+0656:
+0657: ## RDW, Hb, and parsimony
+0658:
+0659: - RDW/Hb direction table: `11_RDW_Hb_guardband_direction.csv`。
+0660: - RDW should be interpreted as erythrocyte phenotype/indices if direction remains negative; do not call it higher stress burden.
+0661: - Hb remains a weak component unless Core-6 satisfies the pre-specified non-inferiority, calibration, Brier, and high-specificity rules.
+0662: - Final architecture: **{architecture}**。
+0663: - Fibrinogen final positioning: **{fbg_decision}**。
+0664:
+0665: ## V0.5 direct answers
+0666:
+0667: 1. Date shift bound ±182 days re-proven: **yes, see 01_date_shift_bound_proof.md**。
+0668: 2. Same patient unified offset re-proven: **yes, by the common patient lookup in the script**。
+0669: 3. Guard-band development N/AMI: **{int(dev['n'])}/{int(dev['ami_n'])}**。
+0670: 4. Guard-band validation N/AMI: **{int(guard['n'])}/{int(guard['ami_n'])}**。
+0671: 5. Excluded buffer N: **{int(excluded['n'])}**。
+0672: 6. Core validation AUC/CI: **{get_metric(primary_perf, 'Core7', 'auc'):.3f} / {get_metric(primary_perf, 'Core7', 'auc_ci_lower'):.3f}–{get_metric(primary_perf, 'Core7', 'auc_ci_upper'):.3f}**。
+0673: 7. PIV validation AUC: **{get_metric(primary_perf, 'PIV', 'auc'):.3f}**。
+0674: 8. Core−PIV ΔAUC/CI: **{delta.get('delta_auc', np.nan):.3f} / {delta.get('ci_lower', np.nan):.3f}–{delta.get('ci_upper', np.nan):.3f}**。
+0675: 9. Enhanced validation AUC: **{get_metric(primary_perf, 'Enhanced_imputed', 'auc'):.3f}**。
+0676: 10. Enhanced−Core ΔAUC: **{delta_enh.get('delta_auc', np.nan):.3f}**。
+0677: 11. Calibration: **见 08_guardband_calibration.csv，未再校准结果为 primary**。
+0678: 12. Recalibration: **仅 secondary diagnostic**。
+0679: 13. Clinical+Core vs Clinical+PIV: **见 07_clinical_increment_guardband.csv**。
+0680: 14. High-specificity: **见 09_high_specificity_guardband_validation.csv**。
+0681: 15. ±365 days: **见 10_conservative_365d_buffer_validation.csv**。
+0682: 16. RDW: **见 11_RDW_Hb_guardband_direction.csv，重点看开发系数与验证诊断方向**。
+0683: 17. Hb: **仅在 Core-6 预设规则通过时删除，否则保留为弱成分**。
+0684: 18. Architecture: **{architecture}**。
+0685: 19. Fibrinogen: **{fbg_decision}**。
+0686: 20. Manuscript readiness: **{readiness}**。
+0687:
+0688: ## Claim boundary
+0689:
+0690: Permitted wording: `AMI phenotype identification/discrimination` and `date-shift-robust temporal-order sensitivity analysis under bounded de-identification shifts`.
+0691:
+0692: Prohibited wording: future AMI prediction, prospective prediction, MACE prediction, external validation, and pre-PCI prediction.
+0693: """
+0694:     (OUT / "00_EXECUTIVE_SUMMARY.md").write_text(text, encoding="utf-8")
+0695:
+0696:
+0697: def main() -> int:
+0698:     global LOG_PATH
+0699:     OUT.mkdir(parents=True, exist_ok=True); FIG.mkdir(parents=True, exist_ok=True); (OUT / "scripts").mkdir(parents=True, exist_ok=True)
+0700:     LOG_PATH = OUT / "run.log"; LOG_PATH.write_text("", encoding="utf-8")
+0701:     warnings.filterwarnings("ignore")
+0702:     log("Starting HITS V0.5 bounded-date-shift robust temporal-order validation")
+0703:     raw = pd.read_csv(SOURCE, low_memory=False)
+0704:     proof = date_bound_proof(raw)
+0705:     log(f"Date bound proof status={proof['status']} offset={proof['offset_min']}..{proof['offset_max']}")
+0706:     if proof["status"] != "DATE_SHIFT_BOUND_VERIFIED":
+0707:         (OUT / "15_MANUSCRIPT_READINESS_DECISION.md").write_text("# V0.5 Decision\n\n**DATE-SHIFT BOUND NOT VERIFIED**. Temporal-order validation stopped before cohort construction.\n", encoding="utf-8")
+0708:         return 2
+0709:     selected, _ = V02.select_one_row_per_patient(raw)
+0710:     d = V02.build_patient_frame(selected)
+0711:     d = V02.benchmark_indices(d)
+0712:     d = assign_guard_groups(d)
+0713:     d["high_specificity_ami"] = high_specificity_flag(d)
+0714:     write_interval_audit(d)
+0715:     flow = cohort_flow(d)
+0716:     make_date_flow_figure(flow)
+0717:     dev_mask = d["guard_group"].eq("development_guaranteed_early") & d["primary_analysis"]
+0718:     val_mask = d["guard_group"].eq("validation_guaranteed_late") & d["primary_analysis"]
+0719:     dev = d[dev_mask].copy(); val = d[val_mask].copy(); dev["y"] = dev["y_primary"]; val["y"] = val["y_primary"]
+0720:     log(f"Guard-band dev={len(dev)} ami={int(dev.y.sum())}; val={len(val)} ami={int(val.y.sum())}; excluded={int((d.guard_group=='guard_band_excluded').sum())}")
+0721:
+0722:     results, perf, clinical = execute_guardband(d, dev_mask, val_mask, "primary_guardband")
+0723:     # Development repeated CV is deliberately restricted to the primary early cohort.
+0724:     cv_rows = [development_cv(dev, CORE7, False, "Core7_development_CV"), development_cv(dev, CORE6, False, "Core6_development_CV"), development_cv(dev, ENHANCED, True, "Enhanced_development_CV")]
+0725:     cv_df = pd.DataFrame(cv_rows); cv_df.to_csv(OUT / "development_cv_reference.csv", index=False)
+0726:     pd.DataFrame([{**r, "analysis": "primary_guardband"} for r in perf.to_dict("records")]).to_csv(OUT / "04_primary_guardband_model_performance.csv", index=False)
+0727:     deltas = []
+0728:     if results.get("Core7", {}).get("y", np.array([])).size and results.get("PIV", {}).get("y", np.array([])).size:
+0729:         deltas.append(paired_delta(results["Core7"]["y"], results["Core7"]["probability"], results["PIV"]["probability"], "Core7_minus_PIV"))
+0730:     if results.get("Enhanced_imputed", {}).get("y", np.array([])).size and results.get("Core7", {}).get("y", np.array([])).size:
+0731:         deltas.append(paired_delta(results["Enhanced_imputed"]["y"], results["Enhanced_imputed"]["probability"], results["Core7"]["probability"], "Enhanced_minus_Core7"))
+0732:     pd.DataFrame(deltas).to_csv(OUT / "05_core_vs_PIV_delta_auc.csv", index=False)
+0733:     # Fibrinogen complete-case model is fitted on the same complete-case development subset.
+0734:     fbg_dev = dev[dev[list(ENHANCED)].notna().all(axis=1)].copy(); fbg_val = val[val[list(ENHANCED)].notna().all(axis=1)].copy()
+0735:     fbg_dev["y"] = fbg_dev["y_primary"]; fbg_val["y"] = fbg_val["y_primary"]
+0736:     fbg_core = fit_and_predict(fbg_dev, fbg_val, CORE7, False, "Fbg_complete_case_Core7")
+0737:     fbg_enh = fit_and_predict(fbg_dev, fbg_val, ENHANCED, False, "Fbg_complete_case_Enhanced")
+0738:     fbg_rows = [metric_row("Enhanced_imputed", results["Enhanced_imputed"]["y"], results["Enhanced_imputed"]["probability"]) if results.get("Enhanced_imputed", {}).get("y", np.array([])).size else {"model":"Enhanced_imputed","status":"INSUFFICIENT_SAMPLE"}]
+0739:     if fbg_enh["status"] == "VALID_GUARDED_ORDER":
+0740:         fbg_rows.append(metric_row("Enhanced_complete_case", fbg_enh["y"], fbg_enh["probability"]))
+0741:         fbg_rows.append(metric_row("Core7_complete_case_same_sample", fbg_core["y"], fbg_core["probability"]))
+0742:         fbg_rows.append({**paired_delta(fbg_enh["y"], fbg_enh["probability"], fbg_core["probability"], "Enhanced_complete_minus_Core7_complete"), "model":"Enhanced_complete_minus_Core7_complete", "status":"PAIRED_BOOTSTRAP_DELTA"})
+0743:     fbg_perf = pd.DataFrame(fbg_rows); fbg_perf.to_csv(OUT / "06_enhanced_guardband_validation.csv", index=False)
+0744:     clinical.to_csv(OUT / "07_clinical_increment_guardband.csv", index=False)
+0745:     cal_rows = []
+0746:     for name in ["Core7", "Enhanced_imputed"]:
+0747:         res = results.get(name)
+0748:         if res and res.get("y", np.array([])).size:
+0749:             p_recal, alpha = intercept_only_recalibration(res["y"], res["probability"])
+0750:             row = metric_row(name, res["y"], p_recal, "SECONDARY_INTERCEPT_ONLY_RECALIBRATION"); row["recalibration_intercept_shift"] = alpha; cal_rows.append(row)
+0751:             raw_row = metric_row(name, res["y"], res["probability"], "PRIMARY_UNRECALIBRATED"); raw_row["recalibration_intercept_shift"] = 0.0; cal_rows.append(raw_row)
+0752:     pd.DataFrame(cal_rows).to_csv(OUT / "08_guardband_calibration.csv", index=False)
+0753:
+0754:     # High-specificity phenotype guard-band, using the same frozen architecture and date rules.
+0755:     high_dev_pos, high_dev_ctrl = guard_masks(d, "development_guaranteed_early", True); high_val_pos, high_val_ctrl = guard_masks(d, "validation_guaranteed_late", True)
+0756:     d_high = d.copy(); d_high["y"] = np.where(d_high["high_specificity_ami"], 1, np.where(d_high["strict_control_candidate"], 0, np.nan))
+0757:     high_results, high_perf, _ = execute_guardband(d_high, high_dev_pos | high_dev_ctrl, high_val_pos | high_val_ctrl, "high_specificity_guardband", True)
+0758:     high_deltas = []
+0759:     if high_results.get("Core7", {}).get("y", np.array([])).size and high_results.get("PIV", {}).get("y", np.array([])).size:
+0760:         high_deltas.append(paired_delta(high_results["Core7"]["y"], high_results["Core7"]["probability"], high_results["PIV"]["probability"], "High_specificity_Core7_minus_PIV"))
+0761:     if high_results.get("Enhanced_imputed", {}).get("y", np.array([])).size and high_results.get("Core7", {}).get("y", np.array([])).size:
+0762:         high_deltas.append(paired_delta(high_results["Enhanced_imputed"]["y"], high_results["Enhanced_imputed"]["probability"], high_results["Core7"]["probability"], "High_specificity_Enhanced_minus_Core7"))
+0763:     high_perf = pd.concat([high_perf, pd.DataFrame(high_deltas)], ignore_index=True); high_perf.to_csv(OUT / "09_high_specificity_guardband_validation.csv", index=False)
+0764:
+0765:     # Conservative +/-365-day sensitivity.
+0766:     cut = pd.Timestamp("2015-01-01")
+0767:     early365 = cut - pd.Timedelta(days=365); late365 = cut + pd.Timedelta(days=365)
+0768:     d365 = d[d["primary_analysis"] & d["cbc_datetime"].notna()].copy(); d365["y"] = d365["y_primary"]
+0769:     d365["buffer365_group"] = np.where(d365["cbc_datetime"].le(early365), "development_365d", np.where(d365["cbc_datetime"].ge(late365), "validation_365d", "excluded_365d_buffer"))
+0770:     dev365 = d365[d365.buffer365_group.eq("development_365d")].copy(); val365 = d365[d365.buffer365_group.eq("validation_365d")].copy()
+0771:     r365, p365, _ = execute_guardband(d365, d365.buffer365_group.eq("development_365d"), d365.buffer365_group.eq("validation_365d"), "conservative_365d")
+0772:     p365["analysis"] = "conservative_365d"; p365["validation_ami_n"] = int(val365.y.sum()); p365["precision_flag"] = np.where(int(val365.y.sum()) < 70, "DESCRIPTIVE_ONLY_AMI_LT70", np.where(int(val365.y.sum()) < 100, "LOW_PRECISION_AMI_LT100", "SUPPORTIVE_STRESS_TEST")); p365.to_csv(OUT / "10_conservative_365d_buffer_validation.csv", index=False)
+0773:
+0774:     core7_result = results.get("Core7", {})
+0775:     direction_audit(dev, val, core7_result)
+0776:     # Core-7 vs Core-6 parsimony on the same complete Core-7 population.
+0777:     common_dev = dev[dev[list(CORE7)].notna().all(axis=1)].copy(); common_val = val[val[list(CORE7)].notna().all(axis=1)].copy(); common_dev["y"] = common_dev.y_primary; common_val["y"] = common_val.y_primary
+0778:     p7 = fit_and_predict(common_dev, common_val, CORE7, False, "Parsimony_Core7"); p6 = fit_and_predict(common_dev, common_val, CORE6, False, "Parsimony_Core6")
+0779:     hs_common_dev_pos, hs_common_dev_ctrl = guard_masks(d, "development_guaranteed_early", True); hs_common_val_pos, hs_common_val_ctrl = guard_masks(d, "validation_guaranteed_late", True)
+0780:     p_rows = []
+0781:     for analysis, res in [("development_cv", None), ("guardband_validation", p7), ("guardband_validation", p6)]:
+0782:         if analysis == "development_cv":
+0783:             for model in ["Core7_development_CV", "Core6_development_CV"]:
+0784:                 row = cv_df[cv_df.model.eq(model)].iloc[0].to_dict(); row.update({"analysis": analysis, "sample_type": "primary", "model": "Core7" if model.startswith("Core7") else "Core6"}); p_rows.append(row)
+0785:         elif res["status"] == "VALID_GUARDED_ORDER":
+0786:             row = metric_row("Core7" if res is p7 else "Core6", res["y"], res["probability"]); row["analysis"] = analysis; row["sample_type"] = "primary"; p_rows.append(row)
+0787:     # The V0.5 Core-6 decision must also inspect the pre-specified
+0788:     # high-specificity phenotype guard-band, not only the broad CAD/AMI cohort.
+0789:     hs_d = d.copy()
+0790:     hs_d["y"] = np.where(hs_d["high_specificity_ami"], 1, np.where(hs_d["strict_control_candidate"], 0, np.nan))
+0791:     hs_train = hs_d[hs_common_dev_pos | hs_common_dev_ctrl].copy()
+0792:     hs_test = hs_d[hs_common_val_pos | hs_common_val_ctrl].copy()
+0793:     hs_p7 = fit_and_predict(hs_train, hs_test, CORE7, False, "Parsimony_HighSpecificity_Core7")
+0794:     hs_p6 = fit_and_predict(hs_train, hs_test, CORE6, False, "Parsimony_HighSpecificity_Core6")
+0795:     for res, name in [(hs_p7, "Core7"), (hs_p6, "Core6")]:
+0796:         if res["status"] == "VALID_GUARDED_ORDER":
+0797:             row = metric_row(name, res["y"], res["probability"]); row["analysis"] = "high_specificity_guardband"; row["sample_type"] = "high_specificity"; p_rows.append(row)
+0798:     core6_decision = "KEEP_CORE7"
+0799:     val7 = next((r for r in p_rows if r.get("analysis") == "guardband_validation" and r.get("model") == "Core7"), {})
+0800:     val6 = next((r for r in p_rows if r.get("analysis") == "guardband_validation" and r.get("model") == "Core6"), {})
+0801:     hs7 = next((r for r in p_rows if r.get("analysis") == "high_specificity_guardband" and r.get("model") == "Core7"), {})
+0802:     hs6 = next((r for r in p_rows if r.get("analysis") == "high_specificity_guardband" and r.get("model") == "Core6"), {})
+0803:     if val7 and val6 and hs7 and hs6:
+0804:         auc_ok = val6.get("auc", np.nan) >= val7.get("auc", np.nan) - .005
+0805:         cal_ok = (not np.isfinite(val7.get("calibration_slope", np.nan)) or not np.isfinite(val6.get("calibration_slope", np.nan)) or abs(val6["calibration_slope"] - val7["calibration_slope"]) <= .10)
+0806:         brier_ok = val6.get("brier_score", np.nan) <= val7.get("brier_score", np.nan) if np.isfinite(val6.get("brier_score", np.nan)) and np.isfinite(val7.get("brier_score", np.nan)) else False
+0807:         high_spec_ok = hs6.get("auc", np.nan) >= hs7.get("auc", np.nan) - .005
+0808:         core6_decision = "DROP_HB_CORE6_RECOMMENDED" if auc_ok and cal_ok and brier_ok and high_spec_ok else "KEEP_CORE7"
+0809:     for row in p_rows: row["core6_decision"] = core6_decision
+0810:     pd.DataFrame(p_rows).to_csv(OUT / "12_core7_vs_core6_parsimony.csv", index=False); make_parsimony_figure(pd.DataFrame(p_rows))
+0811:     architecture = "Core-6 without Hb" if core6_decision == "DROP_HB_CORE6_RECOMMENDED" else "Core-7 (Neut, Lymph, Mono, PLT, MPV, RDW, Hb)"
+0812:     enh_deltas = fbg_perf[fbg_perf["model"].astype(str).str.contains("Enhanced", na=False) & fbg_perf["model"].astype(str).str.contains("minus", na=False)]
+0813:     fbg_decision = "ENHANCED SUPPORTED" if len(enh_deltas) and float(enh_deltas.iloc[0].get("delta_auc", np.nan)) > 0 else "ENHANCED EXPLORATORY ONLY"
+0814:     core_auc = float(next((r["auc"] for r in perf.to_dict("records") if r.get("model") == "Core7"), np.nan)); core_slope = float(next((r["calibration_slope"] for r in perf.to_dict("records") if r.get("model") == "Core7"), np.nan)); piv_auc = float(next((r["auc"] for r in perf.to_dict("records") if r.get("model") == "PIV"), np.nan))
+0815:     primary_delta = next((r for r in deltas if r.get("comparison") == "Core7_minus_PIV"), {})
+0816:     high_delta = next((r for r in high_deltas if r.get("comparison") == "High_specificity_Core7_minus_PIV"), {})
+0817:     conservative_piv_auc = float(next((r["auc"] for r in p365.to_dict("records") if r.get("model") == "PIV"), np.nan))
+0818:     strong_checks = [int(dev.y.sum()) >= 150, int(val.y.sum()) >= 100, np.isfinite(core_auc) and core_auc >= .70, np.isfinite(core_auc) and core_auc - REFERENCE_OOF_AUC >= -.04, np.isfinite(piv_auc) and core_auc >= piv_auc, np.isfinite(core_slope) and .8 <= core_slope <= 1.2, np.isfinite(hs_core_auc := float(next((r["auc"] for r in high_perf.to_dict("records") if r.get("model") == "Core7"), np.nan))) and hs_core_auc >= float(next((r["auc"] for r in high_perf.to_dict("records") if r.get("model") == "PIV"), np.inf)), np.isfinite(primary_delta.get("ci_lower", np.nan)) and primary_delta.get("ci_lower", np.nan) >= 0, np.isfinite(high_delta.get("ci_lower", np.nan)) and high_delta.get("ci_lower", np.nan) >= 0, np.isfinite(conservative_piv_auc) and conservative_piv_auc <= float(next((r["auc"] for r in p365.to_dict("records") if r.get("model") == "Core7"), np.inf)) + .005]
+0819:     robust_comparison = bool(np.isfinite(primary_delta.get("ci_lower", np.nan)) and primary_delta.get("ci_lower", np.nan) >= 0 and np.isfinite(high_delta.get("ci_lower", np.nan)) and high_delta.get("ci_lower", np.nan) >= 0 and np.isfinite(conservative_piv_auc) and conservative_piv_auc <= float(next((r["auc"] for r in p365.to_dict("records") if r.get("model") == "Core7"), np.inf)) + .005)
+0820:     core_supportive = bool(np.isfinite(core_auc) and core_auc >= .67 and np.isfinite(core_slope) and .8 <= core_slope <= 1.2 and np.isfinite(piv_auc) and core_auc >= piv_auc and np.isfinite(hs_core_auc) and hs_core_auc >= float(next((r["auc"] for r in high_perf.to_dict("records") if r.get("model") == "PIV"), np.inf)))
+0821:     readiness = "MANUSCRIPT READY — STRONG" if sum(bool(x) for x in strong_checks) >= 8 and robust_comparison else ("MANUSCRIPT READY — CONDITIONAL" if core_supportive else ("REVISE ARCHITECTURE" if np.isfinite(core_auc) and core_auc < .67 else "MANUSCRIPT READY — CONDITIONAL"))
+0822:     final_summary(proof, flow, results, perf, clinical, high_results, high_perf, p365, pd.DataFrame(p_rows), fbg_perf, architecture, fbg_decision, readiness)
+0823:     final_decision = f"""# HITS V0.5 Final Architecture Freeze\n\n## Architecture\n\n**{architecture}**\n\nCore-6 without Hb was permitted as the only parsimony sensitivity. The decision is recorded in `12_core7_vs_core6_parsimony.csv`; no Core-5/Core-4 or other combinations were tested. Continuous HITS remains the scientific product; integer points remain supplementary only.\n\n## Readiness rationale\n\n**{readiness}**\n\nCore-7 met the supportive discrimination and calibration thresholds, but the primary Core-7 versus PIV delta CI, the high-specificity delta CI, and the +/-365-day sensitivity must be read together. A positive point estimate alone is not sufficient for an unconditional Strong claim.\n\n## Claim boundary\n\nThis is a bounded-date-shift robust temporal-order sensitivity analysis. It is not exact calendar-year validation, external validation, prospective prediction, future AMI prediction, MACE prediction, or pre-PCI prediction.\n"""
+0824:     (OUT / "13_final_architecture_freeze.md").write_text(final_decision, encoding="utf-8")
+0825:     (OUT / "14_final_fibrinogen_decision.md").write_text(f"# Fibrinogen Decision\n\n**{fbg_decision}**\n\nFibrinogen remains outside Core. Imputed and complete-case guard-band results are in `06_enhanced_guardband_validation.csv`; any limitation from missingness or event count remains part of the claim boundary.\n", encoding="utf-8")
+0826:     (OUT / "15_MANUSCRIPT_READINESS_DECISION.md").write_text(f"# Manuscript Readiness\n\n**{readiness}**\n\nThe decision uses the pre-specified bounded-date-shift guard-band, not optimized cutpoints. Exact calendar-year validation remains unavailable. The manuscript must use AMI phenotype identification/discrimination and date-shift-robust temporal-order sensitivity wording.\n", encoding="utf-8")
+0827:     make_roc_figure(perf, results); make_calibration_figure(results); make_clinical_figure(clinical)
+0828:     shutil.copy2(__file__, SCRIPT_COPY); write_source_hashes(proof); write_session_info(proof)
+0829:     manifest = []
+0830:     for path in sorted(OUT.rglob("*")):
+0831:         if path.is_file() and path.name != "run_manifest.csv": manifest.append({"relative_path": str(path.relative_to(OUT)), "bytes": path.stat().st_size, "sha256": sha256(path)})
+0832:     pd.DataFrame(manifest).to_csv(OUT / "run_manifest.csv", index=False)
+0833:     log(f"Completed V0.5: readiness={readiness}; architecture={architecture}; fbg={fbg_decision}")
+0834:     return 0
+0835:
+0836:
+0837: if __name__ == "__main__":
+0838:     raise SystemExit(main())

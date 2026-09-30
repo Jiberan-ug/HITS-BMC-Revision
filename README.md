@@ -4,7 +4,17 @@ This public repository contains a bounded **WP1 evidence-recovery and feasibilit
 
 ## Current Review
 
-**Scientific gate: `WP1_HOLD_DUE_TO_SOURCE_DATA_GAP`.**
+**Latest timing gate: `WP1R_B_PASS_SELECTION_RULE_ONLY`.** WP1R-A remains the historical source-recovery record. WP1R-B verifies the exact CBC record-selection rule but finds no defensible index-episode timing linkage in the available cohort sources. Broader manuscript-revision readiness remains on hold.
+
+[Open the WP1R-B timing executive summary](HITS_BMC_REVISION_WP1R_B_TIMING_AUDIT/00_EXECUTIVE/WP1R_B_EXECUTIVE_SUMMARY.md)
+
+[Browse the WP1R-B timing audit package](HITS_BMC_REVISION_WP1R_B_TIMING_AUDIT)
+
+[Download the WP1R-B aggregate-only audit ZIP](HITS_BMC_REVISION_WP1R_B_TIMING_AUDIT.zip)
+
+[Open the WP1R final decision](https://github.com/Jiberan-ug/HITS-BMC-Revision/blob/revision/bmc-major-revision-wp1-evidence-audit/HITS_BMC_REVISION_WP1_EVIDENCE_AUDIT/10_ORIGINAL_SOURCE_RECOVERY/WP1R_DECISION.md)
+
+[Browse the WP1R source-recovery evidence](https://github.com/Jiberan-ug/HITS-BMC-Revision/tree/revision/bmc-major-revision-wp1-evidence-audit/HITS_BMC_REVISION_WP1_EVIDENCE_AUDIT/10_ORIGINAL_SOURCE_RECOVERY)
 
 [Open the WP1 executive summary and 34 direct answers](https://github.com/Jiberan-ug/HITS-BMC-Revision/blob/revision/bmc-major-revision-wp1-evidence-audit/HITS_BMC_REVISION_WP1_EVIDENCE_AUDIT/00_EXECUTIVE_SUMMARY/WP1_EXECUTIVE_SUMMARY.md)
 
@@ -14,11 +24,12 @@ The dedicated revision pull request remains OPEN for review. The main branch is 
 
 ## Main Findings
 
-1. The frozen 1,820-patient cohort and 453 AMI labels can be reconstructed descriptively, but the model-input CBC dates and stated recruitment period have unresolved provenance conflicts.
-2. The recovered calibration/ROC figure branch uses legacy 20-repeat predictions, while the canonical Table 2 comes from a different verified 10-repeat validation run.
-3. Corrected age provenance and ethics/consent documentation require source-owner confirmation. Canonical patient-level predictions were not persisted and cannot be replaced by legacy predictions for new DCA.
+1. WP1R-A recovered the primary 2,548-row/431-column mother file and matched its 2,279-patient key set exactly to the analysis master; three of the four named source files were found. The author confirms the 2020–2026 coronary-angiography eligibility rule, but no query/date field machine-verifies it.
+2. WP1R-B reproduced the frozen HITS cohort (N=1,820; AMI=453; non-AMI CAD=1,367) and verified the historical completeness-ranked row-selection rule. It found zero defensible index-episode timing links; all 1,820 remain timing-unverified. CBC and fibrinogen timestamps are present, but cannot be assigned to the index CAG stay. Temporal validation must be removed from the manuscript as a clinical transportability claim.
+3. The ethics gate is PASS based on the author's explicit confirmation of approval K202602-10 and waiver of informed consent; the existing manuscript statement that all participants provided consent conflicts and requires correction. Approval documents were not independently inspected or published.
+4. The recovered calibration/ROC figure branch uses legacy 20-repeat predictions, while the canonical Table 2 comes from a different verified 10-repeat validation run. Corrected age provenance remains unresolved; canonical patient-level predictions were not persisted and cannot be replaced by legacy predictions for new DCA.
 
-The audit preserves all frozen model values. It does not edit the manuscript, refit Core-7/Enhanced, create new DCA/calibration/collinearity analyses, generate figures, authorize WP2, or claim the data are irretrievably unusable.
+The audit preserves all frozen model values. It does not edit the manuscript, refit Core-7/Enhanced, create new DCA/calibration/collinearity analyses, generate figures, authorize WP2, or claim the data are irretrievably unusable. No patient-level raw data or protected ethics documents are included.
 
 ## Review Instructions
 

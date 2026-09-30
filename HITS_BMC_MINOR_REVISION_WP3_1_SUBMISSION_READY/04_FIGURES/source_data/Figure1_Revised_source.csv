@@ -1,0 +1,29 @@
+﻿node_id,label,x,y,role
+source,"Source export
+N = 2,548 records",2.65,11.2,source
+patients,"Unique patients
+N = 2,279
+2,010 had one record; 269 had two
+269 surplus records removed
+One patient record retained by completeness rule",2.65,9.5,source
+ami,"Definite AMI
+N = 456",-0.15,7.25,phenotype
+nonami,"Definite non-AMI CAD
+N = 1,372",1.72,7.25,phenotype
+review,"No definite phenotype
+N = 340
+5 ambiguous MI; 335 diagnosis missing",3.58,7.25,review
+other,"Out of scope
+N = 111",5.45,7.25,exclusion
+ab,"Definite AMI + non-AMI CAD
+before core CBC requirement
+N = 1,828",2.65,4.95,analysis
+incomplete,"Core CBC incomplete
+N = 8
+AMI 3; non-AMI CAD 5",1.2,3.15,exclusion
+primary,"Primary analytic cohort
+N = 1,820
+AMI 453; non-AMI CAD 1,367",4.1,3.15,analysis
+strict,"Strict-control sensitivity
+N = 1,517
+AMI 453; controls 1,064",4.1,1.25,sensitivity

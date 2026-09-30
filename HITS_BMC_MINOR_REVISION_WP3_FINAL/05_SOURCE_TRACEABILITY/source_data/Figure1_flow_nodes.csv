@@ -1,0 +1,15 @@
+id,label,x,y,w,h,group
+source,"2,548 source records",0.8,0.0,1.65,0.78,source
+patients,"2,279 unique patients
+2010 with 1 row; 269 with 2 rows",2.85,0.0,2.2,1.02,source
+dx_available,"1,944 with discharge diagnosis",4.95,1.25,2.15,0.82,source
+dx_missing,335 without discharge diagnosis,4.95,-1.25,2.15,0.82,exclusion
+ami,"456 definite AMI
+before core-CBC filter",7.25,2.1,2.12,0.9,phenotype
+nonami,"1,372 definite non-AMI CAD
+before core-CBC filter",7.25,0.68,2.42,0.9,phenotype
+other,"116 other diagnoses
+5 ambiguous/review; 111 not CAD",7.25,-0.88,2.45,0.92,exclusion
+primary,"Primary cohort: N=1,820
+AMI 453; non-AMI CAD 1,367
+8 lacked required core CBC (3 + 5)",10.05,0.78,2.55,1.28,primary

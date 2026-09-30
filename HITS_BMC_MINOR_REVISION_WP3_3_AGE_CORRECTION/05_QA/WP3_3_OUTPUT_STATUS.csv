@@ -1,0 +1,22 @@
+requested_output,status,reason
+AGE_TARGET_DATE_PROVENANCE.md,COMPLETE_AGGREGATE_AUDIT,No validated target date source
+AGE_TARGET_HOSPITALIZATION_LOCK.md,HOLD,Definition reserved but cannot be applied
+AGE_TARGET_HOSPITALIZATION_QC.csv,COMPLETE_AGGREGATE_AUDIT,Reports candidate-field coverage not valid age
+TABLE1_AGE_TARGET_ANCHORED.csv,NOT_PROCESSED,Target episode date unavailable
+AGE_CORRECTION_CLINICAL_RECONCILIATION.csv,NOT_PROCESSED,No corrected clinical estimates exist
+CLINICAL_TARGET_AGE_PERFORMANCE.csv,NOT_PROCESSED,Target age unavailable
+CLINICAL_TARGET_AGE_PAIRED_DELTAS.csv,NOT_PROCESSED,Target age unavailable
+CLINICAL_TARGET_AGE_MISSINGNESS.csv,NOT_PROCESSED,No valid target-age missingness can be measured
+DCA_TARGET_AGE_SOURCE.csv,NOT_PROCESSED,No corrected clinical predictions exist
+DCA_TARGET_AGE_METHOD.md,NOT_PROCESSED,No corrected DCA authorized
+revised_clean_manuscript,NOT_PROCESSED,Analysis gate not passed
+revised_marked_manuscript,NOT_PROCESSED,Analysis gate not passed
+revised_response,NOT_PROCESSED,Analysis gate not passed
+revised_supplementary_files,NOT_PROCESSED,Analysis gate not passed
+WP3_3_NUMERICAL_CROSSCHECK.csv,NOT_PROCESSED,No corrected numerical results exist
+WP3_3_COMMENT_COVERAGE.csv,NOT_PROCESSED,No revised response exists
+WP3_3_CHANGE_MAP.csv,NOT_PROCESSED,No submission document changed
+WP3_3_INTERNAL_TERM_SCAN.csv,NOT_PROCESSED,No submission document changed
+WP3_3_FINAL_QA.md,COMPLETE_HOLD_QA,Source and privacy gate assessed
+FINAL_UPLOAD_CHECKLIST.md,COMPLETE_STOP_CHECKLIST,Submission blocked
+BMC_REVISION_UPLOAD_GUIDE_FINAL.md,NOT_PROCESSED,Submission blocked

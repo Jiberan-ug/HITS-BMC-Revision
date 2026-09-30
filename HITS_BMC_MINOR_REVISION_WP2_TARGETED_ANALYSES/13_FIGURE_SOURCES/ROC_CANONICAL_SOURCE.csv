@@ -1,0 +1,405 @@
+model,false_positive_rate,true_positive_rate,curve_source
+PIV,0.0,0.002207505518763797,canonical 5x10 patient-mean OOF
+PIV,0.01,0.04710816777041943,canonical 5x10 patient-mean OOF
+PIV,0.02,0.10046357615894039,canonical 5x10 patient-mean OOF
+PIV,0.03,0.15236203090507727,canonical 5x10 patient-mean OOF
+PIV,0.04,0.17739514348785873,canonical 5x10 patient-mean OOF
+PIV,0.05,0.20320088300220754,canonical 5x10 patient-mean OOF
+PIV,0.06,0.23253863134657837,canonical 5x10 patient-mean OOF
+PIV,0.07,0.25196026490066226,canonical 5x10 patient-mean OOF
+PIV,0.08,0.27673289183222954,canonical 5x10 patient-mean OOF
+PIV,0.09,0.30252759381898453,canonical 5x10 patient-mean OOF
+PIV,0.1,0.32796173657100813,canonical 5x10 patient-mean OOF
+PIV,0.11,0.3402281089036056,canonical 5x10 patient-mean OOF
+PIV,0.12,0.35991169977924947,canonical 5x10 patient-mean OOF
+PIV,0.13,0.38367917586460637,canonical 5x10 patient-mean OOF
+PIV,0.14,0.40039735099337753,canonical 5x10 patient-mean OOF
+PIV,0.15,0.4275570272259014,canonical 5x10 patient-mean OOF
+PIV,0.16,0.43563796909492275,canonical 5x10 patient-mean OOF
+PIV,0.17,0.4464275202354673,canonical 5x10 patient-mean OOF
+PIV,0.18,0.4547839798170924,canonical 5x10 patient-mean OOF
+PIV,0.19,0.4740176600441501,canonical 5x10 patient-mean OOF
+PIV,0.2,0.48874172185430464,canonical 5x10 patient-mean OOF
+PIV,0.21,0.5024093345947651,canonical 5x10 patient-mean OOF
+PIV,0.22,0.5248123620309051,canonical 5x10 patient-mean OOF
+PIV,0.23,0.5417439293598234,canonical 5x10 patient-mean OOF
+PIV,0.24,0.5552759381898454,canonical 5x10 patient-mean OOF
+PIV,0.25,0.5689845474613687,canonical 5x10 patient-mean OOF
+PIV,0.26,0.5774172185430463,canonical 5x10 patient-mean OOF
+PIV,0.27,0.5830708854549914,canonical 5x10 patient-mean OOF
+PIV,0.28,0.5995290654893304,canonical 5x10 patient-mean OOF
+PIV,0.29,0.6046992273730684,canonical 5x10 patient-mean OOF
+PIV,0.3,0.6121728161463261,canonical 5x10 patient-mean OOF
+PIV,0.31,0.6180380794701987,canonical 5x10 patient-mean OOF
+PIV,0.32,0.6336620063772382,canonical 5x10 patient-mean OOF
+PIV,0.33,0.6404194260485652,canonical 5x10 patient-mean OOF
+PIV,0.34,0.6551434878587198,canonical 5x10 patient-mean OOF
+PIV,0.35000000000000003,0.6674185982339955,canonical 5x10 patient-mean OOF
+PIV,0.36,0.6712465047829286,canonical 5x10 patient-mean OOF
+PIV,0.37,0.6732582781456954,canonical 5x10 patient-mean OOF
+PIV,0.38,0.6917549668874172,canonical 5x10 patient-mean OOF
+PIV,0.39,0.6978835540838852,canonical 5x10 patient-mean OOF
+PIV,0.4,0.7053421633554084,canonical 5x10 patient-mean OOF
+PIV,0.41000000000000003,0.7159133554083885,canonical 5x10 patient-mean OOF
+PIV,0.42,0.7249006622516556,canonical 5x10 patient-mean OOF
+PIV,0.43,0.737027225901398,canonical 5x10 patient-mean OOF
+PIV,0.44,0.742236073237242,canonical 5x10 patient-mean OOF
+PIV,0.45,0.7446809628928834,canonical 5x10 patient-mean OOF
+PIV,0.46,0.7461179438662883,canonical 5x10 patient-mean OOF
+PIV,0.47000000000000003,0.7491871185560317,canonical 5x10 patient-mean OOF
+PIV,0.48,0.7515484074424471,canonical 5x10 patient-mean OOF
+PIV,0.49,0.7573907284768212,canonical 5x10 patient-mean OOF
+PIV,0.5,0.7635209713024282,canonical 5x10 patient-mean OOF
+PIV,0.51,0.771252468920646,canonical 5x10 patient-mean OOF
+PIV,0.52,0.7752465047829286,canonical 5x10 patient-mean OOF
+PIV,0.53,0.7860327972248502,canonical 5x10 patient-mean OOF
+PIV,0.54,0.792759381898455,canonical 5x10 patient-mean OOF
+PIV,0.55,0.8069315673289184,canonical 5x10 patient-mean OOF
+PIV,0.56,0.8113156732891833,canonical 5x10 patient-mean OOF
+PIV,0.5700000000000001,0.8136833806370231,canonical 5x10 patient-mean OOF
+PIV,0.58,0.8165673289183223,canonical 5x10 patient-mean OOF
+PIV,0.59,0.8220364238410596,canonical 5x10 patient-mean OOF
+PIV,0.6,0.8258859068200303,canonical 5x10 patient-mean OOF
+PIV,0.61,0.8290623910770304,canonical 5x10 patient-mean OOF
+PIV,0.62,0.8338147797750447,canonical 5x10 patient-mean OOF
+PIV,0.63,0.8368763796909493,canonical 5x10 patient-mean OOF
+PIV,0.64,0.8461103752759381,canonical 5x10 patient-mean OOF
+PIV,0.65,0.8539735099337749,canonical 5x10 patient-mean OOF
+PIV,0.66,0.8609965310627562,canonical 5x10 patient-mean OOF
+PIV,0.67,0.8665145940642629,canonical 5x10 patient-mean OOF
+PIV,0.68,0.8738484179543783,canonical 5x10 patient-mean OOF
+PIV,0.6900000000000001,0.8784455481972039,canonical 5x10 patient-mean OOF
+PIV,0.7000000000000001,0.8836782560706402,canonical 5x10 patient-mean OOF
+PIV,0.71,0.88880353200883,canonical 5x10 patient-mean OOF
+PIV,0.72,0.9020309050772627,canonical 5x10 patient-mean OOF
+PIV,0.73,0.9148663232769193,canonical 5x10 patient-mean OOF
+PIV,0.74,0.9202980132450331,canonical 5x10 patient-mean OOF
+PIV,0.75,0.92439293598234,canonical 5x10 patient-mean OOF
+PIV,0.76,0.9301464980935179,canonical 5x10 patient-mean OOF
+PIV,0.77,0.9352041942604856,canonical 5x10 patient-mean OOF
+PIV,0.78,0.9404930095658574,canonical 5x10 patient-mean OOF
+PIV,0.79,0.9449264164827079,canonical 5x10 patient-mean OOF
+PIV,0.8,0.9466028942850134,canonical 5x10 patient-mean OOF
+PIV,0.81,0.9510876981737909,canonical 5x10 patient-mean OOF
+PIV,0.8200000000000001,0.9605353200883002,canonical 5x10 patient-mean OOF
+PIV,0.8300000000000001,0.9617926784400295,canonical 5x10 patient-mean OOF
+PIV,0.84,0.9644528539892778,canonical 5x10 patient-mean OOF
+PIV,0.85,0.9684563229265216,canonical 5x10 patient-mean OOF
+PIV,0.86,0.9736183022275737,canonical 5x10 patient-mean OOF
+PIV,0.87,0.974532744665195,canonical 5x10 patient-mean OOF
+PIV,0.88,0.9754471871028162,canonical 5x10 patient-mean OOF
+PIV,0.89,0.9763248186691895,canonical 5x10 patient-mean OOF
+PIV,0.9,0.9771870072532324,canonical 5x10 patient-mean OOF
+PIV,0.91,0.9787156331527193,canonical 5x10 patient-mean OOF
+PIV,0.92,0.9826095038921808,canonical 5x10 patient-mean OOF
+PIV,0.93,0.9834036249564309,canonical 5x10 patient-mean OOF
+PIV,0.9400000000000001,0.9841977460206809,canonical 5x10 patient-mean OOF
+PIV,0.9500000000000001,0.9851103752759383,canonical 5x10 patient-mean OOF
+PIV,0.96,0.9861162619573216,canonical 5x10 patient-mean OOF
+PIV,0.97,0.9878565121412805,canonical 5x10 patient-mean OOF
+PIV,0.98,0.9908741721854304,canonical 5x10 patient-mean OOF
+PIV,0.99,0.9960044150110375,canonical 5x10 patient-mean OOF
+PIV,1.0,1.0,canonical 5x10 patient-mean OOF
+Core-7,0.0,0.002207505518763797,canonical 5x10 patient-mean OOF
+Core-7,0.01,0.050044150110375274,canonical 5x10 patient-mean OOF
+Core-7,0.02,0.0975055187637969,canonical 5x10 patient-mean OOF
+Core-7,0.03,0.15454746136865344,canonical 5x10 patient-mean OOF
+Core-7,0.04,0.21386313465783663,canonical 5x10 patient-mean OOF
+Core-7,0.05,0.2480132450331126,canonical 5x10 patient-mean OOF
+Core-7,0.06,0.269326710816777,canonical 5x10 patient-mean OOF
+Core-7,0.07,0.2856070640176601,canonical 5x10 patient-mean OOF
+Core-7,0.08,0.3142604856512141,canonical 5x10 patient-mean OOF
+Core-7,0.09,0.34586460632818244,canonical 5x10 patient-mean OOF
+Core-7,0.1,0.36291390728476824,canonical 5x10 patient-mean OOF
+Core-7,0.11,0.39154525386313466,canonical 5x10 patient-mean OOF
+Core-7,0.12,0.41376222011983604,canonical 5x10 patient-mean OOF
+Core-7,0.13,0.423434247871334,canonical 5x10 patient-mean OOF
+Core-7,0.14,0.4408167770419426,canonical 5x10 patient-mean OOF
+Core-7,0.15,0.4577262693156733,canonical 5x10 patient-mean OOF
+Core-7,0.16,0.4687858719646799,canonical 5x10 patient-mean OOF
+Core-7,0.17,0.4751250919793966,canonical 5x10 patient-mean OOF
+Core-7,0.18,0.49123620309050775,canonical 5x10 patient-mean OOF
+Core-7,0.19,0.5127777777777778,canonical 5x10 patient-mean OOF
+Core-7,0.2,0.526158940397351,canonical 5x10 patient-mean OOF
+Core-7,0.21,0.53591059602649,canonical 5x10 patient-mean OOF
+Core-7,0.22,0.5531567328918322,canonical 5x10 patient-mean OOF
+Core-7,0.23,0.561158940397351,canonical 5x10 patient-mean OOF
+Core-7,0.24,0.5819690949227373,canonical 5x10 patient-mean OOF
+Core-7,0.25,0.5959651704684817,canonical 5x10 patient-mean OOF
+Core-7,0.26,0.6072185430463576,canonical 5x10 patient-mean OOF
+Core-7,0.27,0.6181677704194262,canonical 5x10 patient-mean OOF
+Core-7,0.28,0.6243818984547461,canonical 5x10 patient-mean OOF
+Core-7,0.29,0.6353421633554084,canonical 5x10 patient-mean OOF
+Core-7,0.3,0.6442604856512141,canonical 5x10 patient-mean OOF
+Core-7,0.31,0.6514569536423841,canonical 5x10 patient-mean OOF
+Core-7,0.32,0.6559483783324843,canonical 5x10 patient-mean OOF
+Core-7,0.33,0.6623730684326712,canonical 5x10 patient-mean OOF
+Core-7,0.34,0.6760706401766005,canonical 5x10 patient-mean OOF
+Core-7,0.35000000000000003,0.6903421633554084,canonical 5x10 patient-mean OOF
+Core-7,0.36,0.7088741721854305,canonical 5x10 patient-mean OOF
+Core-7,0.37,0.724317880794702,canonical 5x10 patient-mean OOF
+Core-7,0.38,0.729245552525646,canonical 5x10 patient-mean OOF
+Core-7,0.39,0.7321799116997793,canonical 5x10 patient-mean OOF
+Core-7,0.4,0.7346946284032376,canonical 5x10 patient-mean OOF
+Core-7,0.41000000000000003,0.7407045621780721,canonical 5x10 patient-mean OOF
+Core-7,0.42,0.746907039489821,canonical 5x10 patient-mean OOF
+Core-7,0.43,0.7508372753074739,canonical 5x10 patient-mean OOF
+Core-7,0.44,0.7543929359823399,canonical 5x10 patient-mean OOF
+Core-7,0.45,0.7581236203090508,canonical 5x10 patient-mean OOF
+Core-7,0.46,0.7653024282560706,canonical 5x10 patient-mean OOF
+Core-7,0.47000000000000003,0.7790242825607064,canonical 5x10 patient-mean OOF
+Core-7,0.48,0.7807784361566167,canonical 5x10 patient-mean OOF
+Core-7,0.49,0.7836175496688742,canonical 5x10 patient-mean OOF
+Core-7,0.5,0.7958057395143487,canonical 5x10 patient-mean OOF
+Core-7,0.51,0.8023473142016189,canonical 5x10 patient-mean OOF
+Core-7,0.52,0.8109381898454747,canonical 5x10 patient-mean OOF
+Core-7,0.53,0.8155447344500715,canonical 5x10 patient-mean OOF
+Core-7,0.54,0.817930463576159,canonical 5x10 patient-mean OOF
+Core-7,0.55,0.8198905445180279,canonical 5x10 patient-mean OOF
+Core-7,0.56,0.8211479028697571,canonical 5x10 patient-mean OOF
+Core-7,0.5700000000000001,0.8324310154525387,canonical 5x10 patient-mean OOF
+Core-7,0.58,0.8336883738042679,canonical 5x10 patient-mean OOF
+Core-7,0.59,0.8356578366445917,canonical 5x10 patient-mean OOF
+Core-7,0.6,0.8445916114790286,canonical 5x10 patient-mean OOF
+Core-7,0.61,0.8556004415011038,canonical 5x10 patient-mean OOF
+Core-7,0.62,0.8656401766004415,canonical 5x10 patient-mean OOF
+Core-7,0.63,0.8727225901398087,canonical 5x10 patient-mean OOF
+Core-7,0.64,0.8741595711132135,canonical 5x10 patient-mean OOF
+Core-7,0.65,0.8790760012614318,canonical 5x10 patient-mean OOF
+Core-7,0.66,0.8838490868954445,canonical 5x10 patient-mean OOF
+Core-7,0.67,0.8909133554083886,canonical 5x10 patient-mean OOF
+Core-7,0.68,0.9014275202354673,canonical 5x10 patient-mean OOF
+Core-7,0.6900000000000001,0.9073089456533164,canonical 5x10 patient-mean OOF
+Core-7,0.7000000000000001,0.9087459266267213,canonical 5x10 patient-mean OOF
+Core-7,0.71,0.910810756572346,canonical 5x10 patient-mean OOF
+Core-7,0.72,0.9135540838852098,canonical 5x10 patient-mean OOF
+Core-7,0.73,0.9184338974736326,canonical 5x10 patient-mean OOF
+Core-7,0.74,0.9201103752759382,canonical 5x10 patient-mean OOF
+Core-7,0.75,0.9231315042573321,canonical 5x10 patient-mean OOF
+Core-7,0.76,0.9272651459406426,canonical 5x10 patient-mean OOF
+Core-7,0.77,0.9289416237429482,canonical 5x10 patient-mean OOF
+Core-7,0.78,0.9317411699779249,canonical 5x10 patient-mean OOF
+Core-7,0.79,0.9336272075055188,canonical 5x10 patient-mean OOF
+Core-7,0.8,0.9354109855862875,canonical 5x10 patient-mean OOF
+Core-7,0.81,0.9368349889624724,canonical 5x10 patient-mean OOF
+Core-7,0.8200000000000001,0.9380923473142017,canonical 5x10 patient-mean OOF
+Core-7,0.8300000000000001,0.9410665405234943,canonical 5x10 patient-mean OOF
+Core-7,0.84,0.9419287291075371,canonical 5x10 patient-mean OOF
+Core-7,0.85,0.9430700094607379,canonical 5x10 patient-mean OOF
+Core-7,0.86,0.9459690949227373,canonical 5x10 patient-mean OOF
+Core-7,0.87,0.9485775386313465,canonical 5x10 patient-mean OOF
+Core-7,0.88,0.95825005017058,canonical 5x10 patient-mean OOF
+Core-7,0.89,0.9611552612214864,canonical 5x10 patient-mean OOF
+Core-7,0.9,0.9636938925680648,canonical 5x10 patient-mean OOF
+Core-7,0.91,0.9694805869367614,canonical 5x10 patient-mean OOF
+Core-7,0.92,0.9712556810803792,canonical 5x10 patient-mean OOF
+Core-7,0.93,0.9771854304635762,canonical 5x10 patient-mean OOF
+Core-7,0.9400000000000001,0.9801275447633064,canonical 5x10 patient-mean OOF
+Core-7,0.9500000000000001,0.9899374540103018,canonical 5x10 patient-mean OOF
+Core-7,0.96,0.9918603251053582,canonical 5x10 patient-mean OOF
+Core-7,0.97,0.9927747675429794,canonical 5x10 patient-mean OOF
+Core-7,0.98,0.9944061810154525,canonical 5x10 patient-mean OOF
+Core-7,0.99,1.0,canonical 5x10 patient-mean OOF
+Core-7,1.0,1.0,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.0,0.004415011037527594,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.01,0.053719646799117,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.02,0.10130978660779985,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.03,0.15675496688741722,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.04,0.20653421633554084,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.05,0.22840323767476087,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.06,0.2630684326710817,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.07,0.2735938189845475,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.08,0.28897718910963943,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.09,0.3134988962472406,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.1,0.3334437086092716,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.11,0.37508462104488594,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.12,0.39077262693156734,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.13,0.42142016188373804,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.14,0.44899400819930624,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.15,0.46915011037527593,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.16,0.4860485651214128,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.17,0.510794701986755,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.18,0.530551876379691,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.19,0.536274834437086,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.2,0.5483443708609271,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.21,0.5596799116997793,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.22,0.5789747363257297,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.23,0.5926754966887418,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.24,0.5997350993377483,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.25,0.60467255334805,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.26,0.6190286975717441,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.27,0.626396247240618,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.28,0.6475055187637969,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.29,0.6589183222958057,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.3,0.6718665685553102,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.31,0.6754505318081477,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.32,0.6812582781456954,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.33,0.691766004415011,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.34,0.6948903605592347,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.35000000000000003,0.7012743327312864,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.36,0.7095187637969095,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.37,0.7164066715722345,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.38,0.7260706401766005,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.39,0.7318598233995585,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.4,0.7360313956340446,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.41000000000000003,0.7535706401766005,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.42,0.7631640912435614,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.43,0.7695437821927888,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.44,0.7750110375275938,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.45,0.7838300220750551,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.46,0.7967108167770419,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.47000000000000003,0.8014790286975717,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.48,0.8067598724552367,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.49,0.8109480655280585,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.5,0.8136865342163355,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.51,0.8199426048565122,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.52,0.8327373068432672,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.53,0.8461672185430463,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.54,0.8523571253372578,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.55,0.8534747772054616,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.56,0.8552759381898455,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.5700000000000001,0.8585408388520971,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.58,0.8606122148638704,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.59,0.8681346578366446,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.6,0.8783349101229896,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.61,0.882645853043204,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.62,0.8869567959634185,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.63,0.8921916390728477,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.64,0.8931346578366446,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.65,0.8943432671081678,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.66,0.8971872700515084,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.67,0.8984446284032377,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.68,0.8996520971302429,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.6900000000000001,0.9030206033848418,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.7000000000000001,0.9046970811871474,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.71,0.9088039333734698,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.72,0.9124197656647988,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.73,0.9147410426218373,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.74,0.9169359823399559,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.75,0.9192604856512142,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.76,0.9270860927152318,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.77,0.9280094607379376,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.78,0.9288716493219804,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.79,0.9340791548407442,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.8,0.936374785381408,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.81,0.9391784925890887,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.8200000000000001,0.9411258278145695,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.8300000000000001,0.9437895511405446,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.84,0.9484326710816776,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.85,0.9505138159397122,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.86,0.9583617985360753,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.87,0.9599500406645753,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.88,0.9622810890360559,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.89,0.9683388520971302,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.9,0.9750919793966152,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.91,0.9765431843267108,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.92,0.9774862030905077,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.93,0.9799420529801325,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.9400000000000001,0.9861179438662883,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.9500000000000001,0.9899006622516556,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.96,0.9957313150425733,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.97,0.9965935036266161,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.98,0.9974556922106591,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),0.99,1.0,canonical 5x10 patient-mean OOF
+Enhanced (full cohort),1.0,1.0,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.0,0.004694835680751174,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.01,0.05065727699530516,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.02,0.1144131455399061,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.03,0.1575352112676056,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.04,0.2139906103286385,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.05,0.2331377151799687,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.06,0.2599530516431925,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.07,0.2820011737089202,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.08,0.2947261345852895,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.09,0.3044679186228482,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.1,0.3307511737089202,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.11,0.37170187793427234,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.12,0.4081455399061033,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.13,0.4302112676056338,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.14,0.4461502347417841,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.15,0.4692488262910798,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.16,0.49971830985915494,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.17,0.5112910798122066,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.18,0.5255399061032864,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.19,0.5434330985915493,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.2,0.5539384454877413,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.21,0.5654577464788733,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.22,0.5782123510292524,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.23,0.5858802816901408,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.24,0.6025888665325285,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.25,0.6172241784037559,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.26,0.627001564945227,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.27,0.6290031298904538,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.28,0.6421596244131456,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.29,0.6595399061032863,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.3,0.6703442879499217,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.31,0.6803521126760564,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.32,0.695,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.33,0.7002511737089202,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.34,0.707245696400626,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.35000000000000003,0.7113849765258217,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.36,0.7146478873239437,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.37,0.7214269829503336,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.38,0.7230281690140845,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.39,0.7321713615023475,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.4,0.7403755868544601,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.41000000000000003,0.7504577464788733,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.42,0.7572196139801773,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.43,0.7652300469483568,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.44,0.7833427230046948,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.45,0.7922769953051644,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.46,0.7989067739771966,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.47000000000000003,0.8022044387537346,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.48,0.8074849094567405,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.49,0.8177042253521126,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.5,0.8220363849765258,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.51,0.8277297116029511,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.52,0.8311737089201879,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.53,0.838599765258216,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.54,0.8401009389671362,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.55,0.8472334004024146,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.56,0.8513145539906104,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.5700000000000001,0.859984350547731,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.58,0.868772867087583,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.59,0.8698081593006314,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.6,0.8708434515136798,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.61,0.8841267605633802,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.62,0.8879342723004695,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.63,0.8892396407430088,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.64,0.8928345070422535,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.65,0.8949178403755869,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.66,0.8993896713615026,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.67,0.9029642670839855,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.68,0.9041502347417841,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.6900000000000001,0.9049008215962442,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.7000000000000001,0.9056514084507042,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.71,0.9068061309030654,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.72,0.908622848200313,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.73,0.9113581488933602,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.74,0.918481220657277,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.75,0.9199823943661971,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.76,0.9221812928855182,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.77,0.9255495719414526,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.78,0.9274119718309859,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.79,0.9302829942618674,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.8,0.9319835680751174,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.81,0.9372577891591976,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.8200000000000001,0.9424237089201878,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.8300000000000001,0.9476854460093898,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.84,0.9490405681954978,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.85,0.9498104008667388,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.86,0.9505802335379799,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.87,0.9570803990610328,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.88,0.9655023474178404,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.89,0.9711096884336321,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.9,0.9765356025039124,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.91,0.9777865805946792,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.92,0.9789892294946148,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.93,0.9798722728528031,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.9400000000000001,0.9807553162109914,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.9500000000000001,0.9854694835680752,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.96,0.9899906103286384,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.97,0.9940342052313883,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.98,0.9959718309859155,canonical 5x10 patient-mean OOF
+Enhanced (complete case),0.99,1.0,canonical 5x10 patient-mean OOF
+Enhanced (complete case),1.0,1.0,canonical 5x10 patient-mean OOF

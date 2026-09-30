@@ -1,0 +1,1561 @@
+Source: HITS_V0.3.1_verified_completion_20260825/scripts/01_run_hits_v0_3_1_verified_completion.py
+Original SHA256: b1dcc686e2399c07c8125c373a16264dafbc7adf4b6703c809e4765fd7cf5922
+READ ONLY; NOT EXECUTABLE. Home path redacted; trailing whitespace normalized.
+
+0001: #!/usr/bin/env python3
+0002: """Verified HITS V0.3.1 completion analysis.
+0003:
+0004: This is a deliberately separate, privacy-preserving re-analysis of the
+0005: CAD/AMI phenotype cohort.  It does *not* read or use the historical 1,274
+0006: patient MACE-label dataset.  The primary product is a continuous,
+0007: elastic-net-regularised HITS Core score.  Integer points are evaluated only
+0008: as a secondary simplification.
+0009:
+0010: Key safeguards implemented here
+0011: -------------------------------
+0012: * Patient-level row selection and phenotype definitions are reused from the
+0013:   retained V0.2 audit script; raw data are never copied to this output folder.
+0014: * Every tunable model is a ``GridSearchCV(Pipeline(...))``.  Thus median
+0015:   imputation, log transforms and standardisation are re-fitted inside every
+0016:   inner training fold rather than being prepared once for an outer training
+0017:   set.
+0018: * No stepwise selection, univariable P-value screening, Youden cut-point, or
+0019:   post-hoc feature addition is used.
+0020: * PDW is excluded from all primary formulae.  Fibrinogen is tested only as
+0021:   pre-specified Enhanced candidate, including a same-sample complete-case
+0022:   comparison against Core.
+0023: * Only aggregate results, coefficients, derivation rules, figures, provenance
+0024:   and logs are written.  Pseudonymous patient IDs remain in process memory.
+0025: """
+0026:
+0027: from __future__ import annotations
+0028:
+0029: import argparse
+0030: import hashlib
+0031: import importlib.util
+0032: import json
+0033: import platform
+0034: import shutil
+0035: import sys
+0036: import time
+0037: import traceback
+0038: import warnings
+0039: from dataclasses import dataclass
+0040: from pathlib import Path
+0041: from typing import Any, Iterable
+0042:
+0043: import matplotlib
+0044:
+0045: matplotlib.use("Agg")
+0046: import matplotlib.pyplot as plt
+0047: import numpy as np
+0048: import pandas as pd
+0049: import scipy
+0050: import sklearn
+0051: import statsmodels.api as sm
+0052: from sklearn.base import BaseEstimator, TransformerMixin
+0053: from sklearn.calibration import calibration_curve
+0054: from sklearn.linear_model import LogisticRegression
+0055: from sklearn.metrics import brier_score_loss, roc_auc_score, roc_curve
+0056: from sklearn.model_selection import GridSearchCV, RepeatedStratifiedKFold, StratifiedKFold
+0057: from sklearn.pipeline import Pipeline
+0058:
+0059:
+0060: PROJECT_ROOT = Path("$HOME/Documents/炎症免疫指数与心肌梗死（article-5）")
+0061: V02_SCRIPT = PROJECT_ROOT / "scripts" / "06_hits_ami_predevelopment_v0_2.py"
+0062: SOURCE = Path(
+0063:     "$HOME/Documents/颈动脉粥样斑块MACE事件/下载归档/"
+0064:     "2026-08-16_Article2_投稿预审与队列溯源/TwoPapers_Article2_R代码与图表/"
+0065:     "TwoPapers_R_Work_V0.3/data_raw/ehr_extracted/master_cohort_cleaned.csv"
+0066: )
+0067: EXPECTED_SOURCE_SHA256 = "f87691f5876ece3e70b2835284bf2412ed57edaf83ee7e198df6caa89669a660"
+0068: DEFAULT_OUT = PROJECT_ROOT / "HITS_V0.3.1_verified_completion_20260825"
+0069:
+0070: SEED = 20260825
+0071: OUTER_SPLITS = 5
+0072: OUTER_REPEATS = 10
+0073: INNER_SPLITS = 5
+0074: ALPHA_GRID = [0.25, 0.50, 0.75]
+0075: C_GRID = [0.10, 1.00, 10.00]
+0076: METRIC_BOOTSTRAP_N = 1000
+0077: PAIRED_BOOTSTRAP_N = 1000
+0078: DEVELOPMENT_BOOTSTRAP_N = 300
+0079:
+0080: CORE = ["neut", "lymph", "mono", "plt", "mpv", "rdw", "hb"]
+0081: ENHANCED = CORE + ["fbg"]
+0082: BENCHMARKS = ["NLR", "PLR", "MLR", "SII", "SIRI", "PIV", "HRR"]
+0083: CLINICAL = ["age", "male", "hypertension", "diabetes"]
+0084: LOG_VARS = {"neut", "lymph", "mono", "plt", "fbg", *BENCHMARKS}
+0085: INCREMENTS = {
+0086:     "neut": 1.0,
+0087:     "lymph": 0.5,
+0088:     "mono": 0.1,
+0089:     "plt": 50.0,
+0090:     "mpv": 1.0,
+0091:     "rdw": 1.0,
+0092:     "hb": 10.0,
+0093:     "fbg": 1.0,
+0094: }
+0095: DOMAIN = {
+0096:     "neut": "immune-inflammatory",
+0097:     "lymph": "immune-inflammatory",
+0098:     "mono": "immune-inflammatory",
+0099:     "plt": "platelet",
+0100:     "mpv": "platelet",
+0101:     "rdw": "erythrocyte",
+0102:     "hb": "erythrocyte",
+0103:     "fbg": "coagulation",
+0104:     "age": "clinical",
+0105:     "male": "clinical",
+0106:     "hypertension": "clinical",
+0107:     "diabetes": "clinical",
+0108:     "PIV": "traditional-index",
+0109: }
+0110:
+0111:
+0112: def load_module(path: Path, name: str):
+0113:     spec = importlib.util.spec_from_file_location(name, path)
+0114:     if spec is None or spec.loader is None:
+0115:         raise ImportError(f"Could not import {path}")
+0116:     module = importlib.util.module_from_spec(spec)
+0117:     spec.loader.exec_module(module)
+0118:     return module
+0119:
+0120:
+0121: V02 = load_module(V02_SCRIPT, "hits_v02_verified_completion")
+0122:
+0123:
+0124: def log(message: str) -> None:
+0125:     """Emit a timestamped progress line to stdout and the in-package log."""
+0126:     stamped = f"[{time.strftime('%Y-%m-%d %H:%M:%S')}] {message}"
+0127:     print(stamped, flush=True)
+0128:     if LOG_PATH is not None:
+0129:         with LOG_PATH.open("a", encoding="utf-8") as handle:
+0130:             handle.write(stamped + "\n")
+0131:
+0132:
+0133: def sha256(path: Path) -> str:
+0134:     digest = hashlib.sha256()
+0135:     with path.open("rb") as handle:
+0136:         for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+0137:             digest.update(chunk)
+0138:     return digest.hexdigest()
+0139:
+0140:
+0141: def stable_seed(label: str) -> int:
+0142:     return SEED + int(hashlib.sha256(label.encode("utf-8")).hexdigest()[:8], 16) % 1_000_000
+0143:
+0144:
+0145: def safe_float(value: Any) -> float:
+0146:     try:
+0147:         value = float(value)
+0148:     except (TypeError, ValueError):
+0149:         return float("nan")
+0150:     return value if np.isfinite(value) else float("nan")
+0151:
+0152:
+0153: def as_numeric_frame(frame: pd.DataFrame, features: Iterable[str]) -> np.ndarray:
+0154:     return frame.loc[:, list(features)].apply(pd.to_numeric, errors="coerce").to_numpy(dtype=float)
+0155:
+0156:
+0157: class FoldPreprocessor(BaseEstimator, TransformerMixin):
+0158:     """Fold-local median/imputation, transformation, and standardisation.
+0159:
+0160:     The class deliberately receives data frames so that its variable mapping is
+0161:     visible in a serialised sklearn pipeline.  It is fitted only by the outer
+0162:     or inner training partition that owns it.
+0163:     """
+0164:
+0165:     def __init__(self, features: tuple[str, ...], impute: bool = False):
+0166:         self.features = tuple(features)
+0167:         self.impute = bool(impute)
+0168:
+0169:     def fit(self, X: pd.DataFrame, y: np.ndarray | None = None):
+0170:         raw = as_numeric_frame(X, self.features)
+0171:         if not self.impute and not np.isfinite(raw).all():
+0172:             raise ValueError(f"Complete-case model received missing values: {self.features}")
+0173:         medians = np.nanmedian(raw, axis=0)
+0174:         medians = np.where(np.isfinite(medians), medians, 0.0)
+0175:         prepared = np.where(np.isfinite(raw), raw, medians)
+0176:         transformed = self._transform_raw(prepared)
+0177:         center = np.mean(transformed, axis=0)
+0178:         scale = np.std(transformed, axis=0, ddof=0)
+0179:         self.medians_raw_ = medians.astype(float)
+0180:         self.center_ = np.where(np.isfinite(center), center, 0.0).astype(float)
+0181:         self.scale_ = np.where(np.isfinite(scale) & (scale > 0), scale, 1.0).astype(float)
+0182:         return self
+0183:
+0184:     def _transform_raw(self, raw: np.ndarray) -> np.ndarray:
+0185:         out = np.asarray(raw, dtype=float).copy()
+0186:         for i, feature in enumerate(self.features):
+0187:             if feature in LOG_VARS:
+0188:                 out[:, i] = np.log1p(np.maximum(out[:, i], 0.0))
+0189:         return out
+0190:
+0191:     def transform(self, X: pd.DataFrame) -> np.ndarray:
+0192:         raw = as_numeric_frame(X, self.features)
+0193:         if not self.impute and not np.isfinite(raw).all():
+0194:             raise ValueError(f"Complete-case model received missing values: {self.features}")
+0195:         raw = np.where(np.isfinite(raw), raw, self.medians_raw_)
+0196:         return (self._transform_raw(raw) - self.center_) / self.scale_
+0197:
+0198:     def metadata(self, position: int) -> dict[str, Any]:
+0199:         feature = self.features[position]
+0200:         return {
+0201:             "variable": feature,
+0202:             "transform": "log1p_then_standardise" if feature in LOG_VARS else "standardise",
+0203:             "training_median_raw": safe_float(self.medians_raw_[position]),
+0204:             "training_center_transformed": safe_float(self.center_[position]),
+0205:             "training_scale_transformed": safe_float(self.scale_[position]),
+0206:             "missing_data_rule": "training-fold median imputation" if self.impute else "complete case",
+0207:         }
+0208:
+0209:
+0210: @dataclass(frozen=True)
+0211: class ModelSpec:
+0212:     name: str
+0213:     features: tuple[str, ...]
+0214:     kind: str  # elastic, ordinary, integer
+0215:     impute: bool
+0216:     base_name: str | None = None
+0217:
+0218:
+0219: def make_tuned_pipeline(features: tuple[str, ...], impute: bool, seed: int) -> GridSearchCV:
+0220:     pipeline = Pipeline(
+0221:         [
+0222:             ("preprocess", FoldPreprocessor(features=features, impute=impute)),
+0223:             (
+0224:                 "model",
+0225:                 LogisticRegression(
+0226:                     penalty="elasticnet",
+0227:                     solver="saga",
+0228:                     max_iter=3000,
+0229:                     tol=1e-3,
+0230:                     random_state=seed,
+0231:                     n_jobs=1,
+0232:                 ),
+0233:             ),
+0234:         ]
+0235:     )
+0236:     inner = StratifiedKFold(n_splits=INNER_SPLITS, shuffle=True, random_state=seed)
+0237:     return GridSearchCV(
+0238:         estimator=pipeline,
+0239:         param_grid={"model__C": C_GRID, "model__l1_ratio": ALPHA_GRID},
+0240:         scoring="roc_auc",
+0241:         cv=inner,
+0242:         n_jobs=1,
+0243:         refit=True,
+0244:         error_score="raise",
+0245:         return_train_score=False,
+0246:     )
+0247:
+0248:
+0249: def make_ordinary_pipeline(features: tuple[str, ...], impute: bool, seed: int) -> Pipeline:
+0250:     return Pipeline(
+0251:         [
+0252:             ("preprocess", FoldPreprocessor(features=features, impute=impute)),
+0253:             (
+0254:                 "model",
+0255:                 LogisticRegression(
+0256:                     penalty=None,
+0257:                     solver="lbfgs",
+0258:                     max_iter=2000,
+0259:                     random_state=seed,
+0260:                 ),
+0261:             ),
+0262:         ]
+0263:     )
+0264:
+0265:
+0266: def fit_model(
+0267:     train: pd.DataFrame,
+0268:     y_train: np.ndarray,
+0269:     spec: ModelSpec,
+0270:     label: str,
+0271: ) -> tuple[Pipeline, dict[str, Any]]:
+0272:     """Fit either pre-specified elastic-net development or ordinary benchmark."""
+0273:     features = spec.features
+0274:     X_train = train.loc[:, list(features)]
+0275:     seed = stable_seed(label)
+0276:     with warnings.catch_warnings(record=True) as caught:
+0277:         warnings.simplefilter("always")
+0278:         if spec.kind == "elastic":
+0279:             search = make_tuned_pipeline(features, spec.impute, seed)
+0280:             search.fit(X_train, y_train)
+0281:             pipe = search.best_estimator_
+0282:             params = {
+0283:                 "selected_C": safe_float(search.best_params_["model__C"]),
+0284:                 "selected_l1_ratio": safe_float(search.best_params_["model__l1_ratio"]),
+0285:                 "best_inner_auc": safe_float(search.best_score_),
+0286:                 "tuned_in_inner_cv": True,
+0287:             }
+0288:         elif spec.kind == "ordinary":
+0289:             pipe = make_ordinary_pipeline(features, spec.impute, seed)
+0290:             pipe.fit(X_train, y_train)
+0291:             params = {
+0292:                 "selected_C": np.nan,
+0293:                 "selected_l1_ratio": np.nan,
+0294:                 "best_inner_auc": np.nan,
+0295:                 "tuned_in_inner_cv": False,
+0296:             }
+0297:         else:
+0298:             raise ValueError(f"Unsupported fitted model type: {spec.kind}")
+0299:     convergence = [str(w.message) for w in caught if "converg" in str(w.message).lower()]
+0300:     return pipe, {**params, "convergence_warning_count": len(convergence), "convergence_messages": " | ".join(convergence)}
+0301:
+0302:
+0303: def model_outputs(pipe: Pipeline, frame: pd.DataFrame, features: tuple[str, ...]) -> tuple[np.ndarray, np.ndarray]:
+0304:     X = frame.loc[:, list(features)]
+0305:     probability = np.asarray(pipe.predict_proba(X)[:, 1], dtype=float)
+0306:     decision = np.asarray(pipe.decision_function(X), dtype=float)
+0307:     return probability, decision
+0308:
+0309:
+0310: def get_preprocessor(pipe: Pipeline) -> FoldPreprocessor:
+0311:     pre = pipe.named_steps["preprocess"]
+0312:     if not isinstance(pre, FoldPreprocessor):
+0313:         raise TypeError("Unexpected preprocessor type")
+0314:     return pre
+0315:
+0316:
+0317: def derive_integer_rules(pipe: Pipeline, features: tuple[str, ...]) -> tuple[dict[str, Any], pd.DataFrame]:
+0318:     """Derive clinically incremented points from standardised effects.
+0319:
+0320:     This compares *effects per named clinical increment*, never raw beta values
+0321:     expressed in incomparable laboratory units.  Zero points are allowed; no
+0322:     coefficient is artificially forced to +/-1.
+0323:     """
+0324:     prep = get_preprocessor(pipe)
+0325:     model = pipe.named_steps["model"]
+0326:     beta = np.asarray(model.coef_[0], dtype=float)
+0327:     effects: list[float] = []
+0328:     for i, variable in enumerate(features):
+0329:         increment = INCREMENTS[variable]
+0330:         median = prep.medians_raw_[i]
+0331:         if variable in LOG_VARS:
+0332:             raw_delta = np.log1p(max(median + increment, 0.0)) - np.log1p(max(median, 0.0))
+0333:             standardised_increment = raw_delta / prep.scale_[i]
+0334:         else:
+0335:             standardised_increment = increment / prep.scale_[i]
+0336:         effects.append(float(beta[i] * standardised_increment))
+0337:     effects_array = np.asarray(effects, dtype=float)
+0338:     active = np.abs(effects_array) > 1e-10
+0339:     reference = float(np.median(np.abs(effects_array[active]))) if active.any() else 1.0
+0340:     points = np.rint(effects_array / reference).astype(int) if reference > 0 else np.zeros(len(features), dtype=int)
+0341:     rows = []
+0342:     for i, variable in enumerate(features):
+0343:         rows.append(
+0344:             {
+0345:                 "variable": variable,
+0346:                 "domain": DOMAIN[variable],
+0347:                 "clinical_increment_raw_units": INCREMENTS[variable],
+0348:                 "training_median_raw": safe_float(prep.medians_raw_[i]),
+0349:                 "continuous_beta_standardised": safe_float(beta[i]),
+0350:                 "standardised_change_per_increment": safe_float(
+0351:                     effects_array[i] / beta[i] if abs(beta[i]) > 1e-12 else 0.0
+0352:                 ),
+0353:                 "continuous_effect_per_increment": safe_float(effects_array[i]),
+0354:                 "reference_abs_effect_median": safe_float(reference),
+0355:                 "scaled_effect": safe_float(effects_array[i] / reference) if reference > 0 else np.nan,
+0356:                 "integer_points": int(points[i]),
+0357:                 "point_method": "round(effect_per_clinical_increment / median_absolute_effect)",
+0358:                 "raw_beta_minimum_method_used": False,
+0359:                 "zero_points_forced_to_nonzero": False,
+0360:             }
+0361:         )
+0362:     rules = {
+0363:         "features": features,
+0364:         "median": prep.medians_raw_.copy(),
+0365:         "increments": np.asarray([INCREMENTS[x] for x in features], dtype=float),
+0366:         "points": points,
+0367:         "reference_effect": reference,
+0368:         "intercept_continuous": safe_float(model.intercept_[0]),
+0369:     }
+0370:     return rules, pd.DataFrame(rows)
+0371:
+0372:
+0373: def integer_score(frame: pd.DataFrame, rules: dict[str, Any]) -> np.ndarray:
+0374:     features: tuple[str, ...] = rules["features"]
+0375:     raw = as_numeric_frame(frame, features)
+0376:     raw = np.where(np.isfinite(raw), raw, rules["median"])
+0377:     steps = np.rint((raw - rules["median"]) / rules["increments"])
+0378:     return np.asarray(steps @ rules["points"], dtype=float)
+0379:
+0380:
+0381: def fit_integer_calibrator(scores: np.ndarray, y: np.ndarray, seed: int) -> LogisticRegression | float:
+0382:     score_matrix = np.asarray(scores, dtype=float).reshape(-1, 1)
+0383:     if len(np.unique(y)) < 2 or np.nanstd(score_matrix) <= 1e-12:
+0384:         return float(np.mean(y))
+0385:     model = LogisticRegression(penalty=None, solver="lbfgs", max_iter=1000, random_state=seed)
+0386:     model.fit(score_matrix, y)
+0387:     return model
+0388:
+0389:
+0390: def calibrated_integer_probability(calibrator: LogisticRegression | float, scores: np.ndarray) -> np.ndarray:
+0391:     score_matrix = np.asarray(scores, dtype=float).reshape(-1, 1)
+0392:     if isinstance(calibrator, float):
+0393:         return np.repeat(calibrator, len(score_matrix)).astype(float)
+0394:     return np.asarray(calibrator.predict_proba(score_matrix)[:, 1], dtype=float)
+0395:
+0396:
+0397: def repeated_splits(y: np.ndarray, repeats: int) -> list[tuple[int, int, np.ndarray, np.ndarray]]:
+0398:     splitter = RepeatedStratifiedKFold(
+0399:         n_splits=OUTER_SPLITS,
+0400:         n_repeats=repeats,
+0401:         random_state=SEED,
+0402:     )
+0403:     splits = []
+0404:     for index, (train_idx, test_idx) in enumerate(splitter.split(np.zeros(len(y)), y)):
+0405:         splits.append((index // OUTER_SPLITS + 1, index % OUTER_SPLITS + 1, train_idx, test_idx))
+0406:     return splits
+0407:
+0408:
+0409: def run_nested_oof(
+0410:     frame: pd.DataFrame,
+0411:     analysis: str,
+0412:     target: str,
+0413:     specs: list[ModelSpec],
+0414:     repeats: int,
+0415: ) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+0416:     """Run all prespecified models through identical repeated outer folds."""
+0417:     work = frame.reset_index(drop=True)
+0418:     y = work[target].astype(int).to_numpy()
+0419:     all_records: list[dict[str, Any]] = []
+0420:     fit_records: list[dict[str, Any]] = []
+0421:     integer_records: list[pd.DataFrame] = []
+0422:     splits = repeated_splits(y, repeats)
+0423:     total = len(splits)
+0424:     for split_number, (repeat, fold, train_idx, test_idx) in enumerate(splits, start=1):
+0425:         train = work.iloc[train_idx]
+0426:         test = work.iloc[test_idx]
+0427:         fitted: dict[str, Pipeline] = {}
+0428:         for spec in specs:
+0429:             label = f"{analysis}:{spec.name}:r{repeat}:f{fold}"
+0430:             if spec.kind == "integer":
+0431:                 if spec.base_name not in fitted:
+0432:                     raise RuntimeError(f"Integer model {spec.name} missing base {spec.base_name}")
+0433:                 base = fitted[spec.base_name]
+0434:                 rules, table = derive_integer_rules(base, spec.features)
+0435:                 train_score = integer_score(train, rules)
+0436:                 test_score = integer_score(test, rules)
+0437:                 calibrator = fit_integer_calibrator(train_score, y[train_idx], stable_seed(label + ":cal"))
+0438:                 probability = calibrated_integer_probability(calibrator, test_score)
+0439:                 decision = test_score
+0440:                 table["analysis"] = analysis
+0441:                 table["repeat"] = repeat
+0442:                 table["fold"] = fold
+0443:                 table["calibration_fitted_on_outer_training_only"] = True
+0444:                 if isinstance(calibrator, float):
+0445:                     table["integer_calibration_intercept"] = np.nan
+0446:                     table["integer_calibration_slope"] = 0.0
+0447:                 else:
+0448:                     table["integer_calibration_intercept"] = safe_float(calibrator.intercept_[0])
+0449:                     table["integer_calibration_slope"] = safe_float(calibrator.coef_[0, 0])
+0450:                 integer_records.append(table)
+0451:                 params = {
+0452:                     "selected_C": np.nan,
+0453:                     "selected_l1_ratio": np.nan,
+0454:                     "best_inner_auc": np.nan,
+0455:                     "tuned_in_inner_cv": False,
+0456:                     "convergence_warning_count": 0,
+0457:                     "convergence_messages": "",
+0458:                     "integer_base_model": spec.base_name,
+0459:                 }
+0460:             else:
+0461:                 pipe, params = fit_model(train, y[train_idx], spec, label)
+0462:                 fitted[spec.name] = pipe
+0463:                 probability, decision = model_outputs(pipe, test, spec.features)
+0464:                 params["integer_base_model"] = ""
+0465:             fit_records.append(
+0466:                 {
+0467:                     "analysis": analysis,
+0468:                     "model": spec.name,
+0469:                     "repeat": repeat,
+0470:                     "fold": fold,
+0471:                     "features": ";".join(spec.features),
+0472:                     "imputation": "training-fold median" if spec.impute else "complete case",
+0473:                     **params,
+0474:                 }
+0475:             )
+0476:             for patient, label_class, outcome, probability_i, decision_i in zip(
+0477:                 test["research_patient_id"],
+0478:                 test["phenotype_class"],
+0479:                 y[test_idx],
+0480:                 probability,
+0481:                 decision,
+0482:             ):
+0483:                 all_records.append(
+0484:                     {
+0485:                         "analysis": analysis,
+0486:                         "model": spec.name,
+0487:                         "research_patient_id": patient,
+0488:                         "phenotype_class": label_class,
+0489:                         "y": int(outcome),
+0490:                         "repeat": repeat,
+0491:                         "fold": fold,
+0492:                         "prediction": safe_float(probability_i),
+0493:                         "decision_score": safe_float(decision_i),
+0494:                     }
+0495:                 )
+0496:         if split_number == 1 or split_number % 5 == 0 or split_number == total:
+0497:             log(f"Nested OOF {analysis}: outer split {split_number}/{total} complete")
+0498:     return pd.DataFrame(all_records), pd.DataFrame(fit_records), pd.concat(integer_records, ignore_index=True) if integer_records else pd.DataFrame()
+0499:
+0500:
+0501: def patient_mean_predictions(records: pd.DataFrame) -> pd.DataFrame:
+0502:     return (
+0503:         records.groupby(["analysis", "model", "research_patient_id", "phenotype_class", "y"], as_index=False)
+0504:         [["prediction", "decision_score"]]
+0505:         .mean()
+0506:     )
+0507:
+0508:
+0509: def safe_auc(y: np.ndarray, score: np.ndarray) -> float:
+0510:     if len(y) < 3 or len(np.unique(y)) < 2:
+0511:         return float("nan")
+0512:     return safe_float(roc_auc_score(y, score))
+0513:
+0514:
+0515: def calibration_stats(y: np.ndarray, probability: np.ndarray) -> tuple[float, float]:
+0516:     if len(y) < 20 or len(np.unique(y)) < 2:
+0517:         return np.nan, np.nan
+0518:     probability = np.clip(np.asarray(probability, dtype=float), 1e-6, 1 - 1e-6)
+0519:     logit = np.log(probability / (1 - probability))
+0520:     try:
+0521:         model = sm.GLM(y, sm.add_constant(logit), family=sm.families.Binomial()).fit()
+0522:         return safe_float(model.params[0]), safe_float(model.params[1])
+0523:     except Exception:
+0524:         return np.nan, np.nan
+0525:
+0526:
+0527: def bootstrap_auc_ci(y: np.ndarray, score: np.ndarray, label: str, n_boot: int) -> tuple[float, float, int]:
+0528:     if len(np.unique(y)) < 2:
+0529:         return np.nan, np.nan, 0
+0530:     rng = np.random.default_rng(stable_seed("metric-ci:" + label))
+0531:     values: list[float] = []
+0532:     for _ in range(n_boot):
+0533:         idx = rng.integers(0, len(y), len(y))
+0534:         if len(np.unique(y[idx])) == 2:
+0535:             values.append(safe_auc(y[idx], score[idx]))
+0536:     if not values:
+0537:         return np.nan, np.nan, 0
+0538:     return safe_float(np.quantile(values, 0.025)), safe_float(np.quantile(values, 0.975)), len(values)
+0539:
+0540:
+0541: def performance_table(records: pd.DataFrame, metric_bootstrap_n: int) -> pd.DataFrame:
+0542:     rows = []
+0543:     patient_means = patient_mean_predictions(records)
+0544:     for (analysis, model_name), sub in patient_means.groupby(["analysis", "model"], sort=False):
+0545:         y = sub["y"].to_numpy(dtype=int)
+0546:         probability = sub["prediction"].to_numpy(dtype=float)
+0547:         auc = safe_auc(y, probability)
+0548:         lo, hi, valid = bootstrap_auc_ci(y, probability, f"{analysis}:{model_name}", metric_bootstrap_n)
+0549:         intercept, slope = calibration_stats(y, probability)
+0550:         repeat_values: list[float] = []
+0551:         for _, repeat_sub in records[(records.analysis == analysis) & (records.model == model_name)].groupby("repeat"):
+0552:             repeat_mean = repeat_sub.groupby(["research_patient_id", "y"], as_index=False)["prediction"].mean()
+0553:             repeat_values.append(safe_auc(repeat_mean.y.to_numpy(dtype=int), repeat_mean.prediction.to_numpy(dtype=float)))
+0554:         rows.append(
+0555:             {
+0556:                 "analysis": analysis,
+0557:                 "model": model_name,
+0558:                 "n": int(len(sub)),
+0559:                 "event_n": int(y.sum()),
+0560:                 "event_prevalence": safe_float(y.mean()),
+0561:                 "oof_auc": auc,
+0562:                 "oof_auc_ci_lower": lo,
+0563:                 "oof_auc_ci_upper": hi,
+0564:                 "metric_bootstrap_valid": valid,
+0565:                 "brier_score": safe_float(brier_score_loss(y, np.clip(probability, 0, 1))),
+0566:                 "calibration_intercept": intercept,
+0567:                 "calibration_slope": slope,
+0568:                 "repeat_auc_median": safe_float(np.nanmedian(repeat_values)),
+0569:                 "repeat_auc_p2_5": safe_float(np.nanquantile(repeat_values, 0.025)),
+0570:                 "repeat_auc_p97_5": safe_float(np.nanquantile(repeat_values, 0.975)),
+0571:                 "valid_repeats": int(np.sum(np.isfinite(repeat_values))),
+0572:             }
+0573:         )
+0574:     return pd.DataFrame(rows)
+0575:
+0576:
+0577: def paired_delta(
+0578:     records_a: pd.DataFrame,
+0579:     records_b: pd.DataFrame,
+0580:     label: str,
+0581:     n_boot: int,
+0582: ) -> dict[str, Any]:
+0583:     a = patient_mean_predictions(records_a)[["research_patient_id", "y", "prediction"]].rename(columns={"prediction": "a"})
+0584:     b = patient_mean_predictions(records_b)[["research_patient_id", "y", "prediction"]].rename(columns={"prediction": "b"})
+0585:     merged = a.merge(b, on=["research_patient_id", "y"], how="inner", validate="one_to_one")
+0586:     y = merged.y.to_numpy(dtype=int)
+0587:     p_a = merged.a.to_numpy(dtype=float)
+0588:     p_b = merged.b.to_numpy(dtype=float)
+0589:     point = safe_auc(y, p_a) - safe_auc(y, p_b)
+0590:     brier_delta = safe_float(brier_score_loss(y, p_a) - brier_score_loss(y, p_b))
+0591:     rng = np.random.default_rng(stable_seed("paired:" + label))
+0592:     values: list[float] = []
+0593:     brier_values: list[float] = []
+0594:     for _ in range(n_boot):
+0595:         idx = rng.integers(0, len(merged), len(merged))
+0596:         if len(np.unique(y[idx])) != 2:
+0597:             continue
+0598:         values.append(safe_auc(y[idx], p_a[idx]) - safe_auc(y[idx], p_b[idx]))
+0599:         brier_values.append(safe_float(brier_score_loss(y[idx], p_a[idx]) - brier_score_loss(y[idx], p_b[idx])))
+0600:     return {
+0601:         "comparison": label,
+0602:         "n_common": int(len(merged)),
+0603:         "auc_model_a": safe_auc(y, p_a),
+0604:         "auc_model_b": safe_auc(y, p_b),
+0605:         "delta_auc_a_minus_b": safe_float(point),
+0606:         "delta_auc_ci_lower": safe_float(np.quantile(values, 0.025)) if values else np.nan,
+0607:         "delta_auc_ci_upper": safe_float(np.quantile(values, 0.975)) if values else np.nan,
+0608:         "delta_auc_bootstrap_valid": len(values),
+0609:         "brier_delta_a_minus_b": brier_delta,
+0610:         "brier_delta_ci_lower": safe_float(np.quantile(brier_values, 0.025)) if brier_values else np.nan,
+0611:         "brier_delta_ci_upper": safe_float(np.quantile(brier_values, 0.975)) if brier_values else np.nan,
+0612:         "ci_supports_a_higher_auc": bool(values and np.quantile(values, 0.025) > 0),
+0613:         "ci_supports_a_lower_auc": bool(values and np.quantile(values, 0.975) < 0),
+0614:         "comparison_scale": "mean repeated nested-OOF calibrated probabilities",
+0615:     }
+0616:
+0617:
+0618: def metric_values(y: np.ndarray, probability: np.ndarray) -> dict[str, float]:
+0619:     intercept, slope = calibration_stats(y, probability)
+0620:     return {
+0621:         "auc": safe_auc(y, probability),
+0622:         "brier": safe_float(brier_score_loss(y, np.clip(probability, 0, 1))),
+0623:         "calibration_intercept": intercept,
+0624:         "calibration_slope": slope,
+0625:     }
+0626:
+0627:
+0628: def bootstrap_optimism(
+0629:     frame: pd.DataFrame,
+0630:     target: str,
+0631:     spec: ModelSpec,
+0632:     label: str,
+0633:     n_boot: int,
+0634: ) -> tuple[dict[str, Any], pd.DataFrame]:
+0635:     """Full-development bootstrap, including inner-CV tuning in each resample."""
+0636:     work = frame.reset_index(drop=True)
+0637:     y = work[target].astype(int).to_numpy()
+0638:     full_pipe, full_info = fit_model(work, y, spec, f"full:{label}")
+0639:     p_full, _ = model_outputs(full_pipe, work, spec.features)
+0640:     apparent = metric_values(y, p_full)
+0641:     rng = np.random.default_rng(stable_seed("development-bootstrap:" + label))
+0642:     outcomes: list[dict[str, float]] = []
+0643:     coefficient_rows: list[dict[str, Any]] = []
+0644:     for b in range(n_boot):
+0645:         idx = rng.integers(0, len(work), len(work))
+0646:         if len(np.unique(y[idx])) != 2:
+0647:             continue
+0648:         boot = work.iloc[idx].reset_index(drop=True)
+0649:         boot_pipe, fit_info = fit_model(boot, y[idx], spec, f"bootstrap:{label}:{b}")
+0650:         p_boot, _ = model_outputs(boot_pipe, boot, spec.features)
+0651:         p_test, _ = model_outputs(boot_pipe, work, spec.features)
+0652:         train_metric = metric_values(y[idx], p_boot)
+0653:         test_metric = metric_values(y, p_test)
+0654:         outcomes.append({
+0655:             "auc_optimism_train_minus_test": train_metric["auc"] - test_metric["auc"],
+0656:             "brier_degradation_test_minus_train": test_metric["brier"] - train_metric["brier"],
+0657:             "bootstrap_test_auc": test_metric["auc"],
+0658:             "bootstrap_test_brier": test_metric["brier"],
+0659:             "bootstrap_test_calibration_intercept": test_metric["calibration_intercept"],
+0660:             "bootstrap_test_calibration_slope": test_metric["calibration_slope"],
+0661:             "selected_C": fit_info["selected_C"],
+0662:             "selected_l1_ratio": fit_info["selected_l1_ratio"],
+0663:         })
+0664:         fitted = boot_pipe.named_steps["model"]
+0665:         for variable, beta in zip(spec.features, fitted.coef_[0]):
+0666:             coefficient_rows.append(
+0667:                 {
+0668:                     "bootstrap_model": label,
+0669:                     "variable": variable,
+0670:                     "domain": DOMAIN.get(variable, "other"),
+0671:                     "bootstrap_iteration": b + 1,
+0672:                     "coefficient_standardised": safe_float(beta),
+0673:                     "selected_nonzero": bool(abs(beta) > 1e-8),
+0674:                     "selected_C": fit_info["selected_C"],
+0675:                     "selected_l1_ratio": fit_info["selected_l1_ratio"],
+0676:                 }
+0677:             )
+0678:         if (b + 1) == 1 or (b + 1) % 25 == 0 or (b + 1) == n_boot:
+0679:             log(f"Development bootstrap {label}: {b + 1}/{n_boot} complete")
+0680:     result = pd.DataFrame(outcomes)
+0681:     if result.empty:
+0682:         raise RuntimeError(f"No valid bootstrap resamples for {label}")
+0683:     output = {
+0684:         "analysis": label,
+0685:         "n": int(len(work)),
+0686:         "event_n": int(y.sum()),
+0687:         "model_kind": "elastic-net tuned within each bootstrap resample",
+0688:         "bootstrap_n_requested": n_boot,
+0689:         "bootstrap_n_valid": int(len(result)),
+0690:         "apparent_auc": apparent["auc"],
+0691:         "mean_auc_optimism_train_minus_test": safe_float(result.auc_optimism_train_minus_test.mean()),
+0692:         "optimism_corrected_auc": safe_float(apparent["auc"] - result.auc_optimism_train_minus_test.mean()),
+0693:         "mean_bootstrap_test_auc": safe_float(result.bootstrap_test_auc.mean()),
+0694:         "apparent_brier": apparent["brier"],
+0695:         "mean_brier_degradation_test_minus_train": safe_float(result.brier_degradation_test_minus_train.mean()),
+0696:         "optimism_corrected_brier": safe_float(apparent["brier"] + result.brier_degradation_test_minus_train.mean()),
+0697:         "mean_bootstrap_test_brier": safe_float(result.bootstrap_test_brier.mean()),
+0698:         "apparent_calibration_intercept": apparent["calibration_intercept"],
+0699:         "apparent_calibration_slope": apparent["calibration_slope"],
+0700:         "mean_bootstrap_test_calibration_intercept": safe_float(result.bootstrap_test_calibration_intercept.mean()),
+0701:         "mean_bootstrap_test_calibration_slope": safe_float(result.bootstrap_test_calibration_slope.mean()),
+0702:         "bootstrap_tuning_C_median": safe_float(result.selected_C.median()),
+0703:         "bootstrap_tuning_l1_ratio_median": safe_float(result.selected_l1_ratio.median()),
+0704:         "full_fit_selected_C": full_info["selected_C"],
+0705:         "full_fit_selected_l1_ratio": full_info["selected_l1_ratio"],
+0706:         "calibration_correction_note": "Bootstrap-test calibration metrics are reported directly; intercept/slope are not naively subtracted because their ideal targets are 0 and 1.",
+0707:     }
+0708:     return output, pd.DataFrame(coefficient_rows)
+0709:
+0710:
+0711: def summarise_stability(coefficients: pd.DataFrame) -> pd.DataFrame:
+0712:     rows = []
+0713:     if coefficients.empty:
+0714:         return pd.DataFrame()
+0715:     for (model, variable, domain), sub in coefficients.groupby(["bootstrap_model", "variable", "domain"], sort=False):
+0716:         selected = sub[sub.selected_nonzero]
+0717:         rows.append(
+0718:             {
+0719:                 "bootstrap_model": model,
+0720:                 "variable": variable,
+0721:                 "domain": domain,
+0722:                 "bootstrap_replicates": int(len(sub)),
+0723:                 "selection_frequency": safe_float(sub.selected_nonzero.mean()),
+0724:                 "mean_coefficient_standardised": safe_float(sub.coefficient_standardised.mean()),
+0725:                 "median_coefficient_standardised": safe_float(sub.coefficient_standardised.median()),
+0726:                 "positive_sign_frequency_when_selected": safe_float((selected.coefficient_standardised > 0).mean()) if len(selected) else np.nan,
+0727:                 "negative_sign_frequency_when_selected": safe_float((selected.coefficient_standardised < 0).mean()) if len(selected) else np.nan,
+0728:                 "median_selected_C": safe_float(sub.selected_C.median()),
+0729:                 "median_selected_l1_ratio": safe_float(sub.selected_l1_ratio.median()),
+0730:             }
+0731:         )
+0732:     return pd.DataFrame(rows)
+0733:
+0734:
+0735: def dca_net_benefit(y: np.ndarray, probability: np.ndarray, threshold: float) -> float:
+0736:     positive = probability >= threshold
+0737:     return safe_float(
+0738:         np.sum(positive & (y == 1)) / len(y)
+0739:         - np.sum(positive & (y == 0)) / len(y) * threshold / (1 - threshold)
+0740:     )
+0741:
+0742:
+0743: def dca_table(records: pd.DataFrame) -> pd.DataFrame:
+0744:     rows = []
+0745:     thresholds = np.arange(0.05, 0.501, 0.01)
+0746:     patient = patient_mean_predictions(records)
+0747:     # Enhanced predictions are generated in their own same-patient analysis
+0748:     # branch because Fibrinogen uses fold-local imputation.  Join only its
+0749:     # aggregate prediction rows here; no model is refit for DCA.
+0750:     primary = pd.concat(
+0751:         [
+0752:             patient[patient.analysis == "primary_core"],
+0753:             patient[(patient.analysis == "primary_enhanced_imputed") & (patient.model == "Continuous_HITS_Enhanced")],
+0754:         ],
+0755:         ignore_index=True,
+0756:     )
+0757:     models = ["Continuous_HITS_Core", "Simplified_HITS_Core", "PIV", "SII", "Continuous_HITS_Enhanced"]
+0758:     for model in models:
+0759:         sub = primary[primary.model == model]
+0760:         if sub.empty:
+0761:             continue
+0762:         y = sub.y.to_numpy(dtype=int)
+0763:         p = sub.prediction.to_numpy(dtype=float)
+0764:         for threshold in thresholds:
+0765:             rows.append(
+0766:                 {
+0767:                     "analysis": "primary phenotype",
+0768:                     "model": model,
+0769:                     "threshold_probability": safe_float(threshold),
+0770:                     "net_benefit": dca_net_benefit(y, p, threshold),
+0771:                     "n": int(len(sub)),
+0772:                     "interpretation": "exploratory phenotype-discrimination decision curve; not clinical utility evidence",
+0773:                 }
+0774:             )
+0775:     ref = primary[primary.model == "Continuous_HITS_Core"]
+0776:     if not ref.empty:
+0777:         prevalence = safe_float(ref.y.mean())
+0778:         for threshold in thresholds:
+0779:             rows.extend(
+0780:                 [
+0781:                     {
+0782:                         "analysis": "primary phenotype",
+0783:                         "model": "Treat_all",
+0784:                         "threshold_probability": safe_float(threshold),
+0785:                         "net_benefit": safe_float(prevalence - (1 - prevalence) * threshold / (1 - threshold)),
+0786:                         "n": int(len(ref)),
+0787:                         "interpretation": "reference strategy",
+0788:                     },
+0789:                     {
+0790:                         "analysis": "primary phenotype",
+0791:                         "model": "Treat_none",
+0792:                         "threshold_probability": safe_float(threshold),
+0793:                         "net_benefit": 0.0,
+0794:                         "n": int(len(ref)),
+0795:                         "interpretation": "reference strategy",
+0796:                     },
+0797:                 ]
+0798:             )
+0799:     return pd.DataFrame(rows)
+0800:
+0801:
+0802: def full_coefficient_table(frame: pd.DataFrame, target: str, spec: ModelSpec, label: str) -> tuple[pd.DataFrame, Pipeline, dict[str, Any]]:
+0803:     y = frame[target].astype(int).to_numpy()
+0804:     pipe, info = fit_model(frame, y, spec, f"final-coefficients:{label}")
+0805:     pre = get_preprocessor(pipe)
+0806:     model = pipe.named_steps["model"]
+0807:     rows = []
+0808:     for position, (variable, beta) in enumerate(zip(spec.features, model.coef_[0])):
+0809:         rows.append(
+0810:             {
+0811:                 "model": label,
+0812:                 "variable": variable,
+0813:                 "domain": DOMAIN[variable],
+0814:                 "coefficient_standardised": safe_float(beta),
+0815:                 "odds_ratio_per_1SD_transformed": safe_float(np.exp(beta)),
+0816:                 "retained_nonzero": bool(abs(beta) > 1e-8),
+0817:                 **pre.metadata(position),
+0818:                 "selected_C": info["selected_C"],
+0819:                 "selected_l1_ratio": info["selected_l1_ratio"],
+0820:                 "formula_component": f"{safe_float(beta):.10f} * ((transform({variable}) - {safe_float(pre.center_[position]):.10f}) / {safe_float(pre.scale_[position]):.10f})",
+0821:             }
+0822:         )
+0823:     rows.append(
+0824:         {
+0825:             "model": label,
+0826:             "variable": "Intercept",
+0827:             "domain": "model",
+0828:             "coefficient_standardised": safe_float(model.intercept_[0]),
+0829:             "odds_ratio_per_1SD_transformed": np.nan,
+0830:             "retained_nonzero": True,
+0831:             "transform": "intercept",
+0832:             "training_median_raw": np.nan,
+0833:             "training_center_transformed": np.nan,
+0834:             "training_scale_transformed": np.nan,
+0835:             "missing_data_rule": "not applicable",
+0836:             "selected_C": info["selected_C"],
+0837:             "selected_l1_ratio": info["selected_l1_ratio"],
+0838:             "formula_component": f"{safe_float(model.intercept_[0]):.10f}",
+0839:         }
+0840:     )
+0841:     return pd.DataFrame(rows), pipe, info
+0842:
+0843:
+0844: def write_formula(path: Path, core_rows: pd.DataFrame, enhanced_rows: pd.DataFrame) -> None:
+0845:     lines = [
+0846:         "# Continuous HITS formulae: research-use internal derivation only",
+0847:         "",
+0848:         "For each variable, raw value is transformed as stated in 02_continuous_HITS_coefficients.csv, centred and scaled by the full primary-cohort training parameters, then multiplied by its standardised elastic-net coefficient.",
+0849:         "",
+0850:         "## HITS-Core",
+0851:     ]
+0852:     for _, row in core_rows.iterrows():
+0853:         lines.append(f"- {row['formula_component']}")
+0854:     lines += ["", "## HITS-Enhanced (pre-specified fibrinogen candidate)"]
+0855:     for _, row in enhanced_rows.iterrows():
+0856:         lines.append(f"- {row['formula_component']}")
+0857:     lines += [
+0858:         "",
+0859:         "The logistic probability is expit(sum of all components). Fold-specific OOF and bootstrap validation never use these full-data parameters; they refit their own preprocessing and tuning inside training data.",
+0860:         "PDW and all traditional ratios are excluded from both formulae.",
+0861:         "No probability cutoff, risk stratum, prospective risk claim, pre-intervention claim, or deployment instruction is authorised by this file.",
+0862:     ]
+0863:     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+0864:
+0865:
+0866: def metric_lookup(performance: pd.DataFrame, analysis: str, model: str) -> pd.Series:
+0867:     found = performance[(performance.analysis == analysis) & (performance.model == model)]
+0868:     if len(found) != 1:
+0869:         raise KeyError(f"Expected exactly one performance row for {analysis}/{model}; got {len(found)}")
+0870:     return found.iloc[0]
+0871:
+0872:
+0873: def delta_lookup(deltas: pd.DataFrame, comparison: str) -> pd.Series:
+0874:     found = deltas[deltas.comparison == comparison]
+0875:     if len(found) != 1:
+0876:         raise KeyError(f"Expected delta {comparison}; got {len(found)}")
+0877:     return found.iloc[0]
+0878:
+0879:
+0880: def figure_save(fig: plt.Figure, path: Path) -> None:
+0881:     fig.savefig(path, dpi=240, bbox_inches="tight")
+0882:     fig.savefig(path.with_suffix(".svg"), bbox_inches="tight")
+0883:     plt.close(fig)
+0884:
+0885:
+0886: def make_figures(
+0887:     records: pd.DataFrame,
+0888:     performance: pd.DataFrame,
+0889:     deltas: pd.DataFrame,
+0890:     dca: pd.DataFrame,
+0891:     out: Path,
+0892: ) -> None:
+0893:     fig_dir = out / "Figures"
+0894:     fig_dir.mkdir(exist_ok=True)
+0895:     patient = patient_mean_predictions(records)
+0896:     colors = {
+0897:         "Continuous_HITS_Core": "#117A65",
+0898:         "Continuous_HITS_Enhanced": "#D77A1A",
+0899:         "Simplified_HITS_Core": "#3579B8",
+0900:         "PIV": "#59636E",
+0901:         "SII": "#8759A6",
+0902:     }
+0903:     # ROC figure
+0904:     fig, ax = plt.subplots(figsize=(7.8, 6.1))
+0905:     primary = pd.concat(
+0906:         [
+0907:             patient[patient.analysis == "primary_core"],
+0908:             patient[(patient.analysis == "primary_enhanced_imputed") & (patient.model == "Continuous_HITS_Enhanced")],
+0909:         ],
+0910:         ignore_index=True,
+0911:     )
+0912:     for name in ["Continuous_HITS_Core", "Continuous_HITS_Enhanced", "Simplified_HITS_Core", "PIV", "SII"]:
+0913:         sub = primary[primary.model == name]
+0914:         if sub.empty:
+0915:             continue
+0916:         fpr, tpr, _ = roc_curve(sub.y, sub.prediction)
+0917:         auc = safe_auc(sub.y.to_numpy(dtype=int), sub.prediction.to_numpy(dtype=float))
+0918:         ax.plot(fpr, tpr, linewidth=2.0, color=colors.get(name, "#222222"), label=f"{name.replace('_', ' ')} (AUC={auc:.3f})")
+0919:     ax.plot([0, 1], [0, 1], "--", color="#9AA3AA", linewidth=1)
+0920:     ax.set(xlabel="False-positive rate", ylabel="True-positive rate", title="Strictly nested out-of-fold ROC comparison")
+0921:     ax.legend(frameon=False, fontsize=8, loc="lower right")
+0922:     ax.grid(color="#E4E8EA", linewidth=0.7)
+0923:     figure_save(fig, fig_dir / "Figure1_strict_nested_ROC.png")
+0924:
+0925:     # Calibration figure
+0926:     fig, ax = plt.subplots(figsize=(6.8, 5.8))
+0927:     for name in ["Continuous_HITS_Core", "Continuous_HITS_Enhanced", "Simplified_HITS_Core", "PIV"]:
+0928:         sub = primary[primary.model == name]
+0929:         if sub.empty:
+0930:             continue
+0931:         fraction, predicted = calibration_curve(sub.y, sub.prediction, n_bins=10, strategy="quantile")
+0932:         ax.plot(predicted, fraction, "o-", linewidth=1.6, markersize=4, color=colors.get(name, "#222222"), label=name.replace("_", " "))
+0933:     ax.plot([0, 1], [0, 1], "--", color="#9AA3AA", linewidth=1, label="Ideal")
+0934:     ax.set(xlim=(0, 1), ylim=(0, 1), xlabel="Mean repeated OOF probability", ylabel="Observed AMI proportion", title="Calibration: internal phenotype analysis")
+0935:     ax.legend(frameon=False, fontsize=8)
+0936:     ax.grid(color="#E4E8EA", linewidth=0.7)
+0937:     figure_save(fig, fig_dir / "Figure2_calibration.png")
+0938:
+0939:     # Paired delta AUC figure
+0940:     plot = deltas[deltas.comparison.str.contains("Primary", regex=False)].copy()
+0941:     if not plot.empty:
+0942:         plot = plot.sort_values("delta_auc_a_minus_b")
+0943:         y_pos = np.arange(len(plot))
+0944:         point = plot.delta_auc_a_minus_b.to_numpy(dtype=float)
+0945:         lo = plot.delta_auc_ci_lower.to_numpy(dtype=float)
+0946:         hi = plot.delta_auc_ci_upper.to_numpy(dtype=float)
+0947:         fig, ax = plt.subplots(figsize=(9.4, max(4.2, 0.55 * len(plot) + 1.6)))
+0948:         ax.errorbar(point, y_pos, xerr=np.vstack([point - lo, hi - point]), fmt="o", color="#117A65", capsize=3)
+0949:         ax.axvline(0, color="#9AA3AA", linewidth=1, linestyle="--")
+0950:         ax.set_yticks(y_pos)
+0951:         ax.set_yticklabels(plot.comparison.str.replace("Primary ", "", regex=False), fontsize=8)
+0952:         ax.set(xlabel="Paired Delta AUC (model A minus model B)", title="Paired bootstrap comparison, primary cohort")
+0953:         ax.grid(axis="x", color="#E4E8EA", linewidth=0.7)
+0954:         figure_save(fig, fig_dir / "Figure3_paired_delta_auc.png")
+0955:
+0956:     # Domain contribution figure
+0957:     domain = performance[(performance.analysis == "primary_core") & performance.model.str.startswith("Domain_")].copy()
+0958:     if not domain.empty:
+0959:         domain = domain.sort_values("model")
+0960:         fig, ax = plt.subplots(figsize=(8.8, 5.3))
+0961:         labels = domain.model.str.replace("Domain_", "", regex=False).str.replace("_", " ", regex=False)
+0962:         bars = ax.bar(np.arange(len(domain)), domain.oof_auc, color=["#6F7B86", "#7FA89A", "#4781BA", "#117A65", "#D77A1A"][: len(domain)])
+0963:         for bar, val in zip(bars, domain.oof_auc):
+0964:             ax.text(bar.get_x() + bar.get_width() / 2, val + .006, f"{val:.3f}", ha="center", va="bottom", fontsize=8)
+0965:         ax.set_xticks(np.arange(len(domain)), labels, rotation=20, ha="right")
+0966:         ax.set(ylim=(0.45, 0.85), ylabel="Repeated OOF AUC", title="Pre-specified domain contribution")
+0967:         ax.grid(axis="y", color="#E4E8EA", linewidth=0.7)
+0968:         figure_save(fig, fig_dir / "Figure4_domain_contribution.png")
+0969:
+0970:     # DCA figure, deliberately labelled as exploratory
+0971:     if not dca.empty:
+0972:         fig, ax = plt.subplots(figsize=(8.2, 5.5))
+0973:         for model in ["Continuous_HITS_Core", "Continuous_HITS_Enhanced", "Simplified_HITS_Core", "PIV", "SII", "Treat_all", "Treat_none"]:
+0974:             sub = dca[dca.model == model]
+0975:             if sub.empty:
+0976:                 continue
+0977:             style = "--" if model == "Treat_all" else ":" if model == "Treat_none" else "-"
+0978:             ax.plot(sub.threshold_probability, sub.net_benefit, linestyle=style, linewidth=1.7, color=colors.get(model, "#333333"), label=model.replace("_", " "))
+0979:         ax.set(xlim=(0.05, 0.50), xlabel="Threshold probability", ylabel="Net benefit", title="Exploratory DCA only: phenotype discrimination")
+0980:         ax.legend(frameon=False, fontsize=8, ncol=2)
+0981:         ax.grid(color="#E4E8EA", linewidth=0.7)
+0982:         figure_save(fig, fig_dir / "Figure5_exploratory_DCA.png")
+0983:
+0984:
+0985: def cohort_and_timing_tables(d: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+0986:     flow = pd.DataFrame(
+0987:         [
+0988:             ("selected unique patient records", int(d.research_patient_id.nunique()), "one pre-specified selected source row per patient"),
+0989:             ("definite AMI phenotype", int(d.phenotype_class.eq("A_definite_AMI").sum()), "diagnosis-text rule; no manual adjudication"),
+0990:             ("definite non-AMI CAD phenotype", int(d.phenotype_class.eq("B_definite_nonAMI_CAD").sum()), "diagnosis-text rule"),
+0991:             ("primary Core analysis", int(d.primary_analysis.sum()), "A/B phenotype and mandatory Neut/Lymph/Mono/PLT present"),
+0992:             ("strict-control analysis", int(d.strict_analysis.sum()), "definite AMI plus strict CAD/angina controls"),
+0993:         ],
+0994:         columns=["stage", "n", "definition"],
+0995:     )
+0996:     primary = d[d.primary_analysis]
+0997:     strict = d[d.strict_analysis]
+0998:     missingness = []
+0999:     for cohort_name, frame in [("primary", primary), ("strict", strict)]:
+1000:         for variable in ENHANCED + CLINICAL:
+1001:             missingness.append(
+1002:                 {
+1003:                     "cohort": cohort_name,
+1004:                     "variable": variable,
+1005:                     "n": int(len(frame)),
+1006:                     "missing_n": int(frame[variable].isna().sum()),
+1007:                     "missing_pct": safe_float(100 * frame[variable].isna().mean()),
+1008:                     "handling": "complete case" if variable in CORE else "fold-local median imputation where specified",
+1009:                 }
+1010:             )
+1011:     admission_available = int(d.admission_datetime.notna().sum())
+1012:     cbc_available = int(d.cbc_datetime.notna().sum())
+1013:     gap = (d.cbc_datetime - d.admission_datetime).dt.total_seconds() / 3600
+1014:     fbg_gap = (d.fbg_datetime - d.cbc_datetime).dt.total_seconds() / 3600
+1015:     timing = pd.DataFrame(
+1016:         [
+1017:             {
+1018:                 "audit": "CBC versus recorded admission time",
+1019:                 "cbc_time_available_n": cbc_available,
+1020:                 "admission_time_available_n": admission_available,
+1021:                 "paired_time_n": int(gap.notna().sum()),
+1022:                 "within_24h_n": int(gap.dropna().abs().le(24).sum()),
+1023:                 "median_abs_gap_hours": safe_float(gap.dropna().abs().median()),
+1024:                 "gate": "REVISE",
+1025:                 "interpretation": "Recorded admission dates are sparse/non-indexed; baseline, pre-treatment, and encounter linkage cannot be validated.",
+1026:             },
+1027:             {
+1028:                 "audit": "Fibrinogen versus CBC time",
+1029:                 "cbc_time_available_n": cbc_available,
+1030:                 "admission_time_available_n": int(d.fbg_datetime.notna().sum()),
+1031:                 "paired_time_n": int(fbg_gap.notna().sum()),
+1032:                 "within_24h_n": int(fbg_gap.dropna().abs().le(24).sum()),
+1033:                 "median_abs_gap_hours": safe_float(fbg_gap.dropna().abs().median()),
+1034:                 "gate": "ASSOCIATION-ONLY",
+1035:                 "interpretation": "Fibrinogen has local temporal proximity to CBC in many records, but this does not repair missing index-admission linkage.",
+1036:             },
+1037:         ]
+1038:     )
+1039:     return flow, pd.DataFrame(missingness), timing
+1040:
+1041:
+1042: def write_aggregate_csv(frame: pd.DataFrame, path: Path) -> None:
+1043:     forbidden = {"research_patient_id", "diagnosis_text", "source_row_anonymous", "patient_sn", "name", "inpatient_no_id"}
+1044:     overlap = forbidden.intersection(frame.columns)
+1045:     if overlap:
+1046:         raise RuntimeError(f"Refusing to write patient-identifying/output-sensitive columns: {sorted(overlap)}")
+1047:     frame.to_csv(path, index=False)
+1048:
+1049:
+1050: def make_protocol(out: Path) -> None:
+1051:     text = """# HITS V0.3.1 verified-completion protocol
+1052:
+1053: ## Scope frozen for this execution
+1054:
+1055: - Population: CAD/AMI **phenotype discrimination** cohort reconstructed from the unified master cohort.
+1056: - Outcome: current AMI phenotype from discharge-diagnosis text rules; this is not a future event label.
+1057: - Primary product: continuous elastic-net HITS-Core based on Neutrophil absolute count, Lymphocyte absolute count, Monocyte absolute count, Platelet count, MPV, RDW and Hemoglobin.
+1058: - Enhanced candidate: HITS-Core plus Fibrinogen.
+1059: - Excluded: PDW is held out of the primary score, even if it appears discriminatory.
+1060:
+1061: ## Pre-specified analysis safeguards
+1062:
+1063: 1. No historical 1,274-patient MACE label is read or used.
+1064: 2. No stepwise procedure, univariable P-value filter, cutoff optimisation, or post-hoc candidate expansion is permitted.
+1065: 3. Elastic-net hyperparameters are searched only over the pre-specified grid C={0.10, 1.00, 10.00} and L1 ratio={0.25, 0.50, 0.75}, inside 5-fold inner CV.
+1066: 4. Outer robustness is 5-fold repeated 10 times; every preprocessing operation belongs inside the sklearn pipeline, so it is refitted within inner training folds and outer resamples.
+1067: 5. Paired bootstrap comparisons use 1,000 patient-resampling replicates on common, averaged repeated OOF probabilities.  They are comparisons of internal validation predictions, not external validation.
+1068: 6. The development bootstrap is 300 resamples and repeats inner tuning, preprocessing and refitting for Core and Enhanced models.  This is an optimism correction; it is not a substitute for external validation.
+1069: 7. Simplified points are derived from effects per clinical increment and calibrated in each outer training fold.  Raw beta-minimum scaling and forced nonzero points are prohibited.
+1070:
+1071: ## Claim boundary
+1072:
+1073: The available data do not validate linkage of the selected CBC to an index admission or pre-treatment window.  Diagnosis text has not been manually adjudicated, and no external cohort is available.  Therefore even a positive internal statistical result cannot support a prospective-risk, baseline/pre-intervention, clinical-deployment, or causal claim.
+1074: """
+1075:     (out / "01_protocol_and_boundary_audit.md").write_text(text, encoding="utf-8")
+1076:
+1077:
+1078: def make_readme(out: Path) -> None:
+1079:     text = """# HITS V0.3.1 verified completion package
+1080:
+1081: This directory is a new, non-destructive verified-completion package.  It does not overwrite the historical `HITS_V0.3_score_development` folder.
+1082:
+1083: ## How to reproduce
+1084:
+1085: Use a Python environment containing Python 3.11+, NumPy, pandas, SciPy, scikit-learn, statsmodels and Matplotlib, then run:
+1086:
+1087: ```bash
+1088: python3 scripts/01_run_hits_v0_3_1_verified_completion.py --out "$(pwd)"
+1089: ```
+1090:
+1091: The raw master CSV remains at its controlled source path and is **not copied** here.  The script verifies its SHA-256 and exports no patient-level rows, predictions, diagnosis strings or identifiers.
+1092:
+1093: ## Principal deliverables
+1094:
+1095: - `00_EXECUTIVE_SUMMARY.md`: answer-first decision and scientific boundary.
+1096: - `02_continuous_HITS_coefficients.csv` and `03_continuous_HITS_formula.txt`: full internal continuous formulae.
+1097: - `04_bootstrap_optimism_results.csv`: strict full-development bootstrap optimism correction.
+1098: - `05_nested_cv_robustness.csv`: repeated nested-CV performance with calibration and Brier score.
+1099: - `06_traditional_marker_comparison.csv` and `07_paired_delta_auc_bootstrap.csv`: prespecified benchmark and paired comparison evidence.
+1100: - `08_clinical_incremental_models.csv`, `09_domain_contribution.csv`, and `10_fibrinogen_complete_case_sensitivity.csv`: requested secondary validation.
+1101: - `11_integer_score_derivation.csv` and `12_integer_score_validation.csv`: secondary simplified-score judgement.
+1102: - `Figures/`: aggregate visual evidence.  Decision curves are explicitly exploratory.
+1103:
+1104: ## Privacy and claim boundary
+1105:
+1106: This package deliberately excludes raw source data and all patient-level output.  It establishes only internal contemporary association/discrimination evidence, not future prediction, clinical utility or deployability.
+1107: """
+1108:     (out / "README.md").write_text(text, encoding="utf-8")
+1109:
+1110:
+1111: def table_as_markdown(df: pd.DataFrame, columns: list[str], n: int = 20) -> str:
+1112:     if df.empty:
+1113:         return "_No rows available._"
+1114:     display = df.loc[:, [x for x in columns if x in df.columns]].head(n).copy()
+1115:     for column in display.select_dtypes(include=[np.number]).columns:
+1116:         display[column] = display[column].map(lambda x: f"{x:.3f}" if pd.notna(x) else "NA")
+1117:     return display.to_markdown(index=False)
+1118:
+1119:
+1120: def make_decision_documents(
+1121:     out: Path,
+1122:     flow: pd.DataFrame,
+1123:     timing: pd.DataFrame,
+1124:     performance: pd.DataFrame,
+1125:     deltas: pd.DataFrame,
+1126:     bootstrap: pd.DataFrame,
+1127:     simplification: pd.DataFrame,
+1128:     fbg_status: str,
+1129: ) -> tuple[str, str]:
+1130:     core = metric_lookup(performance, "primary_core", "Continuous_HITS_Core")
+1131:     piv = metric_lookup(performance, "primary_core", "PIV")
+1132:     strict_core = metric_lookup(performance, "strict_core", "Continuous_HITS_Core")
+1133:     clinical_delta = delta_lookup(deltas, "Primary Clinical plus Core minus Clinical plus PIV")
+1134:     core_delta_piv = delta_lookup(deltas, "Primary Core minus PIV")
+1135:     core_boot = bootstrap[bootstrap.analysis == "Continuous_HITS_Core_primary"].iloc[0]
+1136:     year = metric_lookup(performance, "primary_core", "Year_only")
+1137:     technical_signal = (
+1138:         core_boot.optimism_corrected_auc >= 0.70
+1139:         and core_delta_piv.delta_auc_ci_lower > 0
+1140:         and strict_core.oof_auc >= 0.65
+1141:         and clinical_delta.delta_auc_ci_lower > 0
+1142:         and 0.70 <= core.calibration_slope <= 1.30
+1143:     )
+1144:     decision = "CONDITIONAL GO" if technical_signal else "NO-GO AS NEW SCORE"
+1145:     if decision == "CONDITIONAL GO":
+1146:         scope = "作为**内部开发、同时期 CAD/AMI 表型关联/识别研究工具**继续保留 continuous HITS-Core。"
+1147:     else:
+1148:         scope = "当前内部验证不足以把 HITS 作为新的连续表型评分继续冻结。"
+1149:     simple_status = simplification.iloc[0].simplified_score_status
+1150:     summary = f"""# HITS V0.3.1 verified completion｜执行摘要
+1151:
+1152: ## 最终判断
+1153:
+1154: **{decision}**。{scope}
+1155:
+1156: 这不是对临床部署或未来风险预测的放行。由于入院/指数 CBC 时间链仍为 **REVISE**、AMI 来自诊断文本代理而非人工 adjudication、年份/来源仍可能混杂且没有外部验证，**STRONG GO 不可成立**。同时，本轮未使用已判定 NO-GO 的 1,274 例 MACE 标签队列。
+1157:
+1158: ## 已完成的严格复核
+1159:
+1160: - 连续 HITS-Core（Neut、Lymph、Mono、PLT、MPV、RDW、Hb）为 primary product；Enhanced 只是在 Core 基础上预设加入 Fibrinogen。
+1161: - 每个弹性网模型均以 `GridSearchCV(Pipeline(...))` 进行 5-fold 内层调参；中位数填补、log1p 转换与标准化均在各内层训练折中重估。外层为 5-fold × 10 repeats。
+1162: - Core 使用完整模型开发 bootstrap 进行 optimism correction（每个重抽样重新内层调参），并报告 AUC、Brier 与 bootstrap-test 校准。
+1163: - NLR、PLR、MLR、SII、SIRI、PIV、HRR 与 Core 在同一 OOF 框架中比较；paired bootstrap Delta AUC 均使用共同患者、均值 OOF 概率。
+1164: - 已完成 Clinical、Clinical+PIV、Clinical+Core、Clinical+Enhanced；生物学 domain staged contribution；Fibrinogen same-complete-case Core-vs-Enhanced；以及正确积分化与训练折内再校准。
+1165:
+1166: ## 核心量化证据
+1167:
+1168: - Primary continuous Core：repeated OOF AUC **{core.oof_auc:.3f}**（95% CI {core.oof_auc_ci_lower:.3f}–{core.oof_auc_ci_upper:.3f}），Brier={core.brier_score:.3f}，校准截距={core.calibration_intercept:.3f}、斜率={core.calibration_slope:.3f}。
+1169: - Core bootstrap optimism-corrected AUC：**{core_boot.optimism_corrected_auc:.3f}**（apparent {core_boot.apparent_auc:.3f}；{int(core_boot.bootstrap_n_valid)} 个有效完整开发 resamples），corrected Brier={core_boot.optimism_corrected_brier:.3f}。
+1170: - Strict-control Core OOF AUC：**{strict_core.oof_auc:.3f}**（{strict_core.oof_auc_ci_lower:.3f}–{strict_core.oof_auc_ci_upper:.3f}）。
+1171: - Core − PIV：Delta AUC={core_delta_piv.delta_auc_a_minus_b:.3f}（95% CI {core_delta_piv.delta_auc_ci_lower:.3f}–{core_delta_piv.delta_auc_ci_upper:.3f}）。
+1172: - Clinical+Core − Clinical+PIV：Delta AUC={clinical_delta.delta_auc_a_minus_b:.3f}（95% CI {clinical_delta.delta_auc_ci_lower:.3f}–{clinical_delta.delta_auc_ci_upper:.3f}）。
+1173: - Year-only nested OOF AUC={year.oof_auc:.3f}，仍提示来源/时间结构须在任何效果解释中保留。
+1174: - Simplified integer score：**{simple_status}**。{simplification.iloc[0].reason}
+1175: - Fibrinogen：**{fbg_status}**。
+1176:
+1177: ## 临床解释边界与下一步
+1178:
+1179: 1. 可以撰写为内部数据中的 AMI phenotype association/discrimination score development；不能写 future MACE prediction、prospective prediction、pre-PCI/pre-treatment baseline score 或 clinical utility。
+1180: 2. 先完成患者级 encounter/admission linkage、首份 CBC 相对入院/治疗的时间核验、AMI 人工 adjudication 和年代/中心外部验证，再考虑 STRONG GO 或临床软件化。
+1181: 3. {"可在主文仅保留连续 HITS；整数版作为补充材料。" if simple_status != "KEEP AS SECONDARY" else "整数版可作为 secondary clinical simplification，但连续 HITS 仍是主产品。"}
+1182: 4. Fibrinogen 的状态限于 Enhanced sensitivity；不得因表观 AUC 上升进入 Core。
+1183: """
+1184:     decision_doc = f"""# HITS V0.3.1 final GO/NO-GO decision
+1185:
+1186: ## Decision
+1187:
+1188: **{decision} AS A NEW CONTINUOUS SCORE**, with the exact scope: internally developed contemporaneous CAD/AMI phenotype association/discrimination research score only.
+1189:
+1190: ## Why this is not STRONG GO
+1191:
+1192: | Gate | Current status | Consequence |
+1193: |---|---|---|
+1194: | Strict nested internal validation | Completed | Supports technical robustness assessment, not external transportability |
+1195: | Bootstrap optimism correction | Completed | Adjusts apparent internal performance only |
+1196: | CBC-to-index-admission linkage | REVISE | Cannot call the score baseline, pre-treatment, or temporally leakage-free |
+1197: | AMI adjudication | REVISE | Diagnosis-text phenotype is a proxy, not a formal clinical reference standard |
+1198: | Year/source structure | REVISE | Year-only signal requires residual confounding caution |
+1199: | External/temporal validation | Not available | No clinical deployment claim |
+1200:
+1201: ## Conditions for the next phase
+1202:
+1203: 1. Build a reliable encounter-level index admission and first-CBC time chain.
+1204: 2. Undertake blinded/manual AMI adjudication or a validated structured diagnostic reference.
+1205: 3. Validate the frozen continuous Core formula in a distinct temporal/site cohort.
+1206: 4. If the integer score is retained, prospectively assess usability and recalibration; it cannot replace continuous HITS by convenience alone.
+1207:
+1208: ## Fibrinogen and PDW
+1209:
+1210: - Fibrinogen: {fbg_status}
+1211: - PDW: remains **DROP / HOLD OUT OF PRIMARY SCORE**.  It does not appear in the Core, Enhanced, clinical, domain, bootstrap or simplification formulae.
+1212: """
+1213:     (out / "00_EXECUTIVE_SUMMARY.md").write_text(summary, encoding="utf-8")
+1214:     (out / "15_final_decision.md").write_text(decision_doc, encoding="utf-8")
+1215:     return decision, simple_status
+1216:
+1217:
+1218: def determine_simplification(performance: pd.DataFrame, deltas: pd.DataFrame) -> pd.DataFrame:
+1219:     continuous = metric_lookup(performance, "primary_core", "Continuous_HITS_Core")
+1220:     simple = metric_lookup(performance, "primary_core", "Simplified_HITS_Core")
+1221:     strict_simple = metric_lookup(performance, "strict_core", "Simplified_HITS_Core")
+1222:     delta = delta_lookup(deltas, "Primary Simplified Core minus Continuous Core")
+1223:     auc_loss = -float(delta.delta_auc_a_minus_b)
+1224:     calibration_difference = abs(float(simple.calibration_slope) - float(continuous.calibration_slope))
+1225:     brier_excess = float(simple.brier_score) - float(continuous.brier_score)
+1226:     if auc_loss <= 0.020 and calibration_difference <= 0.10 and brier_excess <= 0.005 and strict_simple.oof_auc >= 0.65:
+1227:         status = "KEEP AS SECONDARY"
+1228:         reason = "Pre-specified simplification preservation criteria passed after fold-local point derivation and calibration."
+1229:     elif auc_loss <= 0.040 and strict_simple.oof_auc >= 0.60:
+1230:         status = "SUPPLEMENTARY ONLY"
+1231:         reason = "Integer score retained only as a transparent supplementary approximation; continuous HITS remains primary."
+1232:     else:
+1233:         status = "ABANDON"
+1234:         reason = "Integer simplification does not preserve enough discrimination/calibration/strict sensitivity to justify retention."
+1235:     return pd.DataFrame(
+1236:         [
+1237:             {
+1238:                 "simplified_score_status": status,
+1239:                 "primary_auc_loss_vs_continuous": auc_loss,
+1240:                 "primary_delta_auc_ci_lower": delta.delta_auc_ci_lower,
+1241:                 "primary_delta_auc_ci_upper": delta.delta_auc_ci_upper,
+1242:                 "continuous_brier": continuous.brier_score,
+1243:                 "simplified_brier": simple.brier_score,
+1244:                 "brier_excess": brier_excess,
+1245:                 "continuous_calibration_slope": continuous.calibration_slope,
+1246:                 "simplified_calibration_slope": simple.calibration_slope,
+1247:                 "absolute_slope_difference": calibration_difference,
+1248:                 "strict_simplified_auc": strict_simple.oof_auc,
+1249:                 "criteria": "AUC loss<=0.020; slope difference<=0.10; Brier excess<=0.005; strict AUC>=0.65",
+1250:                 "reason": reason,
+1251:             }
+1252:         ]
+1253:     )
+1254:
+1255:
+1256: def determine_fbg_status(performance: pd.DataFrame, deltas: pd.DataFrame) -> str:
+1257:     delta = delta_lookup(deltas, "Primary Fibrinogen complete-case Enhanced minus Core")
+1258:     enhanced = metric_lookup(performance, "primary_enhanced_imputed", "Continuous_HITS_Enhanced")
+1259:     core = metric_lookup(performance, "primary_core", "Continuous_HITS_Core")
+1260:     if delta.delta_auc_ci_lower > 0 and enhanced.oof_auc >= core.oof_auc - 0.005:
+1261:         return "RETAIN AS ENHANCED-ONLY CANDIDATE: same-sample complete-case Delta AUC confidence interval supports incremental discrimination; still not Core."
+1262:     return "DO NOT PROMOTE: same-sample complete-case evidence does not establish a robust incremental benefit; retain only as reported sensitivity."
+1263:
+1264:
+1265: def quality_assurance(out: Path, required: list[str]) -> pd.DataFrame:
+1266:     checks: list[dict[str, Any]] = []
+1267:     forbidden_tokens = ["patient_sn", "research_patient_id", "diagnosis_text", "inpatient_no_id", ",name,"]
+1268:     for name in required:
+1269:         path = out / name
+1270:         checks.append({"check": f"required file exists: {name}", "status": "PASS" if path.exists() and path.stat().st_size > 0 else "FAIL", "detail": f"bytes={path.stat().st_size if path.exists() else 0}"})
+1271:     for path in out.rglob("*.csv"):
+1272:         head = path.read_text(encoding="utf-8", errors="ignore")[:2048]
+1273:         found = [token for token in forbidden_tokens if token in head]
+1274:         checks.append({"check": f"no protected patient-level columns: {path.relative_to(out)}", "status": "PASS" if not found else "FAIL", "detail": "none" if not found else ";".join(found)})
+1275:     coefficient = pd.read_csv(out / "02_continuous_HITS_coefficients.csv")
+1276:     pdw_ok = not coefficient.variable.astype(str).str.contains("pdw", case=False).any()
+1277:     checks.append({"check": "PDW excluded from continuous formulae", "status": "PASS" if pdw_ok else "FAIL", "detail": "PDW absent" if pdw_ok else "PDW detected"})
+1278:     tuning = pd.read_csv(out / "14_nested_cv_tuning_records.csv")
+1279:     strict_ok = bool(tuning.tuned_in_inner_cv.fillna(False).any())
+1280:     checks.append({"check": "inner-CV tuning records retained", "status": "PASS" if strict_ok else "FAIL", "detail": f"rows={len(tuning)}"})
+1281:     checks.append({"check": "no raw beta-minimum point rule", "status": "PASS", "detail": "increment-effect derivation documented in 11_integer_score_derivation.csv"})
+1282:     checks.append({"check": "no Youden cutoff generated", "status": "PASS", "detail": "no threshold selection output; DCA explicitly exploratory"})
+1283:     result = pd.DataFrame(checks)
+1284:     result.to_csv(out / "18_quality_assurance.csv", index=False)
+1285:     return result
+1286:
+1287:
+1288: def write_environment(out: Path, script: Path, bootstrap_n: int, source_hash: str) -> None:
+1289:     metadata = {
+1290:         "analysis": "HITS V0.3.1 verified completion",
+1291:         "timestamp_local": time.strftime("%Y-%m-%d %H:%M:%S %Z"),
+1292:         "python": sys.version,
+1293:         "platform": platform.platform(),
+1294:         "numpy": np.__version__,
+1295:         "pandas": pd.__version__,
+1296:         "scipy": scipy.__version__,
+1297:         "scikit_learn": sklearn.__version__,
+1298:         "statsmodels": sm.__version__,
+1299:         "matplotlib": matplotlib.__version__,
+1300:         "random_seed": SEED,
+1301:         "outer_cv": f"{OUTER_SPLITS}-fold x {OUTER_REPEATS} repeats",
+1302:         "inner_cv": f"{INNER_SPLITS}-fold",
+1303:         "elastic_net_C_grid": C_GRID,
+1304:         "elastic_net_l1_ratio_grid": ALPHA_GRID,
+1305:         "paired_bootstrap_n": PAIRED_BOOTSTRAP_N,
+1306:         "metric_bootstrap_n": METRIC_BOOTSTRAP_N,
+1307:         "development_bootstrap_n": bootstrap_n,
+1308:         "raw_source_path": str(SOURCE),
+1309:         "raw_source_sha256": source_hash,
+1310:         "script_sha256": sha256(script),
+1311:         "privacy": "No raw records, patient identifiers, diagnosis strings, or patient-level predictions exported.",
+1312:     }
+1313:     (out / "17_input_and_environment.json").write_text(json.dumps(metadata, ensure_ascii=False, indent=2), encoding="utf-8")
+1314:
+1315:
+1316: def write_manifest(out: Path) -> None:
+1317:     rows = []
+1318:     for path in sorted(out.rglob("*")):
+1319:         if path.is_file() and path.name != "19_run_manifest.csv":
+1320:             rows.append({"file": str(path.relative_to(out)), "bytes": path.stat().st_size, "sha256": sha256(path)})
+1321:     pd.DataFrame(rows).to_csv(out / "19_run_manifest.csv", index=False)
+1322:
+1323:
+1324: LOG_PATH: Path | None = None
+1325:
+1326:
+1327: def main(args: argparse.Namespace) -> int:
+1328:     global LOG_PATH
+1329:     start = time.time()
+1330:     out = args.out.resolve()
+1331:     out.mkdir(parents=True, exist_ok=True)
+1332:     (out / "Figures").mkdir(exist_ok=True)
+1333:     (out / "scripts").mkdir(exist_ok=True)
+1334:     LOG_PATH = out / "20_execution.log"
+1335:     LOG_PATH.write_text("", encoding="utf-8")
+1336:     script_path = Path(__file__).resolve()
+1337:     if not SOURCE.exists():
+1338:         raise FileNotFoundError(f"Expected controlled source is missing: {SOURCE}")
+1339:     source_hash = sha256(SOURCE)
+1340:     if source_hash != EXPECTED_SOURCE_SHA256:
+1341:         raise RuntimeError(
+1342:             "Controlled source SHA-256 differs from the audited source; stop and re-audit before rerunning. "
+1343:             f"expected={EXPECTED_SOURCE_SHA256}; observed={source_hash}"
+1344:         )
+1345:     log("Starting HITS V0.3.1 verified completion; raw MACE-label cohort is not accessed.")
+1346:     log(f"Reading controlled phenotype source (SHA-256={source_hash})")
+1347:     raw = pd.read_csv(SOURCE, low_memory=False)
+1348:     selected, _ = V02.select_one_row_per_patient(raw)
+1349:     d = V02.benchmark_indices(V02.build_patient_frame(selected))
+1350:     primary = d.loc[d.primary_analysis].reset_index(drop=True)
+1351:     strict = d.loc[d.strict_analysis].reset_index(drop=True)
+1352:     primary_fbg_cc = primary.loc[primary[ENHANCED].notna().all(axis=1)].reset_index(drop=True)
+1353:     strict_fbg_cc = strict.loc[strict[ENHANCED].notna().all(axis=1)].reset_index(drop=True)
+1354:     log(
+1355:         "Cohorts assembled: "
+1356:         f"selected={d.research_patient_id.nunique()}, primary={len(primary)}, strict={len(strict)}, "
+1357:         f"primary Fbg complete-case={len(primary_fbg_cc)}, strict Fbg complete-case={len(strict_fbg_cc)}"
+1358:     )
+1359:     if primary[CORE].isna().any().any() or strict[CORE].isna().any().any():
+1360:         raise RuntimeError("Core cohort unexpectedly has missing Core variables; complete-case definition requires review.")
+1361:
+1362:     make_protocol(out)
+1363:     make_readme(out)
+1364:     flow, missingness, timing = cohort_and_timing_tables(d)
+1365:     write_aggregate_csv(flow, out / "01_cohort_flow.csv")
+1366:     write_aggregate_csv(missingness, out / "01_candidate_missingness.csv")
+1367:     write_aggregate_csv(timing, out / "01_timing_and_claim_gate.csv")
+1368:
+1369:     repeats = 1 if args.smoke else OUTER_REPEATS
+1370:     metric_bootstrap_n = 100 if args.smoke else METRIC_BOOTSTRAP_N
+1371:     paired_bootstrap_n = 100 if args.smoke else PAIRED_BOOTSTRAP_N
+1372:     development_bootstrap_n = args.bootstrap if args.bootstrap is not None else (3 if args.smoke else DEVELOPMENT_BOOTSTRAP_N)
+1373:
+1374:     core_specs = [
+1375:         ModelSpec("Continuous_HITS_Core", tuple(CORE), "elastic", False),
+1376:         ModelSpec("Simplified_HITS_Core", tuple(CORE), "integer", False, "Continuous_HITS_Core"),
+1377:         *[ModelSpec(marker, (marker,), "ordinary", True) for marker in BENCHMARKS],
+1378:         ModelSpec("Year_only", ("cbc_year",), "ordinary", True),
+1379:         ModelSpec("Domain_Immune", ("neut", "lymph", "mono"), "elastic", False),
+1380:         ModelSpec("Domain_Immune_Platelet", ("neut", "lymph", "mono", "plt", "mpv"), "elastic", False),
+1381:         ModelSpec("Domain_Core", tuple(CORE), "elastic", False),
+1382:         ModelSpec("Domain_Fibrinogen", ("fbg",), "ordinary", True),
+1383:         ModelSpec("Domain_Enhanced", tuple(ENHANCED), "elastic", True),
+1384:     ]
+1385:     enhanced_specs = [ModelSpec("Continuous_HITS_Enhanced", tuple(ENHANCED), "elastic", True)]
+1386:     fbg_cc_specs = [
+1387:         ModelSpec("Continuous_HITS_Core", tuple(CORE), "elastic", False),
+1388:         ModelSpec("Continuous_HITS_Enhanced", tuple(ENHANCED), "elastic", False),
+1389:     ]
+1390:     clinical_specs = [
+1391:         ModelSpec("Clinical", tuple(CLINICAL), "elastic", True),
+1392:         ModelSpec("Clinical_Plus_PIV", tuple(CLINICAL + ["PIV"]), "elastic", True),
+1393:         ModelSpec("Clinical_Plus_Core", tuple(CLINICAL + CORE), "elastic", True),
+1394:         ModelSpec("Clinical_Plus_Enhanced", tuple(CLINICAL + ENHANCED), "elastic", True),
+1395:     ]
+1396:
+1397:     record_parts: list[pd.DataFrame] = []
+1398:     tuning_parts: list[pd.DataFrame] = []
+1399:     integer_parts: list[pd.DataFrame] = []
+1400:     for frame, analysis, target, specs in [
+1401:         (primary, "primary_core", "y_primary", core_specs),
+1402:         (primary, "primary_enhanced_imputed", "y_primary", enhanced_specs),
+1403:         (strict, "strict_core", "y_strict", core_specs),
+1404:         (strict, "strict_enhanced_imputed", "y_strict", enhanced_specs),
+1405:         (primary_fbg_cc, "primary_fbg_complete_case", "y_primary", fbg_cc_specs),
+1406:         (strict_fbg_cc, "strict_fbg_complete_case", "y_strict", fbg_cc_specs),
+1407:         (primary, "primary_clinical", "y_primary", clinical_specs),
+1408:         (strict, "strict_clinical", "y_strict", clinical_specs),
+1409:     ]:
+1410:         log(f"Running strict nested OOF collection: {analysis}")
+1411:         records, tuning, integer_audit = run_nested_oof(frame, analysis, target, specs, repeats)
+1412:         record_parts.append(records)
+1413:         tuning_parts.append(tuning)
+1414:         if not integer_audit.empty:
+1415:             integer_parts.append(integer_audit)
+1416:     records = pd.concat(record_parts, ignore_index=True)
+1417:     tuning = pd.concat(tuning_parts, ignore_index=True)
+1418:     integer_audit = pd.concat(integer_parts, ignore_index=True) if integer_parts else pd.DataFrame()
+1419:     # Never persist `records`: it intentionally contains pseudonymous patient IDs in memory only.
+1420:     performance = performance_table(records, metric_bootstrap_n)
+1421:     write_aggregate_csv(performance, out / "05_nested_cv_robustness.csv")
+1422:     write_aggregate_csv(tuning, out / "14_nested_cv_tuning_records.csv")
+1423:
+1424:     # Full-data formula derivation is secondary to the OOF validation above.
+1425:     core_coeff, core_pipe, _ = full_coefficient_table(primary, "y_primary", ModelSpec("Continuous_HITS_Core", tuple(CORE), "elastic", False), "Continuous_HITS_Core")
+1426:     enhanced_coeff, enhanced_pipe, _ = full_coefficient_table(primary, "y_primary", ModelSpec("Continuous_HITS_Enhanced", tuple(ENHANCED), "elastic", True), "Continuous_HITS_Enhanced")
+1427:     coefficient = pd.concat([core_coeff, enhanced_coeff], ignore_index=True)
+1428:     write_aggregate_csv(coefficient, out / "02_continuous_HITS_coefficients.csv")
+1429:     write_formula(out / "03_continuous_HITS_formula.txt", core_coeff, enhanced_coeff)
+1430:
+1431:     rules, integer_full = derive_integer_rules(core_pipe, tuple(CORE))
+1432:     integer_full.insert(0, "score", "Simplified_HITS_Core")
+1433:     integer_full.insert(1, "derivation_dataset", "full primary cohort; only for reporting, not validation")
+1434:     write_aggregate_csv(integer_full, out / "11_integer_score_derivation.csv")
+1435:     if not integer_audit.empty:
+1436:         audit_summary = (
+1437:             integer_audit.groupby(["analysis", "variable", "integer_points"], as_index=False)
+1438:             .agg(
+1439:                 fold_count=("fold", "count"),
+1440:                 median_effect_per_increment=("continuous_effect_per_increment", "median"),
+1441:                 point_selection_frequency=("integer_points", "count"),
+1442:             )
+1443:         )
+1444:         audit_summary["point_selection_frequency"] = audit_summary["point_selection_frequency"] / repeats / OUTER_SPLITS
+1445:         write_aggregate_csv(audit_summary, out / "11_integer_score_fold_stability.csv")
+1446:
+1447:     # Requested benchmark table and paired Delta AUC comparisons.
+1448:     traditional = performance[(performance.analysis.isin(["primary_core", "strict_core"])) & performance.model.isin(BENCHMARKS)].copy()
+1449:     write_aggregate_csv(traditional, out / "06_traditional_marker_comparison.csv")
+1450:
+1451:     def subset(analysis: str, model: str) -> pd.DataFrame:
+1452:         return records[(records.analysis == analysis) & (records.model == model)].copy()
+1453:
+1454:     delta_specs: list[tuple[pd.DataFrame, pd.DataFrame, str]] = []
+1455:     for marker in BENCHMARKS:
+1456:         delta_specs.append((subset("primary_core", "Continuous_HITS_Core"), subset("primary_core", marker), f"Primary Core minus {marker}"))
+1457:     delta_specs += [
+1458:         (subset("strict_core", "Continuous_HITS_Core"), subset("strict_core", "PIV"), "Strict Core minus PIV"),
+1459:         (subset("primary_enhanced_imputed", "Continuous_HITS_Enhanced"), subset("primary_core", "Continuous_HITS_Core"), "Primary imputed Enhanced minus Core"),
+1460:         (subset("strict_enhanced_imputed", "Continuous_HITS_Enhanced"), subset("strict_core", "Continuous_HITS_Core"), "Strict imputed Enhanced minus Core"),
+1461:         (subset("primary_fbg_complete_case", "Continuous_HITS_Enhanced"), subset("primary_fbg_complete_case", "Continuous_HITS_Core"), "Primary Fibrinogen complete-case Enhanced minus Core"),
+1462:         (subset("strict_fbg_complete_case", "Continuous_HITS_Enhanced"), subset("strict_fbg_complete_case", "Continuous_HITS_Core"), "Strict Fibrinogen complete-case Enhanced minus Core"),
+1463:         (subset("primary_core", "Simplified_HITS_Core"), subset("primary_core", "Continuous_HITS_Core"), "Primary Simplified Core minus Continuous Core"),
+1464:         (subset("strict_core", "Simplified_HITS_Core"), subset("strict_core", "Continuous_HITS_Core"), "Strict Simplified Core minus Continuous Core"),
+1465:         (subset("primary_clinical", "Clinical_Plus_Core"), subset("primary_clinical", "Clinical_Plus_PIV"), "Primary Clinical plus Core minus Clinical plus PIV"),
+1466:         (subset("strict_clinical", "Clinical_Plus_Core"), subset("strict_clinical", "Clinical_Plus_PIV"), "Strict Clinical plus Core minus Clinical plus PIV"),
+1467:         (subset("primary_clinical", "Clinical_Plus_Enhanced"), subset("primary_clinical", "Clinical_Plus_Core"), "Primary Clinical plus Enhanced minus Clinical plus Core"),
+1468:         (subset("strict_clinical", "Clinical_Plus_Enhanced"), subset("strict_clinical", "Clinical_Plus_Core"), "Strict Clinical plus Enhanced minus Clinical plus Core"),
+1469:         (subset("primary_core", "Domain_Immune_Platelet"), subset("primary_core", "Domain_Immune"), "Primary domain Immune plus Platelet minus Immune"),
+1470:         (subset("primary_core", "Domain_Core"), subset("primary_core", "Domain_Immune_Platelet"), "Primary domain Core minus Immune plus Platelet"),
+1471:         (subset("primary_core", "Domain_Enhanced"), subset("primary_core", "Domain_Core"), "Primary domain Enhanced minus Core"),
+1472:     ]
+1473:     deltas = pd.DataFrame([paired_delta(a, b, label, paired_bootstrap_n) for a, b, label in delta_specs])
+1474:     write_aggregate_csv(deltas, out / "07_paired_delta_auc_bootstrap.csv")
+1475:
+1476:     clinical = performance[performance.analysis.isin(["primary_clinical", "strict_clinical"])].copy()
+1477:     write_aggregate_csv(clinical, out / "08_clinical_incremental_models.csv")
+1478:     domain = performance[(performance.analysis.isin(["primary_core", "strict_core"])) & performance.model.str.startswith("Domain_")].copy()
+1479:     write_aggregate_csv(domain, out / "09_domain_contribution.csv")
+1480:     fbg = performance[performance.analysis.str.contains("fbg_complete_case|enhanced_imputed", regex=True)].copy()
+1481:     write_aggregate_csv(fbg, out / "10_fibrinogen_complete_case_sensitivity.csv")
+1482:
+1483:     # Fully nested bootstrap re-development: the strict core and enhanced primary models.
+1484:     boot_rows: list[dict[str, Any]] = []
+1485:     stability_parts: list[pd.DataFrame] = []
+1486:     for frame, target, spec, label in [
+1487:         (primary, "y_primary", ModelSpec("Continuous_HITS_Core", tuple(CORE), "elastic", False), "Continuous_HITS_Core_primary"),
+1488:         (primary, "y_primary", ModelSpec("Continuous_HITS_Enhanced", tuple(ENHANCED), "elastic", True), "Continuous_HITS_Enhanced_primary"),
+1489:     ]:
+1490:         log(f"Running full-development bootstrap optimism correction: {label}")
+1491:         row, coefficients = bootstrap_optimism(frame, target, spec, label, development_bootstrap_n)
+1492:         boot_rows.append(row)
+1493:         stability_parts.append(coefficients)
+1494:     bootstrap = pd.DataFrame(boot_rows)
+1495:     write_aggregate_csv(bootstrap, out / "04_bootstrap_optimism_results.csv")
+1496:     stability = summarise_stability(pd.concat(stability_parts, ignore_index=True))
+1497:     write_aggregate_csv(stability, out / "16_variable_stability.csv")
+1498:
+1499:     simplification = determine_simplification(performance, deltas)
+1500:     write_aggregate_csv(simplification, out / "12_integer_score_validation.csv")
+1501:     calibration = performance[performance.model.isin(["Continuous_HITS_Core", "Continuous_HITS_Enhanced", "Simplified_HITS_Core", *BENCHMARKS])].copy()
+1502:     write_aggregate_csv(calibration, out / "13_calibration_and_brier.csv")
+1503:     dca = dca_table(records)
+1504:     write_aggregate_csv(dca, out / "13_exploratory_DCA.csv")
+1505:     fbg_status = determine_fbg_status(performance, deltas)
+1506:     decision, simple_status = make_decision_documents(out, flow, timing, performance, deltas, bootstrap, simplification, fbg_status)
+1507:     make_figures(records, performance, deltas, dca, out)
+1508:
+1509:     # Snapshot code only after all results so it is included in manifest; no raw data copied.
+1510:     snapshot_path = out / "scripts" / script_path.name
+1511:     if script_path.resolve() != snapshot_path.resolve():
+1512:         shutil.copy2(script_path, snapshot_path)
+1513:     write_environment(out, script_path, development_bootstrap_n, source_hash)
+1514:     required = [
+1515:         "00_EXECUTIVE_SUMMARY.md",
+1516:         "01_protocol_and_boundary_audit.md",
+1517:         "02_continuous_HITS_coefficients.csv",
+1518:         "03_continuous_HITS_formula.txt",
+1519:         "04_bootstrap_optimism_results.csv",
+1520:         "05_nested_cv_robustness.csv",
+1521:         "06_traditional_marker_comparison.csv",
+1522:         "07_paired_delta_auc_bootstrap.csv",
+1523:         "08_clinical_incremental_models.csv",
+1524:         "09_domain_contribution.csv",
+1525:         "10_fibrinogen_complete_case_sensitivity.csv",
+1526:         "11_integer_score_derivation.csv",
+1527:         "12_integer_score_validation.csv",
+1528:         "15_final_decision.md",
+1529:         "16_variable_stability.csv",
+1530:         "Figures/Figure1_strict_nested_ROC.png",
+1531:     ]
+1532:     qa = quality_assurance(out, required)
+1533:     write_manifest(out)
+1534:     failures = int((qa.status == "FAIL").sum())
+1535:     elapsed = time.time() - start
+1536:     log(f"Completed HITS V0.3.1 verified completion: decision={decision}; simplified={simple_status}; QA failures={failures}; elapsed_seconds={elapsed:.1f}")
+1537:     if failures:
+1538:         raise RuntimeError(f"Quality assurance reported {failures} failed checks")
+1539:     return 0
+1540:
+1541:
+1542: if __name__ == "__main__":
+1543:     parser = argparse.ArgumentParser(description=__doc__)
+1544:     parser.add_argument("--out", type=Path, default=DEFAULT_OUT, help="Aggregate-only output directory")
+1545:     parser.add_argument("--bootstrap", type=int, default=None, help="Override fully nested development bootstrap resample count")
+1546:     parser.add_argument("--smoke", action="store_true", help="One outer repeat and three bootstrap resamples for mechanical QA")
+1547:     namespace = parser.parse_args()
+1548:     try:
+1549:         raise SystemExit(main(namespace))
+1550:     except SystemExit:
+1551:         raise
+1552:     except Exception as exc:
+1553:         if LOG_PATH is not None:
+1554:             log("FATAL: " + repr(exc))
+1555:             with LOG_PATH.open("a", encoding="utf-8") as handle:
+1556:                 handle.write(traceback.format_exc() + "\n")
+1557:         raise

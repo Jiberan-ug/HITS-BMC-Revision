@@ -1,0 +1,4 @@
+group,cohort_n,birth_primary_parseable_n,admission_date_parseable_n,admission_date_missing_n,admission_date_pre_2020_n,admission_date_2020_2026_n,admission_date_post_2026_n,source_confirmed_target_episode_date_n,valid_target_anchored_age_n,status
+overall,1820,1820,130,1690,80,50,0,0,NOT_ESTIMABLE,NO_SOURCE_CONFIRMED_TARGET_EPISODE_DATE
+AMI,453,453,33,420,20,13,0,0,NOT_ESTIMABLE,NO_SOURCE_CONFIRMED_TARGET_EPISODE_DATE
+non_AMI_CAD,1367,1367,97,1270,60,37,0,0,NOT_ESTIMABLE,NO_SOURCE_CONFIRMED_TARGET_EPISODE_DATE

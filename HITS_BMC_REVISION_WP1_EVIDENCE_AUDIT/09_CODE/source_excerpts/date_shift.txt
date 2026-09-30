@@ -1,0 +1,226 @@
+Source: scripts/03_create_reviewer_rescue_package.R
+Original SHA256: 2abce908691ad0be4f8e9aef357b121787d1454d1dc36b06c0d3303215c59540
+READ ONLY; NOT EXECUTABLE. Home path redacted; trailing whitespace normalized.
+
+0001: #!/usr/bin/env Rscript
+0002:
+0003: options(stringsAsFactors = FALSE)
+0004: set.seed(20260816)
+0005:
+0006: source_dir <- "$HOME/Downloads/TwoPapers_Article2_R代码与图表/TwoPapers_R_Work_V0.3/data_raw/ehr_extracted"
+0007: output_dir <- "handoff/数据可救性审查包V0.1"
+0008: data_dir <- file.path(output_dir, "02_保结构脱敏数据")
+0009: audit_dir <- file.path(output_dir, "03_审计文件")
+0010: dir.create(data_dir, recursive = TRUE, showWarnings = FALSE)
+0011: dir.create(audit_dir, recursive = TRUE, showWarnings = FALSE)
+0012:
+0013: source_files <- c(
+0014:   master = "master_cohort_cleaned.csv",
+0015:   mace_positive = "mace_positive_cleaned.csv",
+0016:   mace_negative = "mace_negative_cleaned.csv",
+0017:   positive_extended = "positive_extended_cleaned.csv",
+0018:   model_draft = "recommended_model_dataset_draft.csv"
+0019: )
+0020:
+0021: paths <- file.path(source_dir, source_files)
+0022: names(paths) <- names(source_files)
+0023: if (!all(file.exists(paths))) {
+0024:   stop("Missing source files: ", paste(source_files[!file.exists(paths)], collapse = ", "))
+0025: }
+0026:
+0027: read_source <- function(path) {
+0028:   read.csv(
+0029:     path,
+0030:     check.names = FALSE,
+0031:     colClasses = "character",
+0032:     na.strings = c("", "NA", "N/A", "NULL"),
+0033:     fileEncoding = "UTF-8"
+0034:   )
+0035: }
+0036:
+0037: datasets <- lapply(paths, read_source)
+0038:
+0039: # Build one stable pseudonym map across every related table. The map from source
+0040: # identifiers to pseudonyms is deliberately not written to the reviewer package.
+0041: patient_values <- sort(unique(unlist(lapply(datasets, function(d) {
+0042:   if ("patient_sn" %in% names(d)) trimws(d$patient_sn) else character()
+0043: }))))
+0044: patient_values <- patient_values[!is.na(patient_values) & nzchar(patient_values)]
+0045: patient_map <- setNames(sprintf("P%06d", seq_along(patient_values)), patient_values)
+0046:
+0047: admission_columns <- c("基线_inpatient_no_id", "inpatient_no_id")
+0048: admission_values <- sort(unique(unlist(lapply(datasets, function(d) {
+0049:   cols <- intersect(admission_columns, names(d))
+0050:   if (!length(cols)) return(character())
+0051:   unlist(lapply(d[cols], trimws), use.names = FALSE)
+0052: }))))
+0053: admission_values <- admission_values[!is.na(admission_values) & nzchar(admission_values)]
+0054: admission_map <- setNames(sprintf("A%07d", seq_along(admission_values)), admission_values)
+0055:
+0056: patient_offset <- setNames((seq_along(patient_values) * 73L) %% 365L - 182L, patient_values)
+0057:
+0058: parse_datetime <- function(x) {
+0059:   x <- trimws(as.character(x))
+0060:   x[x %in% c("", "NA", "N/A", "NULL")] <- NA_character_
+0061:   out <- as.POSIXct(rep(NA_character_, length(x)), tz = "Asia/Shanghai")
+0062:
+0063:   numeric_x <- suppressWarnings(as.numeric(x))
+0064:   excel <- !is.na(numeric_x) & numeric_x > 20000 & numeric_x < 70000
+0065:   out[excel] <- as.POSIXct(as.Date(numeric_x[excel], origin = "1899-12-30"), tz = "Asia/Shanghai")
+0066:
+0067:   formats <- c(
+0068:     "%Y-%m-%d %H:%M:%S", "%Y-%m-%d %H:%M", "%Y-%m-%d",
+0069:     "%Y/%m/%d %H:%M:%S", "%Y/%m/%d %H:%M", "%Y/%m/%d",
+0070:     "%Y.%m.%d %H:%M:%S", "%Y.%m.%d"
+0071:   )
+0072:   remaining <- is.na(out) & !is.na(x)
+0073:   for (fmt in formats) {
+0074:     if (!any(remaining)) break
+0075:     parsed <- as.POSIXct(x[remaining], format = fmt, tz = "Asia/Shanghai")
+0076:     idx <- which(remaining)[!is.na(parsed)]
+0077:     out[idx] <- parsed[!is.na(parsed)]
+0078:     remaining <- is.na(out) & !is.na(x)
+0079:   }
+0080:   out
+0081: }
+0082:
+0083: date_pattern <- "(^|_)(birth_date|admission_date|ae_date|death_time)$|_test_time($|__)"
+0084: direct_identifier_pattern <- "^(name|姓名|本人姓名|patient_name|id_card|identity_card|身份证号|phone|mobile|telephone|联系电话|手机号|address|家庭住址|详细地址)$"
+0085:
+0086: audit_rows <- list()
+0087:
+0088: pseudonymize <- function(d, label) {
+0089:   original_n <- nrow(d)
+0090:   patient_source <- if ("patient_sn" %in% names(d)) trimws(d$patient_sn) else rep(NA_character_, nrow(d))
+0091:   pseudo_patient <- unname(patient_map[patient_source])
+0092:
+0093:   drop_cols <- names(d)[grepl(direct_identifier_pattern, names(d), ignore.case = TRUE)]
+0094:   if (length(drop_cols)) d[drop_cols] <- NULL
+0095:
+0096:   if ("patient_sn" %in% names(d)) {
+0097:     d$patient_sn <- pseudo_patient
+0098:     names(d)[names(d) == "patient_sn"] <- "research_patient_id"
+0099:   }
+0100:
+0101:   for (col in intersect(admission_columns, names(d))) {
+0102:     d[[col]] <- unname(admission_map[trimws(d[[col]])])
+0103:   }
+0104:   names(d)[names(d) == "基线_inpatient_no_id"] <- "baseline_admission_id_pseudo"
+0105:   names(d)[names(d) == "inpatient_no_id"] <- "admission_id_pseudo"
+0106:
+0107:   date_cols <- names(d)[grepl(date_pattern, names(d), ignore.case = TRUE)]
+0108:   for (col in date_cols) {
+0109:     raw <- d[[col]]
+0110:     parsed <- parse_datetime(raw)
+0111:     offsets <- unname(patient_offset[patient_source])
+0112:     shifted <- parsed + offsets * 86400
+0113:     nonmissing_raw <- !is.na(raw) & nzchar(trimws(raw))
+0114:     unparsed_n <- sum(nonmissing_raw & is.na(parsed))
+0115:     d[[col]] <- ifelse(is.na(shifted), NA_character_, format(shifted, "%Y-%m-%d %H:%M:%S", tz = "Asia/Shanghai"))
+0116:     audit_rows[[length(audit_rows) + 1L]] <<- data.frame(
+0117:       dataset = label,
+0118:       field = col,
+0119:       nonmissing_source = sum(nonmissing_raw),
+0120:       parsed_and_shifted = sum(!is.na(shifted)),
+0121:       unparsed_redacted = unparsed_n,
+0122:       stringsAsFactors = FALSE
+0123:     )
+0124:   }
+0125:
+0126:   stopifnot(nrow(d) == original_n)
+0127:   d
+0128: }
+0129:
+0130: safe <- Map(pseudonymize, datasets, names(datasets))
+0131:
+0132: output_names <- c(
+0133:   master = "master_cohort_structure_preserved_deidentified.csv",
+0134:   mace_positive = "mace_positive_structure_preserved_deidentified.csv",
+0135:   mace_negative = "mace_negative_structure_preserved_deidentified.csv",
+0136:   positive_extended = "positive_extended_structure_preserved_deidentified.csv",
+0137:   model_draft = "historical_model_dataset_draft_deidentified.csv"
+0138: )
+0139:
+0140: for (label in names(safe)) {
+0141:   write.csv(
+0142:     safe[[label]],
+0143:     file.path(data_dir, output_names[[label]]),
+0144:     row.names = FALSE,
+0145:     na = "",
+0146:     fileEncoding = "UTF-8"
+0147:   )
+0148: }
+0149:
+0150: master <- safe$master
+0151: eligible_ids <- unique(master$research_patient_id[!is.na(master$research_patient_id)])
+0152: sample_ids <- sample(eligible_ids, min(100L, length(eligible_ids)), replace = FALSE)
+0153: sample_100 <- master[master$research_patient_id %in% sample_ids, , drop = FALSE]
+0154: write.csv(
+0155:   sample_100,
+0156:   file.path(data_dir, "random_100_patients_all_records_deidentified.csv"),
+0157:   row.names = FALSE,
+0158:   na = "",
+0159:   fileEncoding = "UTF-8"
+0160: )
+0161:
+0162: field_list <- data.frame(
+0163:   column_order = seq_along(names(master)),
+0164:   field_name = names(master),
+0165:   stringsAsFactors = FALSE
+0166: )
+0167: write.csv(field_list, file.path(audit_dir, "complete_field_name_list.csv"), row.names = FALSE, fileEncoding = "UTF-8")
+0168:
+0169: date_audit <- do.call(rbind, audit_rows)
+0170: write.csv(date_audit, file.path(audit_dir, "date_shift_parse_audit.csv"), row.names = FALSE, fileEncoding = "UTF-8")
+0171:
+0172: inventory <- data.frame(
+0173:   dataset = names(safe),
+0174:   source_rows = vapply(datasets, nrow, integer(1)),
+0175:   source_columns = vapply(datasets, ncol, integer(1)),
+0176:   output_rows = vapply(safe, nrow, integer(1)),
+0177:   output_columns = vapply(safe, ncol, integer(1)),
+0178:   output_file = unname(output_names[names(safe)]),
+0179:   stringsAsFactors = FALSE
+0180: )
+0181: write.csv(inventory, file.path(audit_dir, "dataset_inventory.csv"), row.names = FALSE, fileEncoding = "UTF-8")
+0182:
+0183: # Privacy screen reports only pattern type and count, never matching values.
+0184: screen_patterns <- c(
+0185:   chinese_id = "^[0-9]{17}[0-9Xx]$",
+0186:   mainland_mobile = "^1[3-9][0-9]{9}$"
+0187: )
+0188: screen <- do.call(rbind, lapply(names(safe), function(label) {
+0189:   d <- safe[[label]]
+0190:   do.call(rbind, lapply(names(screen_patterns), function(kind) {
+0191:     hit_count <- sum(vapply(d, function(x) sum(grepl(screen_patterns[[kind]], trimws(x)), na.rm = TRUE), integer(1)))
+0192:     data.frame(dataset = label, pattern_type = kind, matches = hit_count, stringsAsFactors = FALSE)
+0193:   }))
+0194: }))
+0195: write.csv(screen, file.path(audit_dir, "privacy_value_pattern_screen.csv"), row.names = FALSE, fileEncoding = "UTF-8")
+0196:
+0197: if (any(screen$matches > 0)) stop("PRIVACY BLOCK: identifier-like values remain; inspect audit counts")
+0198:
+0199: duplicate_path <- file.path(source_dir, "duplicate_audit.csv")
+0200: if (file.exists(duplicate_path)) {
+0201:   duplicate_audit <- read_source(duplicate_path)
+0202:   if ("patient_sn" %in% names(duplicate_audit)) {
+0203:     duplicate_audit$patient_sn <- unname(patient_map[trimws(duplicate_audit$patient_sn)])
+0204:     names(duplicate_audit)[names(duplicate_audit) == "patient_sn"] <- "research_patient_id"
+0205:   }
+0206:   write.csv(
+0207:     duplicate_audit,
+0208:     file.path(audit_dir, "duplicate_audit_deidentified.csv"),
+0209:     row.names = FALSE,
+0210:     na = "",
+0211:     fileEncoding = "UTF-8"
+0212:   )
+0213: }
+0214:
+0215: for (support_file in c("field_dictionary.csv", "file_relationship.csv", "missing_summary.csv", "README_schemeC.txt")) {
+0216:   source_support <- file.path(source_dir, support_file)
+0217:   if (file.exists(source_support)) file.copy(source_support, file.path(audit_dir, support_file), overwrite = TRUE)
+0218: }
+0219:
+0220: cat("Reviewer rescue package data created at: ", output_dir, "\n", sep = "")
+0221: print(inventory)
+0222: cat("Random sample rows: ", nrow(sample_100), "; patients: ", length(unique(sample_100$research_patient_id)), "\n", sep = "")

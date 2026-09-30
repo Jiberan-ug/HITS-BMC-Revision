@@ -1,0 +1,15 @@
+check,status,evidence
+Numerical cross-check,PASS,81 registered values matched
+Ethics statement and consent correction,PASS,exact approval/waiver/guidelines text present; universal-consent statement absent
+Author order,PASS,all ten authors retained in order
+Funding,PASS,three locked grant numbers present
+Data availability,PASS,restricted-data and reasonable-request language retained
+AI disclosure,PASS,existing disclosure boundary retained
+Citations/references,PASS,no missing citations or orphan references
+Main figure/table captions,PASS,Figures 1-5 and Tables 1-3 present
+Internal terms,PASS,blocked project/version terms absent from manuscript and supplementary text
+Raw patient-level privacy,PASS,restricted source excluded; copied analysis data are aggregate
+Exact editor/reviewer sources,HOLD,verbatim editor and reviewer reports not recovered
+Portal manuscript snapshot,HOLD,exact portal-integrated manuscript not recovered
+Response-to-source alignment,HOLD,responses use explicitly marked non-verbatim summaries
+Final Gate,WP3_HOLD_COMMENT_UNANSWERED,compare with original journal source comments before submission

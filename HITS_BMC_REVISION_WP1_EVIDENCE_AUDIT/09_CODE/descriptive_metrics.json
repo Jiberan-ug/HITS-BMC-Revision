@@ -1,0 +1,68 @@
+{
+  "raw_rows": 2548,
+  "unique_patients": 2279,
+  "patients_one_row": 2010,
+  "patients_two_rows": 269,
+  "patients_three_plus_rows": 0,
+  "patients_multiple_rows": 269,
+  "surplus_rows_removed": 269,
+  "identical_full_row_duplicates": 0,
+  "missing_patient_identifier": 0,
+  "other_exclusions_before_selection": 0,
+  "final_primary_n": 1820,
+  "final_ami_n": 453,
+  "postselection_not_primary": 459,
+  "FLOW_COUNTS_RECONCILE": "YES",
+  "patients_multiple_distinct_admission_dates": 0,
+  "patients_multiple_rows_but_one_distinct_admission_date": 17,
+  "patients_multiple_rows_no_admission_date": 252,
+  "postselection_phenotypes": {
+    "B_definite_nonAMI_CAD": 1372,
+    "A_definite_AMI": 456,
+    "C_ambiguous_or_review": 340,
+    "out_of_scope_nonCAD": 111
+  },
+  "primary_missing_age": 0,
+  "age_manuscript_available_n": 1818,
+  "age_manuscript_denominator_reproduced": false,
+  "primary_cbc_before_2019_n": 1802,
+  "admission_linkage_not_validated": true,
+  "multirow_patients_two_nonempty_diagnoses": 0,
+  "multirow_patients_distinct_nonempty_diagnoses": 0,
+  "multirow_patients_two_CBC_times": 0,
+  "inpatient_no_id_multirow_distinct_token_patient_n": 0,
+  "基线_inpatient_no_id_multirow_distinct_token_patient_n": 0,
+  "cbc_year_min": 2009,
+  "cbc_year_max": 2026,
+  "admission_year_min": 2012,
+  "admission_year_max": 2025,
+  "guardband": [
+    {
+      "stage": "development_guaranteed_early",
+      "primary_n": 1001,
+      "primary_ami_n": 196,
+      "highspecific_ami_n": 162,
+      "strict_control_n": 634,
+      "highspecific_total_n": 796
+    },
+    {
+      "stage": "guard_band_excluded",
+      "primary_n": 271,
+      "primary_ami_n": 79,
+      "highspecific_ami_n": 62,
+      "strict_control_n": 142,
+      "highspecific_total_n": 204
+    },
+    {
+      "stage": "validation_guaranteed_late",
+      "primary_n": 548,
+      "primary_ami_n": 178,
+      "highspecific_ami_n": 138,
+      "strict_control_n": 288,
+      "highspecific_total_n": 426
+    }
+  ],
+  "fibrinogen_complete_case_n": 1705,
+  "fibrinogen_complete_case_ami_n": 426,
+  "fbg_timestamp_with_numeric_value_n": 1705
+}

@@ -1,0 +1,22 @@
+id,label,x,y,w,h,group
+primary_ami,"Primary AMI phenotype
+N=453",0.95,0.0,1.8,0.82,primary
+early,"Date-axis development
+N=196",3.0,2.05,2.0,0.82,source
+buffer,"Date-axis buffer
+N=79",3.0,0.65,2.0,0.82,exclusion
+later,"Date-axis later group
+N=178",3.0,-0.8,2.0,0.82,source
+broad_controls,"Later broad non-AMI controls
+N=370",5.45,1.5,2.4,0.86,source
+strict_ami,"Strict-text AMI
+N=138",5.45,-0.25,2.0,0.82,phenotype
+ami_not_strict,"Did not meet strict text rule
+N=40",5.45,-1.75,2.5,0.82,exclusion
+strict_controls,"Strict CAD/angina controls
+N=288",8.05,1.5,2.25,0.82,phenotype
+controls_excluded,"Excluded from strict control
+N=82",8.05,-0.1,2.25,0.82,exclusion
+comparison,"High-specificity comparison
+N=426
+AMI 138 + controls 288",10.75,0.15,2.45,1.02,primary

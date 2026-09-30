@@ -1,0 +1,15 @@
+risk_id,issue,risk_level,evidence,status,mitigation
+R01,CBC timing,CRITICAL,"130 dates, multi-year gaps; index sample unproven",OPEN,See corresponding audit; WP2 not authorized
+R02,AMI label validity,HIGH,Discharge text only; no independent review,OPEN,See corresponding audit; WP2 not authorized
+R03,Record selection,HIGH,Diagnosis availability ranked; qc score definition unknown,OPEN,See corresponding audit; WP2 not authorized
+R04,Validation leakage,MODERATE,Canonical fitted preprocessing fold-local; prior variable selection/lineage not eliminated,OPEN,See corresponding audit; WP2 not authorized
+R05,Bootstrap CI provenance,MODERATE,"Fixed prediction bootstrap, not full pipeline uncertainty",OPEN,See corresponding audit; WP2 not authorized
+R06,Temporal source/period mismatch,CRITICAL,2020-2026 CAG eligibility author-confirmed but not source-field verified; CBC test-time encounter semantics and date-shift input/output linkage unresolved,OPEN,See WP1R source recovery and temporal audit; WP2 not authorized
+R07,Consent consistency,HIGH,Author confirms ethics approval K202602-10 and waiver; manuscript's all-participants-consented statement conflicts and requires WP3 correction,OPEN_REQUIRES_WP3_CORRECTION,See ethics gate; no ethics documents uploaded
+R08,Troponin feasibility,HIGH,Assay/ULN/index time unresolved,OPEN,See corresponding audit; WP2 not authorized
+R09,Missing fibrinogen,MODERATE,"115 missing, timing not anchored",OPEN,See corresponding audit; WP2 not authorized
+R10,Clinical covariate missingness,HIGH,Corrected age denominator1818 not reproduced,OPEN,See corresponding audit; WP2 not authorized
+R11,Figure/canonical lineage,CRITICAL,Figure3 legacy20-repeat versus Table2 canonical10-repeat,OPEN,See corresponding audit; WP2 not authorized
+R12,Prediction recovery/DCA,HIGH,Canonical OOF not persisted,OPEN,See corresponding audit; WP2 not authorized
+R13,Reviewer/source document completeness,HIGH,Full verbatim decision letter and portal snapshot not recovered,OPEN,See corresponding audit; WP2 not authorized
+R14,R figure reproducibility,HIGH,Renamed source mismatches and hardcoded Figure4/5 numbers in recovered script,OPEN,See corresponding audit; WP2 not authorized

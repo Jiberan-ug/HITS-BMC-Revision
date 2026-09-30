@@ -1,0 +1,70 @@
+analysis_group,metric,status,numerator_n,denominator_n,percent,numerator_denominator_display,interpretation
+Total,CBC timestamp available,FIELD_AVAILABLE,1820,1820,100.00,1820/1820 (100.00%),Selected-row laboratory timestamp availability only; does not identify the index hospitalization
+Total,CBC and listed admission date paired,FIELD_PAIRED_NOT_ENCOUNTER_LINKED,130,1820,7.14,130/1820 (7.14%),Arithmetic comparison only; the admission field is not linked to the angiography episode
+Total,CBC calendar date before listed admission date,DATE_LEVEL_ONLY,99,130,76.15,99/130 (76.15%),Date-level comparison only; not an index-admission ordering claim
+Total,CBC on same calendar date as listed admission date,DATE_LEVEL_ONLY,19,130,14.62,19/130 (14.62%),Same calendar date does not prove same stay or same-day event ordering
+Total,CBC calendar date after listed admission date,DATE_LEVEL_ONLY,12,130,9.23,12/130 (9.23%),Date-level comparison only; not an index-admission ordering claim
+Total,CBC same index hospitalization confirmed,UNKNOWN_NOT_NO,0,0,NA,0/0 (not estimable),No index episode can be reconstructed; UNKNOWN for all 1820 cohort members
+Total,CBC before angiography confirmed,NOT_ESTIMABLE,0,0,NA,0/0 (not estimable),No angiography/CAG/PCI date or time is available in the linked cohort source
+Total,CBC before initial AMI diagnosis confirmed,NOT_ESTIMABLE,0,0,NA,0/0 (not estimable),No initial AMI diagnosis timestamp is available; discharge diagnosis is not substituted
+Total,CBC before major intervention confirmed,NOT_ESTIMABLE,0,0,NA,0/0 (not estimable),No major-intervention/procedure timestamp is available
+Total,NEUT time field available,FIELD_AVAILABLE,1820,1820,100.00,1820/1820 (100.00%),Timestamp is present in the selected flat row; not a laboratory encounter key
+Total,NEUT timestamp identical to WBC timestamp,WITHIN_ROW_ONLY,1820,1820,100.00,1820/1820 (100.00%),Within-row timestamp agreement does not prove specimen or encounter identity
+Total,LYMPH time field available,FIELD_AVAILABLE,1820,1820,100.00,1820/1820 (100.00%),Timestamp is present in the selected flat row; not a laboratory encounter key
+Total,LYMPH timestamp identical to WBC timestamp,WITHIN_ROW_ONLY,1820,1820,100.00,1820/1820 (100.00%),Within-row timestamp agreement does not prove specimen or encounter identity
+Total,MONO time field available,FIELD_AVAILABLE,1820,1820,100.00,1820/1820 (100.00%),Timestamp is present in the selected flat row; not a laboratory encounter key
+Total,MONO timestamp identical to WBC timestamp,WITHIN_ROW_ONLY,1820,1820,100.00,1820/1820 (100.00%),Within-row timestamp agreement does not prove specimen or encounter identity
+Total,PLT time field available,FIELD_AVAILABLE,1820,1820,100.00,1820/1820 (100.00%),Timestamp is present in the selected flat row; not a laboratory encounter key
+Total,PLT timestamp identical to WBC timestamp,WITHIN_ROW_ONLY,1820,1820,100.00,1820/1820 (100.00%),Within-row timestamp agreement does not prove specimen or encounter identity
+Total,MPV time field available,FIELD_AVAILABLE,1820,1820,100.00,1820/1820 (100.00%),Timestamp is present in the selected flat row; not a laboratory encounter key
+Total,MPV timestamp identical to WBC timestamp,WITHIN_ROW_ONLY,1820,1820,100.00,1820/1820 (100.00%),Within-row timestamp agreement does not prove specimen or encounter identity
+Total,RDW time field available,FIELD_AVAILABLE,1820,1820,100.00,1820/1820 (100.00%),Timestamp is present in the selected flat row; not a laboratory encounter key
+Total,RDW timestamp identical to WBC timestamp,WITHIN_ROW_ONLY,1820,1820,100.00,1820/1820 (100.00%),Within-row timestamp agreement does not prove specimen or encounter identity
+Total,HB time field available,FIELD_AVAILABLE,1820,1820,100.00,1820/1820 (100.00%),Timestamp is present in the selected flat row; not a laboratory encounter key
+Total,HB timestamp identical to WBC timestamp,WITHIN_ROW_ONLY,1820,1820,100.00,1820/1820 (100.00%),Within-row timestamp agreement does not prove specimen or encounter identity
+AMI,CBC timestamp available,FIELD_AVAILABLE,453,453,100.00,453/453 (100.00%),Selected-row laboratory timestamp availability only; does not identify the index hospitalization
+AMI,CBC and listed admission date paired,FIELD_PAIRED_NOT_ENCOUNTER_LINKED,33,453,7.28,33/453 (7.28%),Arithmetic comparison only; the admission field is not linked to the angiography episode
+AMI,CBC calendar date before listed admission date,DATE_LEVEL_ONLY,20,33,60.61,20/33 (60.61%),Date-level comparison only; not an index-admission ordering claim
+AMI,CBC on same calendar date as listed admission date,DATE_LEVEL_ONLY,11,33,33.33,11/33 (33.33%),Same calendar date does not prove same stay or same-day event ordering
+AMI,CBC calendar date after listed admission date,DATE_LEVEL_ONLY,2,33,6.06,2/33 (6.06%),Date-level comparison only; not an index-admission ordering claim
+AMI,CBC same index hospitalization confirmed,UNKNOWN_NOT_NO,0,0,NA,0/0 (not estimable),No index episode can be reconstructed; UNKNOWN for all 453 cohort members
+AMI,CBC before angiography confirmed,NOT_ESTIMABLE,0,0,NA,0/0 (not estimable),No angiography/CAG/PCI date or time is available in the linked cohort source
+AMI,CBC before initial AMI diagnosis confirmed,NOT_ESTIMABLE,0,0,NA,0/0 (not estimable),No initial AMI diagnosis timestamp is available; discharge diagnosis is not substituted
+AMI,CBC before major intervention confirmed,NOT_ESTIMABLE,0,0,NA,0/0 (not estimable),No major-intervention/procedure timestamp is available
+AMI,NEUT time field available,FIELD_AVAILABLE,453,453,100.00,453/453 (100.00%),Timestamp is present in the selected flat row; not a laboratory encounter key
+AMI,NEUT timestamp identical to WBC timestamp,WITHIN_ROW_ONLY,453,453,100.00,453/453 (100.00%),Within-row timestamp agreement does not prove specimen or encounter identity
+AMI,LYMPH time field available,FIELD_AVAILABLE,453,453,100.00,453/453 (100.00%),Timestamp is present in the selected flat row; not a laboratory encounter key
+AMI,LYMPH timestamp identical to WBC timestamp,WITHIN_ROW_ONLY,453,453,100.00,453/453 (100.00%),Within-row timestamp agreement does not prove specimen or encounter identity
+AMI,MONO time field available,FIELD_AVAILABLE,453,453,100.00,453/453 (100.00%),Timestamp is present in the selected flat row; not a laboratory encounter key
+AMI,MONO timestamp identical to WBC timestamp,WITHIN_ROW_ONLY,453,453,100.00,453/453 (100.00%),Within-row timestamp agreement does not prove specimen or encounter identity
+AMI,PLT time field available,FIELD_AVAILABLE,453,453,100.00,453/453 (100.00%),Timestamp is present in the selected flat row; not a laboratory encounter key
+AMI,PLT timestamp identical to WBC timestamp,WITHIN_ROW_ONLY,453,453,100.00,453/453 (100.00%),Within-row timestamp agreement does not prove specimen or encounter identity
+AMI,MPV time field available,FIELD_AVAILABLE,453,453,100.00,453/453 (100.00%),Timestamp is present in the selected flat row; not a laboratory encounter key
+AMI,MPV timestamp identical to WBC timestamp,WITHIN_ROW_ONLY,453,453,100.00,453/453 (100.00%),Within-row timestamp agreement does not prove specimen or encounter identity
+AMI,RDW time field available,FIELD_AVAILABLE,453,453,100.00,453/453 (100.00%),Timestamp is present in the selected flat row; not a laboratory encounter key
+AMI,RDW timestamp identical to WBC timestamp,WITHIN_ROW_ONLY,453,453,100.00,453/453 (100.00%),Within-row timestamp agreement does not prove specimen or encounter identity
+AMI,HB time field available,FIELD_AVAILABLE,453,453,100.00,453/453 (100.00%),Timestamp is present in the selected flat row; not a laboratory encounter key
+AMI,HB timestamp identical to WBC timestamp,WITHIN_ROW_ONLY,453,453,100.00,453/453 (100.00%),Within-row timestamp agreement does not prove specimen or encounter identity
+non-AMI CAD,CBC timestamp available,FIELD_AVAILABLE,1367,1367,100.00,1367/1367 (100.00%),Selected-row laboratory timestamp availability only; does not identify the index hospitalization
+non-AMI CAD,CBC and listed admission date paired,FIELD_PAIRED_NOT_ENCOUNTER_LINKED,97,1367,7.10,97/1367 (7.10%),Arithmetic comparison only; the admission field is not linked to the angiography episode
+non-AMI CAD,CBC calendar date before listed admission date,DATE_LEVEL_ONLY,79,97,81.44,79/97 (81.44%),Date-level comparison only; not an index-admission ordering claim
+non-AMI CAD,CBC on same calendar date as listed admission date,DATE_LEVEL_ONLY,8,97,8.25,8/97 (8.25%),Same calendar date does not prove same stay or same-day event ordering
+non-AMI CAD,CBC calendar date after listed admission date,DATE_LEVEL_ONLY,10,97,10.31,10/97 (10.31%),Date-level comparison only; not an index-admission ordering claim
+non-AMI CAD,CBC same index hospitalization confirmed,UNKNOWN_NOT_NO,0,0,NA,0/0 (not estimable),No index episode can be reconstructed; UNKNOWN for all 1367 cohort members
+non-AMI CAD,CBC before angiography confirmed,NOT_ESTIMABLE,0,0,NA,0/0 (not estimable),No angiography/CAG/PCI date or time is available in the linked cohort source
+non-AMI CAD,CBC before initial AMI diagnosis confirmed,NOT_APPLICABLE,0,0,NA,0/0 (not estimable),No initial AMI diagnosis timestamp is available; discharge diagnosis is not substituted
+non-AMI CAD,CBC before major intervention confirmed,NOT_ESTIMABLE,0,0,NA,0/0 (not estimable),No major-intervention/procedure timestamp is available
+non-AMI CAD,NEUT time field available,FIELD_AVAILABLE,1367,1367,100.00,1367/1367 (100.00%),Timestamp is present in the selected flat row; not a laboratory encounter key
+non-AMI CAD,NEUT timestamp identical to WBC timestamp,WITHIN_ROW_ONLY,1367,1367,100.00,1367/1367 (100.00%),Within-row timestamp agreement does not prove specimen or encounter identity
+non-AMI CAD,LYMPH time field available,FIELD_AVAILABLE,1367,1367,100.00,1367/1367 (100.00%),Timestamp is present in the selected flat row; not a laboratory encounter key
+non-AMI CAD,LYMPH timestamp identical to WBC timestamp,WITHIN_ROW_ONLY,1367,1367,100.00,1367/1367 (100.00%),Within-row timestamp agreement does not prove specimen or encounter identity
+non-AMI CAD,MONO time field available,FIELD_AVAILABLE,1367,1367,100.00,1367/1367 (100.00%),Timestamp is present in the selected flat row; not a laboratory encounter key
+non-AMI CAD,MONO timestamp identical to WBC timestamp,WITHIN_ROW_ONLY,1367,1367,100.00,1367/1367 (100.00%),Within-row timestamp agreement does not prove specimen or encounter identity
+non-AMI CAD,PLT time field available,FIELD_AVAILABLE,1367,1367,100.00,1367/1367 (100.00%),Timestamp is present in the selected flat row; not a laboratory encounter key
+non-AMI CAD,PLT timestamp identical to WBC timestamp,WITHIN_ROW_ONLY,1367,1367,100.00,1367/1367 (100.00%),Within-row timestamp agreement does not prove specimen or encounter identity
+non-AMI CAD,MPV time field available,FIELD_AVAILABLE,1367,1367,100.00,1367/1367 (100.00%),Timestamp is present in the selected flat row; not a laboratory encounter key
+non-AMI CAD,MPV timestamp identical to WBC timestamp,WITHIN_ROW_ONLY,1367,1367,100.00,1367/1367 (100.00%),Within-row timestamp agreement does not prove specimen or encounter identity
+non-AMI CAD,RDW time field available,FIELD_AVAILABLE,1367,1367,100.00,1367/1367 (100.00%),Timestamp is present in the selected flat row; not a laboratory encounter key
+non-AMI CAD,RDW timestamp identical to WBC timestamp,WITHIN_ROW_ONLY,1367,1367,100.00,1367/1367 (100.00%),Within-row timestamp agreement does not prove specimen or encounter identity
+non-AMI CAD,HB time field available,FIELD_AVAILABLE,1367,1367,100.00,1367/1367 (100.00%),Timestamp is present in the selected flat row; not a laboratory encounter key
+non-AMI CAD,HB timestamp identical to WBC timestamp,WITHIN_ROW_ONLY,1367,1367,100.00,1367/1367 (100.00%),Within-row timestamp agreement does not prove specimen or encounter identity

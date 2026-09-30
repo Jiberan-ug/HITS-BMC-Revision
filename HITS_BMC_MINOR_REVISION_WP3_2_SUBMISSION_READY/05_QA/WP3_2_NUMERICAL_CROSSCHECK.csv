@@ -1,0 +1,11 @@
+item,manuscript_or_package_value,frozen_source_value,authoritative_source,status,note
+Core-7 primary AUC,0.725,0.7253504637053473 (95% CI 0.6972291331992886-0.7526109516538609),WP2 PRIMARY_MODEL_PERFORMANCE_CANONICAL.csv,PASS,Primary 1820-person cohort; no rerun
+PIV primary AUC,0.708,0.7080505320136745 (95% CI 0.6777573646293071-0.7352535551335468),WP2 PRIMARY_MODEL_PERFORMANCE_CANONICAL.csv,PASS,Primary 1820-person cohort; no rerun
+Core-7 minus PIV primary delta,0.017,0.017299931691672765 (95% CI 0.0034460663635580064-0.030793997352151985),WP2 PRIMARY_PAIRED_DELTAS_CANONICAL.csv,PASS,Primary paired comparison; no rerun
+Enhanced complete-case AUC,0.7367386492528273,0.7367386492528273 (N=1705; AMI=426),WP2 PRIMARY_MODEL_PERFORMANCE_CANONICAL.csv,PASS,Same complete-case cohort as Core-7
+Enhanced minus Core-7 complete-case delta,0.009678,0.009677821948631982 (95% CI 0.002300085305734942-0.016932265681489395),WP2 PRIMARY_PAIRED_DELTAS_CANONICAL.csv,PASS,Same patients and outer folds
+Clinical plus Core-7 minus Clinical plus PIV,0.0130,0.012964941066781144 (95% CI 0.00039098609899128084-0.025073671226689423),WP2 PRIMARY_PAIRED_DELTAS_CANONICAL.csv,PASS,Fibrinogen-complete cohort N=1705; AMI=426
+Temporal sensitivity group counts,Development 1001/196; buffer 271/79; later 548/178,Development 1001/196; buffer 271/79; later 548/178,WP2 DATE_AXIS_SENSITIVITY_FINAL_FACTS.csv,PASS,Each pair is N/AMI; dates are hospitalization/coronary-angiography dates after deidentification
+Temporal sensitivity later AUCs,Core-7 0.701; PIV 0.699; Enhanced 0.719,Core-7 0.7013209839052537; PIV 0.6990586091709686; Enhanced 0.7192833282720922,WP2 DATE_AXIS_SENSITIVITY_FINAL_FACTS.csv,PASS,Presentation labels only; estimates unchanged
+Temporal sensitivity Core-7 minus PIV,0.002 (95% CI -0.021 to 0.025),0.002262374734285 (95% CI -0.0214960275970386 to 0.0252706811236757),WP2 DATE_AXIS_SENSITIVITY_FINAL_FACTS.csv,PASS,Interval includes zero
+Statistical reanalysis,None,None,WP3.2 instruction and run scope,PASS,No model or statistical output rerun

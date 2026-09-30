@@ -1,0 +1,8 @@
+bootstrap_model,variable,domain,bootstrap_replicates,selection_frequency,mean_coefficient_standardised,median_coefficient_standardised,positive_sign_frequency_when_selected,negative_sign_frequency_when_selected,median_selected_C,median_selected_l1_ratio
+Continuous_HITS_Core_primary,neut,immune-inflammatory,300,1.0,0.5718258699490749,0.5759350569556568,1.0,0.0,10.0,0.25
+Continuous_HITS_Core_primary,lymph,immune-inflammatory,300,1.0,-0.320586833167113,-0.3164477200453973,0.0,1.0,10.0,0.25
+Continuous_HITS_Core_primary,mono,immune-inflammatory,300,1.0,0.2137033226907606,0.2112386507277623,1.0,0.0,10.0,0.25
+Continuous_HITS_Core_primary,plt,platelet,300,1.0,0.2387239539808553,0.2357242890039021,1.0,0.0,10.0,0.25
+Continuous_HITS_Core_primary,mpv,platelet,300,0.99,0.1185946718856203,0.1139324223467119,0.9663299663299664,0.0336700336700336,10.0,0.25
+Continuous_HITS_Core_primary,rdw,erythrocyte,300,1.0,-0.2951230024109792,-0.28999640197695,0.0,1.0,10.0,0.25
+Continuous_HITS_Core_primary,hb,erythrocyte,300,0.95,0.0331247125324918,0.0302205467633431,0.7543859649122807,0.2456140350877192,10.0,0.25

@@ -1,0 +1,27 @@
+{
+  "python": "3.11.15 | packaged by conda-forge | (main, Jun 11 2026, 03:29:05) [Clang 19.1.7 ]",
+  "platform": "macOS-26.6.2-arm64-arm-64bit",
+  "numpy": "2.4.6",
+  "pandas": "2.3.3",
+  "scipy": "1.17.1",
+  "scikit_learn": "1.7.1",
+  "statsmodels": "0.14.6",
+  "matplotlib": "3.11.0",
+  "seed": 20260825,
+  "outer_cv": "5-fold x 10 repeats; RepeatedStratifiedKFold; random_state=20260825",
+  "inner_cv": "5-fold StratifiedKFold; per-fold stable seed",
+  "elastic_net_C_grid": [
+    0.1,
+    1.0,
+    10.0
+  ],
+  "elastic_net_l1_ratio_grid": [
+    0.25,
+    0.5,
+    0.75
+  ],
+  "metric_and_paired_bootstrap_n": 1000,
+  "bootstrap_method": "1000 patient resamples of fixed patient-mean OOF predictions; percentile 2.5th/97.5th; no model refits",
+  "patient_level_prediction_exports": "private local directory only; not part of repository",
+  "figure_backend": "R with ggplot2/ragg"
+}

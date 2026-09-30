@@ -1,0 +1,4 @@
+group,analysis_n,canonical_age_available_n,canonical_age_missing_n,canonical_age_missing_pct,admission_date_reference_n,CBC_time_fallback_reference_n,missing_reference_date_n,submitted_table1_reported_available_n,reported_minus_canonical_available_n,reported_derivation_status
+overall,1820,1820,0,0.0,130,1690,0,1818,-2,NOT_REPRODUCED_FROM_RECOVERED_EXECUTABLE_SOURCE
+AMI,453,453,0,0.0,33,420,0,452,-1,NOT_REPRODUCED_FROM_RECOVERED_EXECUTABLE_SOURCE
+non_AMI_CAD,1367,1367,0,0.0,97,1270,0,1366,-1,NOT_REPRODUCED_FROM_RECOVERED_EXECUTABLE_SOURCE

@@ -1,0 +1,332 @@
+{
+  "technical_package_qa": "PASS",
+  "scientific_gate": "WP1R_SOURCE_RECOVERY_PARTIAL_PASS_INDEX_CBC_RECONSTRUCTION_REQUIRED",
+  "ethics_consent_gate": "PASS_AUTHOR_CONFIRMED_DOCUMENT_NOT_INDEPENDENTLY_INSPECTED",
+  "checks": [
+    {
+      "check": "Required files present",
+      "passed": true
+    },
+    {
+      "check": "No unexpected binary/patient artifacts",
+      "passed": true
+    },
+    {
+      "check": "Python syntax",
+      "passed": true
+    },
+    {
+      "check": "22 unique comments",
+      "passed": true
+    },
+    {
+      "check": "Feasibility enum",
+      "passed": true
+    },
+    {
+      "check": "Cohort and row reconciliation",
+      "passed": true
+    },
+    {
+      "check": "Age disagreement preserved without duplication",
+      "passed": true
+    },
+    {
+      "check": "Figure source ancestry verified",
+      "passed": true
+    },
+    {
+      "check": "Source unchanged: HITS_V0.5.2_PUBLICATION_FREEZE/04_CANONICAL_RESULT_REGISTRY.csv",
+      "passed": true
+    },
+    {
+      "check": "Source unchanged: HITS_V0.3.1_verified_completion_20260825/05_nested_cv_robustness.csv",
+      "passed": true
+    },
+    {
+      "check": "Source unchanged: HITS_V0.3.1_verified_completion_20260825/06_traditional_marker_comparison.csv",
+      "passed": true
+    },
+    {
+      "check": "Source unchanged: HITS_V0.3.1_verified_completion_20260825/08_clinical_incremental_models.csv",
+      "passed": true
+    },
+    {
+      "check": "Source unchanged: HITS_V0.3.1_verified_completion_20260825/07_paired_delta_auc_bootstrap.csv",
+      "passed": true
+    },
+    {
+      "check": "Source unchanged: HITS_V0.3.1_verified_completion_20260825/10_fibrinogen_complete_case_sensitivity.csv",
+      "passed": true
+    },
+    {
+      "check": "Source unchanged: HITS_V0.3.1_verified_completion_20260825/16_variable_stability.csv",
+      "passed": true
+    },
+    {
+      "check": "Source unchanged: HITS_V0.3.1_verified_completion_20260825/01_candidate_missingness.csv",
+      "passed": true
+    },
+    {
+      "check": "Source unchanged: HITS_V0.3_score_development/05_nested_cv_robustness_performance.csv",
+      "passed": true
+    },
+    {
+      "check": "Source unchanged: HITS_V0.5.1_final_QA_lock/08_asymmetric_bound_sensitivity.csv",
+      "passed": true
+    },
+    {
+      "check": "Source unchanged: HITS_V0.5.1_final_QA_lock/06_clinical_enhanced_vs_PIV.csv",
+      "passed": true
+    },
+    {
+      "check": "Source unchanged: scripts/06_hits_ami_predevelopment_v0_2.py",
+      "passed": true
+    },
+    {
+      "check": "Source unchanged: HITS_V0.3.1_verified_completion_20260825/scripts/01_run_hits_v0_3_1_verified_completion.py",
+      "passed": true
+    },
+    {
+      "check": "Source unchanged: scripts/12_hits_v0_5_shift_robust_validation.py",
+      "passed": true
+    },
+    {
+      "check": "Source unchanged: scripts/03_create_reviewer_rescue_package.R",
+      "passed": true
+    },
+    {
+      "check": "Source unchanged: scripts/build_hits_manuscript_v1.R",
+      "passed": true
+    },
+    {
+      "check": "Source unchanged: RECOVERED_FROM_DOWNLOADS_20260831/03_SUBMISSION_PACKS/HITS_BMC_Cardiovascular_Disorders_Submission_Pack_v1.0/04_SOURCE_TRACEABILITY/Figure_Source_Data_and_R_Scripts/plot_hits_clinical_figures.R",
+      "passed": true
+    },
+    {
+      "check": "Source unchanged: RECOVERED_FROM_DOWNLOADS_20260831/03_SUBMISSION_PACKS/HITS_BMC_Cardiovascular_Disorders_Submission_Pack_v1.0/04_SOURCE_TRACEABILITY/Figure_Source_Data_and_R_Scripts/Figure3_source_data.csv",
+      "passed": true
+    },
+    {
+      "check": "Source unchanged: HITS_MANUSCRIPT_V1.0/03_FIGURES/Figure4_source_data.csv",
+      "passed": true
+    },
+    {
+      "check": "Source unchanged: HITS_MANUSCRIPT_V1.1_PRE_SUBMISSION_QA/03_FIGURES/Figure4_source_data.csv",
+      "passed": true
+    },
+    {
+      "check": "Source unchanged: HITS_MANUSCRIPT_V1.2.1_FINAL_HOTFIX/01_MANUSCRIPT/figures/Figure4_source_data.csv",
+      "passed": true
+    },
+    {
+      "check": "Source unchanged: LOCAL_DOWNLOADS/HITS_BMC_Manuscript_v1.2_EthicsNumber.docx",
+      "passed": true
+    },
+    {
+      "check": "Master hash unchanged",
+      "passed": true
+    },
+    {
+      "check": "No protected source identifier values of length>=6 found",
+      "passed": true
+    },
+    {
+      "check": "No patient pseudonym rows",
+      "passed": true
+    },
+    {
+      "check": "No credential tokens",
+      "passed": true
+    },
+    {
+      "check": "Aggregate CSV: 04_VALIDATION/FIGURE5_CI_AVAILABILITY.csv",
+      "passed": true
+    },
+    {
+      "check": "Aggregate CSV: 04_VALIDATION/FIGURE_SOURCE_LINEAGE_CHECK.csv",
+      "passed": true
+    },
+    {
+      "check": "Aggregate CSV: 09_CODE/SOURCE_MANIFEST.csv",
+      "passed": true
+    },
+    {
+      "check": "Aggregate CSV: 09_CODE/PACKAGE_SHA256.csv",
+      "passed": true
+    },
+    {
+      "check": "Aggregate CSV: 09_CODE/FIELD_DICTIONARY_SELECTED.csv",
+      "passed": true
+    },
+    {
+      "check": "Aggregate CSV: 09_CODE/INPUT_HASHES.csv",
+      "passed": true
+    },
+    {
+      "check": "Aggregate CSV: 09_CODE/MASTER_FIELD_NAMES.csv",
+      "passed": true
+    },
+    {
+      "check": "Aggregate CSV: 09_CODE/evidence/LEGACY_NOT_CANONICAL_performance.csv",
+      "passed": true
+    },
+    {
+      "check": "Aggregate CSV: 09_CODE/evidence/CANONICAL_RESULT_REGISTRY.csv",
+      "passed": true
+    },
+    {
+      "check": "Aggregate CSV: 09_CODE/evidence/V051_temporal_clinical_delta.csv",
+      "passed": true
+    },
+    {
+      "check": "Aggregate CSV: 09_CODE/evidence/V031_paired_deltas.csv",
+      "passed": true
+    },
+    {
+      "check": "Aggregate CSV: 09_CODE/evidence/V031_clinical.csv",
+      "passed": true
+    },
+    {
+      "check": "Aggregate CSV: 09_CODE/evidence/V051_asymmetric_sensitivity.csv",
+      "passed": true
+    },
+    {
+      "check": "Aggregate CSV: 09_CODE/evidence/V031_performance.csv",
+      "passed": true
+    },
+    {
+      "check": "Aggregate CSV: 09_CODE/evidence/V031_stability.csv",
+      "passed": true
+    },
+    {
+      "check": "Aggregate CSV: 09_CODE/evidence/V031_historical_missingness.csv",
+      "passed": true
+    },
+    {
+      "check": "Aggregate CSV: 09_CODE/evidence/V031_traditional.csv",
+      "passed": true
+    },
+    {
+      "check": "Aggregate CSV: 09_CODE/evidence/MANUSCRIPT_TARGETED_EXCERPTS.csv",
+      "passed": true
+    },
+    {
+      "check": "Aggregate CSV: 09_CODE/evidence/V031_fibrinogen_CC.csv",
+      "passed": true
+    },
+    {
+      "check": "Aggregate CSV: 09_CODE/evidence/submitted_calibration_points.csv",
+      "passed": true
+    },
+    {
+      "check": "Aggregate CSV: 00_EXECUTIVE_SUMMARY/REVIEWER_COMMENT_MASTER_MATRIX.csv",
+      "passed": true
+    },
+    {
+      "check": "Aggregate CSV: 00_EXECUTIVE_SUMMARY/REVISION_RISK_REGISTER.csv",
+      "passed": true
+    },
+    {
+      "check": "Aggregate CSV: 01_TIMING/CBC_TIMING_COVERAGE.csv",
+      "passed": true
+    },
+    {
+      "check": "Aggregate CSV: 01_TIMING/FIBRINOGEN_TIMING_COVERAGE.csv",
+      "passed": true
+    },
+    {
+      "check": "Aggregate CSV: 01_TIMING/CBC_TIMING_VARIABLE_INVENTORY.csv",
+      "passed": true
+    },
+    {
+      "check": "Aggregate CSV: 05_MISSINGNESS/CLINICAL_VARIABLE_MISSINGNESS.csv",
+      "passed": true
+    },
+    {
+      "check": "Aggregate CSV: 05_MISSINGNESS/FIBRINOGEN_MISSINGNESS_BY_OUTCOME.csv",
+      "passed": true
+    },
+    {
+      "check": "Aggregate CSV: 06_COMPARATORS/CLINICAL_INCREMENTAL_PERFORMANCE_EXISTING_RESULTS.csv",
+      "passed": true
+    },
+    {
+      "check": "Aggregate CSV: 06_COMPARATORS/TROPONIN_FIELD_INVENTORY.csv",
+      "passed": true
+    },
+    {
+      "check": "Aggregate CSV: 06_COMPARATORS/TRADITIONAL_INDEX_PERFORMANCE_INVENTORY.csv",
+      "passed": true
+    },
+    {
+      "check": "Aggregate CSV: 10_ORIGINAL_SOURCE_RECOVERY/ORIGINAL_MOTHER_DATE_FIELD_SUMMARY.csv",
+      "passed": true
+    },
+    {
+      "check": "Aggregate CSV: 10_ORIGINAL_SOURCE_RECOVERY/ORIGINAL_FOUR_FILE_INVENTORY.csv",
+      "passed": true
+    },
+    {
+      "check": "Aggregate CSV: 10_ORIGINAL_SOURCE_RECOVERY/RAW_TO_ANALYSIS_SOURCE_CROSSWALK.csv",
+      "passed": true
+    },
+    {
+      "check": "Aggregate CSV: 10_ORIGINAL_SOURCE_RECOVERY/REPEATED_PATIENT_TOKEN_AUDIT.csv",
+      "passed": true
+    },
+    {
+      "check": "Aggregate CSV: 10_ORIGINAL_SOURCE_RECOVERY/ORIGINAL_DATE_RELATIONSHIPS.csv",
+      "passed": true
+    },
+    {
+      "check": "Aggregate CSV: 10_ORIGINAL_SOURCE_RECOVERY/ORIGINAL_MOTHER_FIELD_INVENTORY.csv",
+      "passed": true
+    },
+    {
+      "check": "Aggregate CSV: 02_PHENOTYPE/SUPPLEMENTARY_HIGHSPEC_FLOW_SOURCE.csv",
+      "passed": true
+    },
+    {
+      "check": "Aggregate CSV: 03_COHORT_FLOW/REPEATED_ADMISSION_FLOW_AUDIT.csv",
+      "passed": true
+    },
+    {
+      "check": "Aggregate CSV: 03_COHORT_FLOW/PRIOR_CARDIOVASCULAR_HISTORY_AVAILABILITY.csv",
+      "passed": true
+    },
+    {
+      "check": "Aggregate CSV: 03_COHORT_FLOW/RECORD_MULTIPLICITY.csv",
+      "passed": true
+    },
+    {
+      "check": "Primary mother dimensions and IDs",
+      "passed": true
+    },
+    {
+      "check": "Three of four unique source file roles found",
+      "passed": true
+    },
+    {
+      "check": "Index-CBC and repeated-row findings preserved",
+      "passed": true
+    },
+    {
+      "check": "Author-confirmed ethics gate and conflict flagged",
+      "passed": true
+    },
+    {
+      "check": "WP1R partial-pass gate locked",
+      "passed": true
+    },
+    {
+      "check": "No protected identifier values from original mother file",
+      "passed": true
+    }
+  ],
+  "privacy_scope": "Exact source identifier values >=6 chars, including original mother identifiers when HITS_RAW_MOTHER_CSV is set; pseudonym/credential scans; schema/allowlist checks. Does not claim universal deidentification proof. Manual review also required.",
+  "models_run": 0,
+  "new_figures": 0,
+  "manuscript_modified": false,
+  "wp2_entered": false
+}

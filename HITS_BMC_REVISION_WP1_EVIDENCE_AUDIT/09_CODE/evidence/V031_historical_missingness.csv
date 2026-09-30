@@ -1,0 +1,25 @@
+cohort,variable,n,missing_n,missing_pct,handling
+primary,neut,1820,0,0.0,complete case
+primary,lymph,1820,0,0.0,complete case
+primary,mono,1820,0,0.0,complete case
+primary,plt,1820,0,0.0,complete case
+primary,mpv,1820,0,0.0,complete case
+primary,rdw,1820,0,0.0,complete case
+primary,hb,1820,0,0.0,complete case
+primary,fbg,1820,115,6.318681318681318,fold-local median imputation where specified
+primary,age,1820,0,0.0,fold-local median imputation where specified
+primary,male,1820,0,0.0,fold-local median imputation where specified
+primary,hypertension,1820,79,4.34065934065934,fold-local median imputation where specified
+primary,diabetes,1820,48,2.6373626373626373,fold-local median imputation where specified
+strict,neut,1517,0,0.0,complete case
+strict,lymph,1517,0,0.0,complete case
+strict,mono,1517,0,0.0,complete case
+strict,plt,1517,0,0.0,complete case
+strict,mpv,1517,0,0.0,complete case
+strict,rdw,1517,0,0.0,complete case
+strict,hb,1517,0,0.0,complete case
+strict,fbg,1517,99,6.526038233355306,fold-local median imputation where specified
+strict,age,1517,0,0.0,fold-local median imputation where specified
+strict,male,1517,0,0.0,fold-local median imputation where specified
+strict,hypertension,1517,67,4.4166117336849045,fold-local median imputation where specified
+strict,diabetes,1517,41,2.702702702702702,fold-local median imputation where specified

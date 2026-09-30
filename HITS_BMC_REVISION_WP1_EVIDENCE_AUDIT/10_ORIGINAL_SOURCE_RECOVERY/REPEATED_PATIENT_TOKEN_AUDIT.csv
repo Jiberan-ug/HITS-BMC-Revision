@@ -1,0 +1,4 @@
+field,repeated_patient_pairs,pairs_both_rows_nonmissing,pairs_one_row_nonmissing,pairs_distinct_values,pairs_same_single_value,pairs_no_value
+基线_inpatient_no_id,269,269,0,0,269,0
+inpatient_no_id,269,0,269,0,269,0
+admission_date,269,0,17,0,17,252

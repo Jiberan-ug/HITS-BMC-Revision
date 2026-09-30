@@ -1,0 +1,2 @@
+source,aggregation,outer_cv,inner_cv,patient_level_rows_public
+canonical V0.3.1 pipeline,arithmetic mean of 10 held-out probabilities,5-fold x 10 repeats,5-fold,NO

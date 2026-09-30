@@ -1,0 +1,25 @@
+field,available_n,missing_n,cohort_n,unit_counts
+lab_myocardial_injury_markers_cTnT_test_time,90,1730,1820,
+lab_myocardial_injury_markers_cTnT_test_result,88,1732,1820,
+lab_myocardial_injury_markers_cTnT_unit,90,1730,1820,"{""ng/ml"": 55, ""ng/mL"": 35}"
+lab_myocardial_injury_markers_cTnT_test_time__dup02,90,1730,1820,
+lab_myocardial_injury_markers_cTnT_test_result__dup02,88,1732,1820,
+lab_myocardial_injury_markers_cTnT_unit__dup02,90,1730,1820,
+lab_myocardial_injury_markers_CK_MB_test_time,1,1819,1820,
+lab_myocardial_injury_markers_CK_MB_test_result,1,1819,1820,
+lab_myocardial_injury_markers_CK_MB_unit,1,1819,1820,"{""ng/ml"": 1}"
+lab_myocardial_injury_markers_CK_MB_test_time__dup02,1,1819,1820,
+lab_myocardial_injury_markers_CK_MB_test_result__dup02,1,1819,1820,
+lab_myocardial_injury_markers_CK_MB_unit__dup02,1,1819,1820,
+lab_myocardial_injury_markers_cTnI_test_time,173,1647,1820,
+lab_myocardial_injury_markers_cTnI_test_result,173,1647,1820,
+lab_myocardial_injury_markers_cTnI_unit,173,1647,1820,"{""ng/ml"": 166, ""ug/L"": 7}"
+lab_myocardial_injury_markers_cTnI_test_time__dup02,173,1647,1820,
+lab_myocardial_injury_markers_cTnI_test_result__dup02,173,1647,1820,
+lab_myocardial_injury_markers_cTnI_unit__dup02,173,1647,1820,
+lab_myocardial_injury_markers_hs_cTnT_test_time,402,1418,1820,
+lab_myocardial_injury_markers_hs_cTnT_test_result,390,1430,1820,
+lab_myocardial_injury_markers_hs_cTnT_unit,402,1418,1820,"{""ng/mL"": 309, ""ug/L"": 93}"
+lab_myocardial_injury_markers_hs_cTnT_test_time__dup02,402,1418,1820,
+lab_myocardial_injury_markers_hs_cTnT_test_result__dup02,390,1430,1820,
+lab_myocardial_injury_markers_hs_cTnT_unit__dup02,402,1418,1820,
