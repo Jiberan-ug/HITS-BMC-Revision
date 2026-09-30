@@ -1,0 +1,13 @@
+{
+  "package": "HITS_BMC_MINOR_REVISION_WP3_1_SUBMISSION_READY",
+  "created_utc": "2026-09-30T06:14:28.788276+00:00",
+  "manuscript_template": "/Users/jibulangainiwaer/Downloads/HITS_BMC_Manuscript_v1.2_EthicsNumber-2.docx",
+  "manuscript_template_sha256": "e5cd37ff97b45805c4bb2670e56ac2770b8aac3ec0ede7109b560eec286ce91b",
+  "template_user_confirmed_as_original": true,
+  "portal_integrated_manuscript_recovered": false,
+  "exact_editor_and_reviewer_reports_recovered": true,
+  "raw_patient_level_data_included": false,
+  "model_reanalysis_performed": false,
+  "source_date_lineage_reconciled": false,
+  "gate": "WP3_1_HOLD_SOURCE_DATE_LINEAGE"
+}

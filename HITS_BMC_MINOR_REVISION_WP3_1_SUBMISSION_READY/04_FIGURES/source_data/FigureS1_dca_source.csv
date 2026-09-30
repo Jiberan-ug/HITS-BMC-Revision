@@ -1,0 +1,277 @@
+model,threshold_probability,net_benefit,N,AMI_n,decision_curve_scope
+Clinical only,0.05,0.2103719709831764,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical only,0.060000000000000005,0.20197167280214637,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical only,0.07,0.19339072304733074,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical only,0.08000000000000002,0.18462323090654084,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical only,0.09000000000000001,0.17566304663078855,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical only,0.1,0.16650374714890842,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical only,0.11000000000000001,0.1571386207123793,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical only,0.12000000000000002,0.14756065049320177,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical only,0.13,0.13776249705059493,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical only,0.14,0.12773647957443907,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical only,0.15000000000000002,0.11747455580472657,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical only,0.16000000000000003,0.1069683005166876,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical only,0.17000000000000004,0.09620888245062356,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical only,0.18000000000000002,0.08485802160074382,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical only,0.19000000000000003,0.07064190289996736,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical only,0.20000000000000004,0.055718475073313734,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical only,0.21000000000000002,0.04840565722558374,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical only,0.22000000000000003,0.042168584104067985,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical only,0.23000000000000004,0.027162280534714506,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical only,0.24000000000000005,0.021176107423985152,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical only,0.25000000000000006,0.017986314760508312,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical only,0.26000000000000006,0.016247919473725905,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical only,0.27,0.00816293737195195,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical only,0.28,0.005571847507331383,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical only,0.29000000000000004,0.002147784065094367,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical only,0.30000000000000004,0.00460829493087557,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical only,0.31000000000000005,0.000314505503846315,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical only,0.32000000000000006,-0.0022770398481973464,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical only,0.33000000000000007,0.00031513984330546634,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical only,0.3400000000000001,0.0,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical only,0.3500000000000001,0.0,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical only,0.36000000000000004,0.0,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical only,0.37000000000000005,0.0,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical only,0.38000000000000006,0.0,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical only,0.39000000000000007,0.0,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical only,0.4000000000000001,0.0,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical only,0.4100000000000001,0.0,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical only,0.4200000000000001,0.0,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical only,0.43000000000000005,0.0,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical only,0.44000000000000006,0.0,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical only,0.45000000000000007,0.0,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical only,0.4600000000000001,0.0,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical only,0.4700000000000001,0.0,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical only,0.4800000000000001,0.0,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical only,0.4900000000000001,0.0,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical only,0.5000000000000001,0.0,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + PIV,0.05,0.20963111591294953,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + PIV,0.060000000000000005,0.20111062581893058,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + PIV,0.07,0.19334027055150882,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + PIV,0.08000000000000002,0.1856177483105954,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + PIV,0.09000000000000001,0.17734523540975153,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + PIV,0.1,0.17100032583903552,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + PIV,0.11000000000000001,0.16415038386767272,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + PIV,0.12000000000000002,0.15715809117568647,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + PIV,0.13,0.15193312434691747,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + PIV,0.14,0.1410625383618632,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + PIV,0.15000000000000002,0.1331033293082629,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + PIV,0.16000000000000003,0.1250942605781315,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + PIV,0.17000000000000004,0.11634102391972578,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + PIV,0.18000000000000002,0.10930548601673698,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + PIV,0.19000000000000003,0.10291444915100828,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + PIV,0.20000000000000004,0.09706744868035187,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + PIV,0.21000000000000002,0.09490330004825716,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + PIV,0.22000000000000003,0.08969095420708324,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + PIV,0.23000000000000004,0.09010168716913583,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + PIV,0.24000000000000005,0.08550702268868651,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + PIV,0.25000000000000006,0.08230694037145649,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + PIV,0.26000000000000006,0.0784180074502655,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + PIV,0.27,0.07435021893705059,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + PIV,0.28,0.07067448680351905,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + PIV,0.29000000000000004,0.06563958531246128,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + PIV,0.30000000000000004,0.06242144951822369,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + PIV,0.31000000000000005,0.05576947596582939,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + PIV,0.32000000000000006,0.054510953941693946,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + PIV,0.33000000000000007,0.051971812491793216,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + PIV,0.3400000000000001,0.04660090642495333,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + PIV,0.3500000000000001,0.043627340401533925,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + PIV,0.36000000000000004,0.045014662756598225,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + PIV,0.37000000000000005,0.04138155751058974,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + PIV,0.38000000000000006,0.03931510736921765,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + PIV,0.39000000000000007,0.03427719821162443,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + PIV,0.4000000000000001,0.035972629521016604,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + PIV,0.4100000000000001,0.036303991252050284,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + PIV,0.4200000000000001,0.033977146324198584,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + PIV,0.43000000000000005,0.031013016411997725,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + PIV,0.44000000000000006,0.027775450356095514,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + PIV,0.45000000000000007,0.025966408957611292,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + PIV,0.4600000000000001,0.020158574997284663,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + PIV,0.4700000000000001,0.020605322857300934,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + PIV,0.4800000000000001,0.02183622828784118,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + PIV,0.4900000000000001,0.01588177793111378,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + PIV,0.5000000000000001,0.011143695014662742,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + Core-7,0.05,0.20929155733909555,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + Core-7,0.060000000000000005,0.20185936232607476,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + Core-7,0.07,0.19259609623813578,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + Core-7,0.08000000000000002,0.18495473670789236,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + Core-7,0.09000000000000001,0.17520543972156874,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + Core-7,0.1,0.1661127403062887,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + Core-7,0.11000000000000001,0.1571518007183103,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + Core-7,0.12000000000000002,0.1483604372167422,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + Core-7,0.13,0.1436545656790373,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + Core-7,0.14,0.1414444520220964,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + Core-7,0.15000000000000002,0.13541486976022077,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + Core-7,0.16000000000000003,0.13283061024996506,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + Core-7,0.17000000000000004,0.12589478147192873,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + Core-7,0.18000000000000002,0.11954795794292253,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + Core-7,0.19000000000000003,0.11455052315267368,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + Core-7,0.20000000000000004,0.10923753665689147,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + Core-7,0.21000000000000002,0.10534912209064924,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + Core-7,0.22000000000000003,0.1012106173396496,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + Core-7,0.23000000000000004,0.09393304642571502,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + Core-7,0.24000000000000005,0.08803827751196171,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + Core-7,0.25000000000000006,0.08641251221896383,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + Core-7,0.26000000000000006,0.08322105096298643,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + Core-7,0.27,0.07866468485116297,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + Core-7,0.28,0.07269468882372107,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + Core-7,0.29000000000000004,0.06654000247821237,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + Core-7,0.30000000000000004,0.06459991621281942,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + Core-7,0.31000000000000005,0.06083556462238088,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + Core-7,0.32000000000000006,0.06075556322235637,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + Core-7,0.33000000000000007,0.06099706744868034,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + Core-7,0.3400000000000001,0.05788678574602326,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + Core-7,0.3500000000000001,0.05359801488833746,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + Core-7,0.36000000000000004,0.04945014662756597,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + Core-7,0.37000000000000005,0.04641809803100124,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + Core-7,0.38000000000000006,0.04622079273484059,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + Core-7,0.39000000000000007,0.04546896783808469,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + Core-7,0.4000000000000001,0.042424242424242406,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + Core-7,0.4100000000000001,0.04431631790844474,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + Core-7,0.4200000000000001,0.04113661644251186,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + Core-7,0.43000000000000005,0.03581828471471934,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + Core-7,0.44000000000000006,0.03544197737746124,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + Core-7,0.45000000000000007,0.0359904025593175,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + Core-7,0.4600000000000001,0.03241012273270337,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + Core-7,0.4700000000000001,0.032280196978918825,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + Core-7,0.4800000000000001,0.029460861718926208,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + Core-7,0.4900000000000001,0.029624518429072495,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + Core-7,0.5000000000000001,0.028152492668621694,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + Enhanced,0.05,0.21068066059577095,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + Enhanced,0.060000000000000005,0.2015349098396456,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + Enhanced,0.07,0.19385740863368334,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + Enhanced,0.08000000000000002,0.18439372689022057,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + Enhanced,0.09000000000000001,0.1763204537398086,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + Enhanced,0.1,0.1654610622352558,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + Enhanced,0.11000000000000001,0.15911562160202972,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + Enhanced,0.12000000000000002,0.15417222074113568,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + Enhanced,0.13,0.14865675666565542,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + Enhanced,0.14,0.1428357089272318,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + Enhanced,0.15000000000000002,0.13769190960841812,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + Enhanced,0.16000000000000003,0.13176930596285433,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + Enhanced,0.17000000000000004,0.12679221283962827,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + Enhanced,0.18000000000000002,0.12434017595307915,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + Enhanced,0.19000000000000003,0.12640382317801668,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + Enhanced,0.20000000000000004,0.11950146627565982,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + Enhanced,0.21000000000000002,0.1123798210772486,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + Enhanced,0.22000000000000003,0.10621851267012558,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + Enhanced,0.23000000000000004,0.09962295768747381,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + Enhanced,0.24000000000000005,0.09563204198178729,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + Enhanced,0.25000000000000006,0.09051808406647115,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + Enhanced,0.26000000000000006,0.08678766743282872,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + Enhanced,0.27,0.08477081910577271,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + Enhanced,0.28,0.08103616813294232,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + Enhanced,0.29000000000000004,0.07787369377555656,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + Enhanced,0.30000000000000004,0.07205697528278171,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + Enhanced,0.31000000000000005,0.06940371456500488,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + Enhanced,0.32000000000000006,0.06568914956011727,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + Enhanced,0.33000000000000007,0.0613822383682759,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + Enhanced,0.3400000000000001,0.056251666222340686,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + Enhanced,0.3500000000000001,0.056304985337243374,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + Enhanced,0.36000000000000004,0.05590175953079178,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + Enhanced,0.37000000000000005,0.05124982544337381,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + Enhanced,0.38000000000000006,0.04650458802383878,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + Enhanced,0.39000000000000007,0.04092110956204027,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + Enhanced,0.4000000000000001,0.03655913978494621,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + Enhanced,0.4100000000000001,0.036085292509568045,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + Enhanced,0.4200000000000001,0.03082212559409441,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + Enhanced,0.43000000000000005,0.031393733600864324,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + Enhanced,0.44000000000000006,0.028655215751989926,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + Enhanced,0.45000000000000007,0.029005598507064773,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + Enhanced,0.4600000000000001,0.02817421527098945,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + Enhanced,0.4700000000000001,0.025452332208266454,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + Enhanced,0.4800000000000001,0.025625986916309483,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + Enhanced,0.4900000000000001,0.02157437755160714,1705,426,exploratory phenotype discrimination; not clinical utility
+Clinical + Enhanced,0.5000000000000001,0.02111436950146626,1705,426,exploratory phenotype discrimination; not clinical utility
+Treat all,0.05,0.2103719709831764,1705,426,reference strategy
+Treat none,0.05,0.0,1705,426,reference strategy
+Treat all,0.060000000000000005,0.20197167280214637,1705,426,reference strategy
+Treat none,0.060000000000000005,0.0,1705,426,reference strategy
+Treat all,0.07,0.19339072304733074,1705,426,reference strategy
+Treat none,0.07,0.0,1705,426,reference strategy
+Treat all,0.08000000000000002,0.18462323090654084,1705,426,reference strategy
+Treat none,0.08000000000000002,0.0,1705,426,reference strategy
+Treat all,0.09000000000000001,0.17566304663078855,1705,426,reference strategy
+Treat none,0.09000000000000001,0.0,1705,426,reference strategy
+Treat all,0.1,0.16650374714890842,1705,426,reference strategy
+Treat none,0.1,0.0,1705,426,reference strategy
+Treat all,0.11000000000000001,0.1571386207123793,1705,426,reference strategy
+Treat none,0.11000000000000001,0.0,1705,426,reference strategy
+Treat all,0.12000000000000002,0.14756065049320177,1705,426,reference strategy
+Treat none,0.12000000000000002,0.0,1705,426,reference strategy
+Treat all,0.13,0.13776249705059493,1705,426,reference strategy
+Treat none,0.13,0.0,1705,426,reference strategy
+Treat all,0.14,0.12773647957443907,1705,426,reference strategy
+Treat none,0.14,0.0,1705,426,reference strategy
+Treat all,0.15000000000000002,0.11747455580472657,1705,426,reference strategy
+Treat none,0.15000000000000002,0.0,1705,426,reference strategy
+Treat all,0.16000000000000003,0.1069683005166876,1705,426,reference strategy
+Treat none,0.16000000000000003,0.0,1705,426,reference strategy
+Treat all,0.17000000000000004,0.09620888245062356,1705,426,reference strategy
+Treat none,0.17000000000000004,0.0,1705,426,reference strategy
+Treat all,0.18000000000000002,0.08518703955367996,1705,426,reference strategy
+Treat none,0.18000000000000002,0.0,1705,426,reference strategy
+Treat all,0.19000000000000003,0.07389305238767602,1705,426,reference strategy
+Treat none,0.19000000000000003,0.0,1705,426,reference strategy
+Treat all,0.20000000000000004,0.06231671554252194,1705,426,reference strategy
+Treat none,0.20000000000000004,0.0,1705,426,reference strategy
+Treat all,0.21000000000000002,0.05044730687850327,1705,426,reference strategy
+Treat none,0.21000000000000002,0.0,1705,426,reference strategy
+Treat all,0.22000000000000003,0.03827355440258662,1705,426,reference strategy
+Treat none,0.22000000000000003,0.0,1705,426,reference strategy
+Treat all,0.23000000000000004,0.025783600563659193,1705,426,reference strategy
+Treat none,0.23000000000000004,0.0,1705,426,reference strategy
+Treat all,0.24000000000000005,0.012964963728970463,1705,426,reference strategy
+Treat none,0.24000000000000005,0.0,1705,426,reference strategy
+Treat all,0.25000000000000006,-0.00019550342130994491,1705,426,reference strategy
+Treat none,0.25000000000000006,0.0,1705,426,reference strategy
+Treat all,0.26000000000000006,-0.013711658872949256,1705,426,reference strategy
+Treat none,0.26000000000000006,0.0,1705,426,reference strategy
+Treat all,0.27,-0.027598119953400585,1705,426,reference strategy
+Treat none,0.27,0.0,1705,426,reference strategy
+Treat all,0.28,-0.041870316063864516,1705,426,reference strategy
+Treat none,0.28,0.0,1705,426,reference strategy
+Treat all,0.29000000000000004,-0.056544545867580925,1705,426,reference strategy
+Treat none,0.29000000000000004,0.0,1705,426,reference strategy
+Treat all,0.30000000000000004,-0.0716380393799749,1705,426,reference strategy
+Treat none,0.30000000000000004,0.0,1705,426,reference strategy
+Treat all,0.31000000000000005,-0.08716902545794561,1705,426,reference strategy
+Treat none,0.31000000000000005,0.0,1705,426,reference strategy
+Treat all,0.32000000000000006,-0.10315680524409185,1705,426,reference strategy
+Treat none,0.32000000000000006,0.0,1705,426,reference strategy
+Treat all,0.33000000000000007,-0.11962183218803354,1705,426,reference strategy
+Treat none,0.33000000000000007,0.0,1705,426,reference strategy
+Treat all,0.3400000000000001,-0.1365857993423977,1705,426,reference strategy
+Treat none,0.3400000000000001,0.0,1705,426,reference strategy
+Treat all,0.3500000000000001,-0.1540717347168962,1705,426,reference strategy
+Treat none,0.3500000000000001,0.0,1705,426,reference strategy
+Treat all,0.36000000000000004,-0.17210410557184766,1705,426,reference strategy
+Treat none,0.36000000000000004,0.0,1705,426,reference strategy
+Treat all,0.37000000000000005,-0.19070893264441666,1705,426,reference strategy
+Treat none,0.37000000000000005,0.0,1705,426,reference strategy
+Treat all,0.38000000000000006,-0.20991391542900398,1705,426,reference strategy
+Treat none,0.38000000000000006,0.0,1705,426,reference strategy
+Treat all,0.39000000000000007,-0.2297485697802992,1705,426,reference strategy
+Treat none,0.39000000000000007,0.0,1705,426,reference strategy
+Treat all,0.4000000000000001,-0.25024437927663756,1705,426,reference strategy
+Treat none,0.4000000000000001,0.0,1705,426,reference strategy
+Treat all,0.4100000000000001,-0.2714349619762416,1705,426,reference strategy
+Treat none,0.4100000000000001,0.0,1705,426,reference strategy
+Treat all,0.4200000000000001,-0.29335625442410784,1705,426,reference strategy
+Treat none,0.4200000000000001,0.0,1705,426,reference strategy
+Treat all,0.43000000000000005,-0.3160467150280394,1705,426,reference strategy
+Treat none,0.43000000000000005,0.0,1705,426,reference strategy
+Treat all,0.44000000000000006,-0.33954754922496877,1705,426,reference strategy
+Treat none,0.44000000000000006,0.0,1705,426,reference strategy
+Treat all,0.45000000000000007,-0.36390295921087723,1705,426,reference strategy
+Treat none,0.45000000000000007,0.0,1705,426,reference strategy
+Treat all,0.4600000000000001,-0.38916042141848606,1705,426,reference strategy
+Treat none,0.4600000000000001,0.0,1705,426,reference strategy
+Treat all,0.4700000000000001,-0.4153709954075141,1705,426,reference strategy
+Treat none,0.4700000000000001,0.0,1705,426,reference strategy
+Treat all,0.4800000000000001,-0.44258966839612024,1705,426,reference strategy
+Treat none,0.4800000000000001,0.0,1705,426,reference strategy
+Treat all,0.4900000000000001,-0.470875740325456,1705,426,reference strategy
+Treat none,0.4900000000000001,0.0,1705,426,reference strategy
+Treat all,0.5000000000000001,-0.5002932551319652,1705,426,reference strategy
+Treat none,0.5000000000000001,0.0,1705,426,reference strategy

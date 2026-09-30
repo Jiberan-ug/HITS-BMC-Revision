@@ -1,0 +1,19 @@
+﻿item,manuscript_value,authoritative_source,status,note
+raw_source_records,2548,WP1 MOST_COMPLETE_RECORD_SELECTION_RULE.md,PASS,Records; not asserted to be encounters
+unique_patients,2279,WP1 MOST_COMPLETE_RECORD_SELECTION_RULE.md,PASS,One selected source row per patient
+patients_with_one_source_record,2010,WP1 MOST_COMPLETE_RECORD_SELECTION_RULE.md,PASS,
+patients_with_two_source_records,269,WP1 MOST_COMPLETE_RECORD_SELECTION_RULE.md,PASS,Not described as repeat admissions
+primary_cohort,1820 (AMI 453; non-AMI CAD 1367),WP2 COHORT_FLOW_FINAL.csv,PASS,
+age_overall,"58.8 [50.4, 67.7]",WP3 Table1_age_rebuilt_source.csv,PASS,Canonical 1820-person vector; p=0.0039739906
+age_AMI,"57.4 [48.9, 66.6]",WP3 Table1_age_rebuilt_source.csv,PASS,
+age_non_AMI_CAD,"59.3 [50.9, 68.2]",WP3 Table1_age_rebuilt_source.csv,PASS,
+date_axis_group_counts,1001/196; 271/79; 548/178,WP2 DATE_AXIS_SENSITIVITY_FINAL_FACTS.csv,PASS,Development N/AMI; buffer N/AMI; later N/AMI
+date_axis_Core_minus_PIV,0.002262 (95% CI -0.021496 to 0.025271),WP2 DATE_AXIS_SENSITIVITY_FINAL_FACTS.csv,PASS,
+clinical_Core_vs_PIV_delta,0.0130 (95% CI 0.0004 to 0.0251),WP2 PRIMARY_PAIRED_DELTAS_CANONICAL.csv,PASS,N=1705
+high_specificity_flow,138 AMI + 288 controls = 426,WP2 HIGH_SPECIFICITY_FLOW_FINAL.csv,PASS,"Text rule, not independent adjudication"
+fibrinogen_missingness,115/1820; AMI 27/453; non-AMI 88/1367,WP2 FIBRINOGEN_MISSINGNESS_FINAL.csv,PASS,
+ethics_waiver,Approval K202602-10; retrospective waiver,Author-provided WP3.1 instruction,APPLIED,Ethics letter not included in public repository
+exact_editor_and_reviewer_wording,Recovered from supplied decision and review letters,User-provided source attachments,PASS,Verbatim comments are used in the response
+manuscript_template,HITS_BMC_Manuscript_v1.2_EthicsNumber-2.docx,User-confirmed original manuscript; SHA256 recorded in metadata,PASS,Portal-integrated binary was not independently recovered
+selected_CBC_date_lineage,2009-2026; 1802/1820 before 2019,WP1 repeated admission flow audit and CBC timing inventory,HOLD,Conflicts with stated 2020-2026 period; bounded date shift does not explain this; source-to-shift linkage is unresolved
+date_shift_input_output_linkage,Not verified,WP1 consecutive screening and selection-bias audit,HOLD,Do not submit until source date lineage is reconciled
