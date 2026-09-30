@@ -1,0 +1,109 @@
+﻿submission_file,term_or_claim,occurrence_count,review_status,context_if_present
+manuscript_clean_docx,obsolete_source_date_hold,0,PASS_NO_OBSOLETE_CLAIM,
+manuscript_clean_docx,unresolved_lineage,0,PASS_NO_OBSOLETE_CLAIM,
+manuscript_clean_docx,resolved_legacy_anomaly_reported_as_current,0,PASS_NO_OBSOLETE_CLAIM,
+manuscript_clean_docx,machine_verification_claim,0,PASS_NO_OBSOLETE_CLAIM,
+manuscript_clean_docx,uniform_pre_event_claim,1,PASS_NEGATED_OR_QUOTED_ONLY,"a clinical-time hierarchy, and the measurements are not described as uniformly first-admission, pre-angiography, pre-diagnostic, or pre-treatmen"
+manuscript_clean_docx,admission_first_phrase,0,PASS_NEGATED_OR_QUOTED_ONLY,
+manuscript_clean_docx,pre_angiography_phrase,1,PASS_NEGATED_OR_QUOTED_ONLY,"and the measurements are not described as uniformly first-admission, pre-angiography, pre-diagnostic, or pre-treatment. Laboratory uni"
+manuscript_clean_docx,pre_diagnostic_phrase,1,PASS_NEGATED_OR_QUOTED_ONLY,"ents are not described as uniformly first-admission, pre-angiography, pre-diagnostic, or pre-treatment. Laboratory units were 10^9/L f"
+manuscript_clean_docx,pre_treatment_phrase,1,PASS_NEGATED_OR_QUOTED_ONLY,"bed as uniformly first-admission, pre-angiography, pre-diagnostic, or pre-treatment. Laboratory units were 10^9/L for leukocyte and p"
+manuscript_clean_docx,temporal_validation_phrase,7,PASS_NEGATED_OR_QUOTED_ONLY,"21 to 0.025), and Enhanced had an AUC of 0.719; this analysis was not formal temporal validation. Conclusions: Joint modeling of routine hematolog || and later N=548 (AMI=178). This temporal sensitivity analysis is not formal temporal validation. Phenotype and missingness sensitivity analyses H || ge was attenuated in this temporal sensitivity analysis, which is not formal temporal validation. The high-specificity comparison contained 138 st || 0.021 to 0.025), and the interval included zero. This analysis is not formal temporal validation. Alternative date-shift estimates are presented a || alization/coronary-angiography dates from the study period but is not formal temporal validation. Independent cohorts with standardized clinical t || was also observed in the temporal sensitivity analysis, which was not formal temporal validation. This finding is clinically plausible because fib || plete than CBC measurements. The temporal sensitivity analysis is not formal temporal validation. These limitations define the next step: independ"
+manuscript_clean_docx,transportability_claim,0,PASS_NEGATED_OR_QUOTED_ONLY,
+manuscript_clean_docx,stale_temporal_cutpoint,0,PASS_NO_OBSOLETE_CLAIM,
+manuscript_clean_pdf,obsolete_source_date_hold,0,PASS_NO_OBSOLETE_CLAIM,
+manuscript_clean_pdf,unresolved_lineage,0,PASS_NO_OBSOLETE_CLAIM,
+manuscript_clean_pdf,resolved_legacy_anomaly_reported_as_current,0,PASS_NO_OBSOLETE_CLAIM,
+manuscript_clean_pdf,machine_verification_claim,0,PASS_NO_OBSOLETE_CLAIM,
+manuscript_clean_pdf,uniform_pre_event_claim,1,PASS_NEGATED_OR_QUOTED_ONLY,"a clinical-time hierarchy, and the measurements are not described as uniformly first-admission, pre-angiography, pre-diagnostic, or pre-treatmen"
+manuscript_clean_pdf,admission_first_phrase,0,PASS_NEGATED_OR_QUOTED_ONLY,
+manuscript_clean_pdf,pre_angiography_phrase,1,PASS_NEGATED_OR_QUOTED_ONLY,"and the measurements are not described as uniformly first-admission, pre-angiography, pre-diagnostic, or pre-treatment. Laboratory uni"
+manuscript_clean_pdf,pre_diagnostic_phrase,1,PASS_NEGATED_OR_QUOTED_ONLY,"nts are not described as uniformly first-admission, pre-angiography, pre-diagnostic, or pre-treatment. Laboratory units were 10^9/L"
+manuscript_clean_pdf,pre_treatment_phrase,1,PASS_NEGATED_OR_QUOTED_ONLY,"ed as uniformly first-admission, pre-angiography, pre-diagnostic, or pre-treatment. Laboratory units were 10^9/L for leukocyte and"
+manuscript_clean_pdf,temporal_validation_phrase,5,PASS_NEGATED_OR_QUOTED_ONLY,"1 to 0.025), and Enhanced had an AUC of 0.719; this analysis was not formal temporal validation. Conclusions: Joint modeling of routine hematolog || e was attenuated in this temporal sensitivity analysis, which is not formal temporal validation. The high-specificity comparison contained 138 s || 0.021 to 0.025), and the interval included zero. This analysis is not formal temporal validation. Alternative date-shift estimates are presented || as also observed in the temporal sensitivity analysis, which was not formal temporal validation. This finding is clinically plausible because fib || lete than CBC measurements. The temporal sensitivity analysis is not formal temporal validation. These limitations define the next step: independ"
+manuscript_clean_pdf,transportability_claim,0,PASS_NEGATED_OR_QUOTED_ONLY,
+manuscript_clean_pdf,stale_temporal_cutpoint,0,PASS_NO_OBSOLETE_CLAIM,
+manuscript_marked_docx,obsolete_source_date_hold,0,PASS_NO_OBSOLETE_CLAIM,
+manuscript_marked_docx,unresolved_lineage,0,PASS_NO_OBSOLETE_CLAIM,
+manuscript_marked_docx,resolved_legacy_anomaly_reported_as_current,0,PASS_NO_OBSOLETE_CLAIM,
+manuscript_marked_docx,machine_verification_claim,0,PASS_NO_OBSOLETE_CLAIM,
+manuscript_marked_docx,uniform_pre_event_claim,1,PASS_NEGATED_OR_QUOTED_ONLY,"a clinical-time hierarchy, and the measurements are not described as uniformly first-admission, pre-angiography, pre-diagnostic, or pre-treatmen"
+manuscript_marked_docx,admission_first_phrase,0,PASS_NEGATED_OR_QUOTED_ONLY,
+manuscript_marked_docx,pre_angiography_phrase,1,PASS_NEGATED_OR_QUOTED_ONLY,"and the measurements are not described as uniformly first-admission, pre-angiography, pre-diagnostic, or pre-treatment. Laboratory uni"
+manuscript_marked_docx,pre_diagnostic_phrase,1,PASS_NEGATED_OR_QUOTED_ONLY,"ents are not described as uniformly first-admission, pre-angiography, pre-diagnostic, or pre-treatment. Laboratory units were 10^9/L f"
+manuscript_marked_docx,pre_treatment_phrase,1,PASS_NEGATED_OR_QUOTED_ONLY,"bed as uniformly first-admission, pre-angiography, pre-diagnostic, or pre-treatment. Laboratory units were 10^9/L for leukocyte and p"
+manuscript_marked_docx,temporal_validation_phrase,7,PASS_NEGATED_OR_QUOTED_ONLY,"21 to 0.025), and Enhanced had an AUC of 0.719; this analysis was not formal temporal validation. Conclusions: Joint modeling of routine hematolog || and later N=548 (AMI=178). This temporal sensitivity analysis is not formal temporal validation. Phenotype and missingness sensitivity analyses H || ge was attenuated in this temporal sensitivity analysis, which is not formal temporal validation. The high-specificity comparison contained 138 st || 0.021 to 0.025), and the interval included zero. This analysis is not formal temporal validation. Alternative date-shift estimates are presented a || alization/coronary-angiography dates from the study period but is not formal temporal validation. Independent cohorts with standardized clinical t || was also observed in the temporal sensitivity analysis, which was not formal temporal validation. This finding is clinically plausible because fib || plete than CBC measurements. The temporal sensitivity analysis is not formal temporal validation. These limitations define the next step: independ"
+manuscript_marked_docx,transportability_claim,0,PASS_NEGATED_OR_QUOTED_ONLY,
+manuscript_marked_docx,stale_temporal_cutpoint,0,PASS_NO_OBSOLETE_CLAIM,
+response_docx,obsolete_source_date_hold,0,PASS_NO_OBSOLETE_CLAIM,
+response_docx,unresolved_lineage,0,PASS_NO_OBSOLETE_CLAIM,
+response_docx,resolved_legacy_anomaly_reported_as_current,0,PASS_NO_OBSOLETE_CLAIM,
+response_docx,machine_verification_claim,0,PASS_NO_OBSOLETE_CLAIM,
+response_docx,uniform_pre_event_claim,0,PASS_NEGATED_OR_QUOTED_ONLY,
+response_docx,admission_first_phrase,2,PASS_NEGATED_OR_QUOTED_ONLY,"y patient. We therefore do not describe the measurements as uniformly admission-first, pre-angiography, or pre-diagnostic, and we have || ierarchy; we therefore make no claim that measurements were uniformly admission-first, pre-angiography, or pre-diagnostic. Symptom-onse"
+response_docx,pre_angiography_phrase,2,PASS_NEGATED_OR_QUOTED_ONLY,"refore do not describe the measurements as uniformly admission-first, pre-angiography, or pre-diagnostic, and we have added the exact r || efore make no claim that measurements were uniformly admission-first, pre-angiography, or pre-diagnostic. Symptom-onset timing was not"
+response_docx,pre_diagnostic_phrase,2,PASS_NEGATED_OR_QUOTED_ONLY,"be the measurements as uniformly admission-first, pre-angiography, or pre-diagnostic, and we have added the exact record-selection rul || that measurements were uniformly admission-first, pre-angiography, or pre-diagnostic. Symptom-onset timing was not available. Changes"
+response_docx,pre_treatment_phrase,0,PASS_NEGATED_OR_QUOTED_ONLY,
+response_docx,temporal_validation_phrase,5,PASS_NEGATED_OR_QUOTED_ONLY,"alization/coronary-angiography dates from the study period and is not formal temporal validation. Editor Comments Editor Comment 1 Comment: Please || attenuated. We describe this as a temporal sensitivity analysis, not temporal validation. Changes in manuscript: The confirmed date source || aced with an inferred value. The temporal sensitivity analysis is not formal temporal validation. (page 16, paragraph 1 of Temporal and diagnostic || uthors should clarify whether the temporal analysis represents a true temporal validation and moderate claims regarding external applicabil || on/coronary-angiography dates is a temporal sensitivity analysis, not formal temporal validation; generalizability therefore remains uncertain. Ch"
+response_docx,transportability_claim,0,PASS_NEGATED_OR_QUOTED_ONLY,
+response_docx,stale_temporal_cutpoint,0,PASS_NO_OBSOLETE_CLAIM,
+response_pdf,obsolete_source_date_hold,0,PASS_NO_OBSOLETE_CLAIM,
+response_pdf,unresolved_lineage,0,PASS_NO_OBSOLETE_CLAIM,
+response_pdf,resolved_legacy_anomaly_reported_as_current,0,PASS_NO_OBSOLETE_CLAIM,
+response_pdf,machine_verification_claim,0,PASS_NO_OBSOLETE_CLAIM,
+response_pdf,uniform_pre_event_claim,0,PASS_NEGATED_OR_QUOTED_ONLY,
+response_pdf,admission_first_phrase,2,PASS_NEGATED_OR_QUOTED_ONLY,"patient. We therefore do not describe the measurements as uniformly admission-first, pre-angiography, or pre-diagnostic, and we have || erarchy; we therefore make no claim that measurements were uniformly admission-first, pre-angiography, or pre-diagnostic. Symptom-onse"
+response_pdf,pre_angiography_phrase,2,PASS_NEGATED_OR_QUOTED_ONLY,"efore do not describe the measurements as uniformly admission-first, pre-angiography, or pre-diagnostic, and we have added the exact || fore make no claim that measurements were uniformly admission-first, pre-angiography, or pre-diagnostic. Symptom-onset timing was not"
+response_pdf,pre_diagnostic_phrase,2,PASS_NEGATED_OR_QUOTED_ONLY,"be the measurements as uniformly admission-first, pre-angiography, or pre-diagnostic, and we have added the exact record-selection ru || hat measurements were uniformly admission-first, pre-angiography, or pre-diagnostic. Symptom-onset timing was not available. Changes"
+response_pdf,pre_treatment_phrase,0,PASS_NEGATED_OR_QUOTED_ONLY,
+response_pdf,temporal_validation_phrase,3,PASS_NEGATED_OR_QUOTED_ONLY,"alization/coronary-angiography dates from the study period and is not formal temporal validation. Editor Comments Editor Comment 1 Comment: Please || attenuated. We describe this as a temporal sensitivity analysis, not temporal validation. Changes in manuscript: The confirmed date source || ced with an inferred value. The temporal sensitivity analysis is not formal temporal validation. (page 16, paragraph 1 of Temporal and diagnostic"
+response_pdf,transportability_claim,0,PASS_NEGATED_OR_QUOTED_ONLY,
+response_pdf,stale_temporal_cutpoint,0,PASS_NO_OBSOLETE_CLAIM,
+supplement_methods_docx,obsolete_source_date_hold,0,PASS_NO_OBSOLETE_CLAIM,
+supplement_methods_docx,unresolved_lineage,0,PASS_NO_OBSOLETE_CLAIM,
+supplement_methods_docx,resolved_legacy_anomaly_reported_as_current,0,PASS_NO_OBSOLETE_CLAIM,
+supplement_methods_docx,machine_verification_claim,0,PASS_NO_OBSOLETE_CLAIM,
+supplement_methods_docx,uniform_pre_event_claim,1,PASS_NEGATED_OR_QUOTED_ONLY,"every patient; therefore, selected measurements are not described as uniformly first-admission, pre-angiography, pre-diagnostic, or pre-treatmen"
+supplement_methods_docx,admission_first_phrase,0,PASS_NEGATED_OR_QUOTED_ONLY,
+supplement_methods_docx,pre_angiography_phrase,1,PASS_NEGATED_OR_QUOTED_ONLY,"selected measurements are not described as uniformly first-admission, pre-angiography, pre-diagnostic, or pre-treatment. Internal valid"
+supplement_methods_docx,pre_diagnostic_phrase,1,PASS_NEGATED_OR_QUOTED_ONLY,"ents are not described as uniformly first-admission, pre-angiography, pre-diagnostic, or pre-treatment. Internal validation and sensit"
+supplement_methods_docx,pre_treatment_phrase,1,PASS_NEGATED_OR_QUOTED_ONLY,"bed as uniformly first-admission, pre-angiography, pre-diagnostic, or pre-treatment. Internal validation and sensitivity analyses Pri"
+supplement_methods_docx,temporal_validation_phrase,2,PASS_NEGATED_OR_QUOTED_ONLY,"r was excluded. These analyses are temporal sensitivity analyses, not formal temporal validation. A separate conservative +/-365-day sensitivity r || rlier draft is not reported. The temporal sensitivity analysis is not formal temporal validation. The high-specificity comparison used 138 definit"
+supplement_methods_docx,transportability_claim,0,PASS_NEGATED_OR_QUOTED_ONLY,
+supplement_methods_docx,stale_temporal_cutpoint,0,PASS_NO_OBSOLETE_CLAIM,
+supplement_tables_xlsx,obsolete_source_date_hold,0,PASS_NO_OBSOLETE_CLAIM,
+supplement_tables_xlsx,unresolved_lineage,0,PASS_NO_OBSOLETE_CLAIM,
+supplement_tables_xlsx,resolved_legacy_anomaly_reported_as_current,0,PASS_NO_OBSOLETE_CLAIM,
+supplement_tables_xlsx,machine_verification_claim,0,PASS_NO_OBSOLETE_CLAIM,
+supplement_tables_xlsx,uniform_pre_event_claim,0,PASS_NEGATED_OR_QUOTED_ONLY,
+supplement_tables_xlsx,admission_first_phrase,0,PASS_NEGATED_OR_QUOTED_ONLY,
+supplement_tables_xlsx,pre_angiography_phrase,0,PASS_NEGATED_OR_QUOTED_ONLY,
+supplement_tables_xlsx,pre_diagnostic_phrase,0,PASS_NEGATED_OR_QUOTED_ONLY,
+supplement_tables_xlsx,pre_treatment_phrase,0,PASS_NEGATED_OR_QUOTED_ONLY,
+supplement_tables_xlsx,temporal_validation_phrase,1,PASS_NEGATED_OR_QUOTED_ONLY,"15 date from an earlier draft is not reported. These analyses are not formal temporal validation. Exact CBC sampling times relative to admission,"
+supplement_tables_xlsx,transportability_claim,0,PASS_NEGATED_OR_QUOTED_ONLY,
+supplement_tables_xlsx,stale_temporal_cutpoint,0,PASS_NO_OBSOLETE_CLAIM,
+upload_guide,obsolete_source_date_hold,0,PASS_NO_OBSOLETE_CLAIM,
+upload_guide,unresolved_lineage,0,PASS_NO_OBSOLETE_CLAIM,
+upload_guide,resolved_legacy_anomaly_reported_as_current,0,PASS_NO_OBSOLETE_CLAIM,
+upload_guide,machine_verification_claim,0,PASS_NO_OBSOLETE_CLAIM,
+upload_guide,uniform_pre_event_claim,0,PASS_NEGATED_OR_QUOTED_ONLY,
+upload_guide,admission_first_phrase,0,PASS_NEGATED_OR_QUOTED_ONLY,
+upload_guide,pre_angiography_phrase,0,PASS_NEGATED_OR_QUOTED_ONLY,
+upload_guide,pre_diagnostic_phrase,0,PASS_NEGATED_OR_QUOTED_ONLY,
+upload_guide,pre_treatment_phrase,0,PASS_NEGATED_OR_QUOTED_ONLY,
+upload_guide,temporal_validation_phrase,1,PASS_NEGATED_OR_QUOTED_ONLY,m an earlier draft is not reported. This analysis is not described as temporal validation. The source-date interpretation is based on auth
+upload_guide,transportability_claim,0,PASS_NEGATED_OR_QUOTED_ONLY,
+upload_guide,stale_temporal_cutpoint,0,PASS_NO_OBSOLETE_CLAIM,
+upload_checklist,obsolete_source_date_hold,0,PASS_NO_OBSOLETE_CLAIM,
+upload_checklist,unresolved_lineage,0,PASS_NO_OBSOLETE_CLAIM,
+upload_checklist,resolved_legacy_anomaly_reported_as_current,0,PASS_NO_OBSOLETE_CLAIM,
+upload_checklist,machine_verification_claim,0,PASS_NO_OBSOLETE_CLAIM,
+upload_checklist,uniform_pre_event_claim,0,PASS_NEGATED_OR_QUOTED_ONLY,
+upload_checklist,admission_first_phrase,0,PASS_NEGATED_OR_QUOTED_ONLY,
+upload_checklist,pre_angiography_phrase,0,PASS_NEGATED_OR_QUOTED_ONLY,
+upload_checklist,pre_diagnostic_phrase,0,PASS_NEGATED_OR_QUOTED_ONLY,
+upload_checklist,pre_treatment_phrase,0,PASS_NEGATED_OR_QUOTED_ONLY,
+upload_checklist,temporal_validation_phrase,0,PASS_NEGATED_OR_QUOTED_ONLY,
+upload_checklist,transportability_claim,0,PASS_NEGATED_OR_QUOTED_ONLY,
+upload_checklist,stale_temporal_cutpoint,0,PASS_NO_OBSOLETE_CLAIM,

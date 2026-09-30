@@ -1,0 +1,11 @@
+﻿from_id,to_id
+source,patients
+patients,ami
+patients,nonami
+patients,review
+patients,other
+ami,ab
+nonami,ab
+ab,incomplete
+ab,primary
+primary,strict

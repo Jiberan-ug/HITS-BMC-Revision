@@ -1,0 +1,10 @@
+from_id,to_id
+primary_ami,early
+primary_ami,buffer
+primary_ami,later
+later,strict_ami
+later,ami_not_strict
+broad_controls,strict_controls
+broad_controls,controls_excluded
+strict_ami,comparison
+strict_controls,comparison
